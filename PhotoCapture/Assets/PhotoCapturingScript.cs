@@ -14,31 +14,44 @@ public class PhotoCapturingScript : MonoBehaviour {
     PhotoCapture photoCaptureObject = null;
     Texture2D targetTexture = null;
 
-    // Use this for initialization
+    public string deviceName;
+    WebCamTexture wct;
+
     void Start()
     {
-        Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
-        targetTexture = new Texture2D(cameraResolution.width, cameraResolution.height);
-
-        // Create a PhotoCapture object
-        PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject) {
-            photoCaptureObject = captureObject;
-            CameraParameters cameraParameters = new CameraParameters( WebCamMode.VideoMode);
-            
-            cameraParameters.hologramOpacity = 0.0f;
-            cameraParameters.cameraResolutionWidth = cameraResolution.width;
-            cameraParameters.cameraResolutionHeight = cameraResolution.height;
-            cameraParameters.pixelFormat = CapturePixelFormat.BGRA32;
-            cameraParameters.frameRate = 30;
-            // Activate the camera
-            photoCaptureObject.StartPhotoModeAsync(cameraParameters, delegate (PhotoCapture.PhotoCaptureResult result) {
-                // Take a picture
-                photoCaptureObject.TakePhotoAsync(OnCapturedPhotoToMemory);
-                
-            });
-        });
-        
+        WebCamDevice[] devices = WebCamTexture.devices;
+        deviceName = devices[1].name;
+        wct = new WebCamTexture(deviceName, 400, 300, 12);
+        GetComponent<Renderer>().material.mainTexture = wct;
+        wct.Play();
     }
+
+    void TakeSnapshot()
+    {
+        Texture2D snap = new Texture2D(wct.width, wct.height);
+        snap.SetPixels(wct.GetPixels());
+        snap.Apply();
+    }
+
+    void OnGUI()
+    {
+        if (GUI.Button(new Rect(10, 70, 50, 30), "Click"))
+            TakeSnapshot();
+
+
+        // Create a GameObject to which the texture can be applied
+        GameObject quad = gameObject;
+        Renderer quadRenderer = quad.GetComponent<Renderer>() as Renderer;
+        quadRenderer.material = new Material(material);
+
+        quad.transform.parent = this.transform;
+        quad.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+
+        quadRenderer.material.SetTexture("_MainTex", wct);
+
+    }
+
+    /*
     private void Update()
     {
         if (photoCaptureObject != null)
@@ -74,4 +87,5 @@ public class PhotoCapturingScript : MonoBehaviour {
         photoCaptureObject.StopPhotoModeAsync(OnStoppedPhotoMode);
         Debug.Log("Stopped");
     }
+    */
 }
