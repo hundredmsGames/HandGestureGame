@@ -1,0 +1,17 @@
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\CNN_Test.exe.config
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\CNN_Test.exe
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\CNN_Test.pdb
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.CV.dll
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.CV.UI.dll
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.Util.dll
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\ZedGraph.dll
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.CV.xml
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.CV.UI.xml
+D:\workspace\c_sharp\CNN_Test\CNN_Test\bin\Debug\Emgu.Util.xml
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.csprojResolveAssemblyReference.cache
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.Properties.Resources.resources
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.csproj.GenerateResource.cache
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.csproj.CoreCompileInputs.cache
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.csproj.CopyComplete
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.exe
+D:\workspace\c_sharp\CNN_Test\CNN_Test\obj\Debug\CNN_Test.pdb
