@@ -1,16 +1,22 @@
 ﻿using System;
 
-namespace FullyConnectedNN
+namespace MatrixLib
 {
 	public class Matrix
 	{
-		int rows;
+        #region Variables
+
+        int rows;
 		int cols;
 		public double[,] data;
 
 		static Random randomize = new Random();
 
-		public Matrix (int rows, int cols)
+        #endregion
+
+        #region Constructors
+
+        public Matrix (int rows, int cols)
 		{
 			this.rows = rows;
 			this.cols = cols;
@@ -31,202 +37,190 @@ namespace FullyConnectedNN
 					this.data[i, j] = m.data[i, j];
 		}
 
-		// Element-wise add
-		public static Matrix operator+(Matrix m1, Matrix m2)
-		{
-			if(m1.rows != m2.rows || m1.cols != m2.cols)
-			{
-				Console.WriteLine("Error: rows and cols should be same!");
-				return null;
-			}
+        #endregion
 
-			Matrix sum = new Matrix(m1.rows, m1.cols);
-			for(int i = 0; i < sum.rows; i++)
-			{
-				for(int j = 0; j < sum.cols; j++)
-				{
-					sum.data[i, j] = m1.data[i, j] + m2.data[i, j];
-				}
-			}
+        #region Element-wise Operations
 
-			return sum;
-		}
+        public static Matrix Add(Matrix m1, Matrix m2)
+        {
+            if (m1.rows != m2.rows || m1.cols != m2.cols)
+            {
+                Console.WriteLine("Error: rows and cols should be same!");
+                return null;
+            }
 
-		// Element-wise subtract
-		public static Matrix operator-(Matrix m1, Matrix m2)
-		{
-			if(m1.rows != m2.rows || m1.cols != m2.cols)
-			{
-				Console.WriteLine("Error: rows and cols should be same!");
-				return null;
-			}
+            Matrix sum = new Matrix(m1.rows, m1.cols);
+            for (int i = 0; i < sum.rows; i++)
+            {
+                for (int j = 0; j < sum.cols; j++)
+                {
+                    sum.data[i, j] = m1.data[i, j] + m2.data[i, j];
+                }
+            }
 
-			Matrix sub = new Matrix(m1.rows, m1.cols);
-			for(int i = 0; i < sub.rows; i++)
-			{
-				for(int j = 0; j < sub.cols; j++)
-				{
-					sub.data[i, j] = m1.data[i, j] - m2.data[i, j];
-				}
-			}
+            return sum;
+        }
 
-			return sub;
-		}
+        public static Matrix Subtract(Matrix m1, Matrix m2)
+        {
+            if (m1.rows != m2.rows || m1.cols != m2.cols)
+            {
+                Console.WriteLine("Error: rows and cols should be same!");
+                return null;
+            }
 
-		// Element-wise multiply
-		public static Matrix operator*(Matrix m1, Matrix m2)
-		{
-			if(m1.rows != m2.rows || m1.cols != m2.cols)
-			{
-				Console.WriteLine("Error: rows and cols should be same!");
-				return null;
-			}
+            Matrix sub = new Matrix(m1.rows, m1.cols);
+            for (int i = 0; i < sub.rows; i++)
+            {
+                for (int j = 0; j < sub.cols; j++)
+                {
+                    sub.data[i, j] = m1.data[i, j] - m2.data[i, j];
+                }
+            }
 
-			Matrix mult = new Matrix(m1.rows, m1.cols);
-			for(int i = 0; i < mult.rows; i++)
-			{
-				for(int j = 0; j < mult.cols; j++)
-				{
-					mult.data[i, j] = m1.data[i, j] * m2.data[i, j];
-				}
-			}
+            return sub;
+        }
 
-			return mult;
-		}
+        // Hadamard Multiply
+        public static Matrix Multiply(Matrix m1, Matrix m2)
+        {
+            if (m1.rows != m2.rows || m1.cols != m2.cols)
+            {
+                Console.WriteLine("Error: rows and cols should be same!");
+                return null;
+            }
 
-		// Element-wise divide
-		public static Matrix operator/(Matrix m1, Matrix m2)
-		{
-			if(m1.rows != m2.rows || m1.cols != m2.cols)
-			{
-				Console.WriteLine("Error: rows and cols should be same!");
-				return null;
-			}
+            Matrix mult = new Matrix(m1.rows, m1.cols);
+            for (int i = 0; i < mult.rows; i++)
+            {
+                for (int j = 0; j < mult.cols; j++)
+                {
+                    mult.data[i, j] = m1.data[i, j] * m2.data[i, j];
+                }
+            }
 
-			Matrix div = new Matrix(m1.rows, m1.cols);
-			for(int i = 0; i < div.rows; i++)
-			{
-				for(int j = 0; j < div.cols; j++)
-				{
-					if(m2.data[i, j] == 0.0)
-					{
-						Console.WriteLine("Error: Cannot divide by zero!");
-						return null;
-					}
+            return mult;
+        }
 
-					div.data[i, j] = m1.data[i, j] / m2.data[i, j];
-				}
-			}
+        public static Matrix Divide(Matrix m1, Matrix m2)
+        {
+            if (m1.rows != m2.rows || m1.cols != m2.cols)
+            {
+                Console.WriteLine("Error: rows and cols should be same!");
+                return null;
+            }
 
-			return div;
-		}
+            Matrix div = new Matrix(m1.rows, m1.cols);
+            for (int i = 0; i < div.rows; i++)
+            {
+                for (int j = 0; j < div.cols; j++)
+                {
+                    if (m2.data[i, j] == 0.0)
+                    {
+                        Console.WriteLine("Error: Cannot divide by zero!");
+                        return null;
+                    }
 
-		// Scalar add
-		public static Matrix operator+(Matrix m, double x)
-		{
-			Matrix sum = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < sum.rows; i++)
-			{
-				for(int j = 0; j < sum.cols; j++)
-				{
-					sum.data[i, j] = m.data[i, j] + x;
-				}
-			}
+                    div.data[i, j] = m1.data[i, j] / m2.data[i, j];
+                }
+            }
 
-			return sum;
-		}
+            return div;
+        }
 
-		public static Matrix operator+(double x, Matrix m)
-		{
-			return m + x;
-		}
+        #endregion
 
-		// Scalar subtract
-		public static Matrix operator-(Matrix m, double x)
-		{
-			Matrix sub = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < sub.rows; i++)
-			{
-				for(int j = 0; j < sub.cols; j++)
-				{
-					sub.data[i, j] = m.data[i, j] - x;
-				}
-			}
+        #region Scalar Operations
 
-			return sub;
-		}
+        public static Matrix Add(Matrix m, double x)
+        {
+            Matrix sum = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < sum.rows; i++)
+            {
+                for (int j = 0; j < sum.cols; j++)
+                {
+                    sum.data[i, j] = m.data[i, j] + x;
+                }
+            }
 
-		public static Matrix operator-(double x, Matrix m)
-		{
-			return -(m - x);
-		}
+            return sum;
+        }
 
-		// Scalar multiply
-		public static Matrix operator*(Matrix m, double x)
-		{
-			Matrix mult = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < mult.rows; i++)
-			{
-				for(int j = 0; j < mult.cols; j++)
-				{
-					mult.data[i, j] = m.data[i, j] * x;
-				}
-			}
+        public static Matrix Subtract(Matrix m, double x)
+        {
+            Matrix sub = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < sub.rows; i++)
+            {
+                for (int j = 0; j < sub.cols; j++)
+                {
+                    sub.data[i, j] = m.data[i, j] - x;
+                }
+            }
 
-			return mult;
-		}
+            return sub;
+        }
 
-		public static Matrix operator*(double x, Matrix m)
-		{
-			return m * x;
-		}
+        public static Matrix Multiply(Matrix m, double x)
+        {
+            Matrix mult = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < mult.rows; i++)
+            {
+                for (int j = 0; j < mult.cols; j++)
+                {
+                    mult.data[i, j] = m.data[i, j] * x;
+                }
+            }
 
-		// Scalar divide
-		public static Matrix operator/(Matrix m, double x)
-		{
-			Matrix div = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < div.rows; i++)
-			{
-				for(int j = 0; j < div.cols; j++)
-				{
-					div.data[i, j] = m.data[i, j] / x;
-				}
-			}
+            return mult;
+        }
 
-			return div;
-		}
+        public static Matrix Divide(Matrix m, double x)
+        {
+            Matrix div = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < div.rows; i++)
+            {
+                for (int j = 0; j < div.cols; j++)
+                {
+                    div.data[i, j] = m.data[i, j] / x;
+                }
+            }
 
-		public static Matrix operator/(double x, Matrix m)
-		{
-			Matrix div = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < div.rows; i++)
-			{
-				for(int j = 0; j < div.cols; j++)
-				{
-					div.data[i, j] = x / m.data[i, j];
-				}
-			}
+            return div;
+        }
 
-			return div;
-		}
-			
-		// Negative operator
-		public static Matrix operator-(Matrix m)
-		{
-			Matrix neg = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < neg.rows; i++)
-			{
-				for(int j = 0; j < neg.cols; j++)
-				{
-					neg.data[i, j] = -m.data[i, j];
-				}
-			}
+        public static Matrix Divide(double x, Matrix m)
+        {
+            Matrix div = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < div.rows; i++)
+            {
+                for (int j = 0; j < div.cols; j++)
+                {
+                    div.data[i, j] = x / m.data[i, j];
+                }
+            }
 
-			return neg;
-		}
+            return div;
+        }
 
-		// Matrix product of m1 and m2.
-		public static Matrix MatrixProduct(Matrix m1, Matrix m2)
+        public static Matrix Negative(Matrix m)
+        {
+            Matrix neg = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < neg.rows; i++)
+            {
+                for (int j = 0; j < neg.cols; j++)
+                {
+                    neg.data[i, j] = -m.data[i, j];
+                }
+            }
+
+            return neg;
+        }
+
+        #endregion
+
+        #region Matrix Multiply (Matrix Product)
+
+        public static Matrix SlowMultiply(Matrix m1, Matrix m2)
 		{
 			if(m1.cols != m2.rows)
 			{
@@ -249,8 +243,12 @@ namespace FullyConnectedNN
 			return product;
 		}
 
-		// Transpose of matrix m.
-		public static Matrix Transpose(Matrix m)
+        #endregion
+
+        #region Transpose
+
+        // Transpose of matrix m.
+        public static Matrix Transpose(Matrix m)
 		{
 			Matrix transpose = new Matrix(m.cols, m.rows);
 
@@ -265,9 +263,82 @@ namespace FullyConnectedNN
 			return transpose;
 		}
 
-		// Maps the matrix according to given func.
-		// i.e: Changes each element according to given func.
-		public void Map(Func<double, double> mapFunc)
+        #endregion
+
+        #region Operator Overloading
+
+        public static Matrix operator +(Matrix m1, Matrix m2)
+        {
+            return Add(m1, m2);
+        }
+
+        public static Matrix operator -(Matrix m1, Matrix m2)
+        {
+            return Subtract(m1, m2);
+        }
+
+        public static Matrix operator *(Matrix m1, Matrix m2)
+        {
+            return Multiply(m1, m2);
+        }
+
+        public static Matrix operator /(Matrix m1, Matrix m2)
+        {
+            return Divide(m1, m2);
+        }
+
+        public static Matrix operator +(Matrix m, double x)
+        {
+            return Add(m, x);
+        }
+
+        public static Matrix operator +(double x, Matrix m)
+        {
+            return Add(m, x);
+        }
+
+        public static Matrix operator -(Matrix m, double x)
+        {
+            return Subtract(m, x);
+        }
+
+        public static Matrix operator -(double x, Matrix m)
+        {
+            return Negative(Subtract(m, x));
+        }
+
+        public static Matrix operator *(Matrix m, double x)
+        {
+            return Multiply(m, x);
+        }
+
+        public static Matrix operator *(double x, Matrix m)
+        {
+            return Multiply(m, x);
+        }
+
+        public static Matrix operator /(Matrix m, double x)
+        {
+            return Divide(m, x);
+        }
+
+        public static Matrix operator /(double x, Matrix m)
+        {
+            return Divide(x, m);
+        }
+
+        public static Matrix operator -(Matrix m)
+        {
+            return Negative(m);
+        }
+
+        #endregion
+
+        #region Map Functions
+
+        // Maps the matrix according to given func.
+        // i.e: Changes each element according to given func.
+        public void Map(Func<double, double> mapFunc)
 		{
 			for(int i = 0; i < this.rows; i++)
 			{
@@ -293,8 +364,12 @@ namespace FullyConnectedNN
 			return mapped;
 		}
 
-		// Randomize numbers in matrix
-		public void Randomize()
+        #endregion
+
+        #region Randomize Method
+
+        // Randomize numbers in matrix
+        public void Randomize()
 		{
 			for(int i = 0; i < rows; i++)
 			{
@@ -305,8 +380,11 @@ namespace FullyConnectedNN
 			}
 		}
 
-		// Convert matrix from array.
-		public static Matrix FromArray(double[] arr)
+        #endregion
+
+        #region Transform Methods
+        // Convert matrix from array.
+        public static Matrix FromArray(double[] arr)
 		{
 			Matrix m = new Matrix(arr.Length, 1);
 
@@ -333,7 +411,11 @@ namespace FullyConnectedNN
 			return arr;
 		}
 
-		public override string ToString()
+        #endregion
+
+        #region ToString Override
+
+        public override string ToString()
 		{
 			string ret = "";
 			ret += string.Format("rows: {0}, cols: {1}\n", rows, cols);
@@ -349,6 +431,8 @@ namespace FullyConnectedNN
 
 			return ret;
 		}
-	}
+
+        #endregion
+    }
 }
 

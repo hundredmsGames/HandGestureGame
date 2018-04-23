@@ -1,4 +1,5 @@
 ﻿using System;
+using MatrixLib;
 
 namespace FullyConnectedNN
 {
@@ -52,12 +53,12 @@ namespace FullyConnectedNN
 		{
 			// Generating the hidden outputs.
 			Matrix input = Matrix.FromArray(inputArray);
-			Matrix hidden = Matrix.MatrixProduct(this.weights_ih, input);
+			Matrix hidden = Matrix.SlowMultiply(this.weights_ih, input);
 			hidden += this.bias_h;
 			hidden.Map(Sigmoid);
 
 			// Generating the output's output.
-			Matrix output = Matrix.MatrixProduct(this.weights_ho, hidden);
+			Matrix output = Matrix.SlowMultiply(this.weights_ho, hidden);
 			output += this.bias_o;
 			output.Map(Sigmoid);
 
@@ -69,12 +70,12 @@ namespace FullyConnectedNN
 			// FeedForward Process
 			// Generating the hidden outputs.
 			Matrix input = Matrix.FromArray(inputArray);
-			Matrix out_hid = Matrix.MatrixProduct(this.weights_ih, input);
+			Matrix out_hid = Matrix.SlowMultiply(this.weights_ih, input);
 			out_hid += this.bias_h;
 			out_hid.Map(Sigmoid);
 
 			// Generating the output's output.
-			Matrix outs_out = Matrix.MatrixProduct(this.weights_ho, out_hid);
+			Matrix outs_out = Matrix.SlowMultiply(this.weights_ho, out_hid);
 			outs_out += this.bias_o;
 			outs_out.Map(Sigmoid);
 
@@ -86,7 +87,7 @@ namespace FullyConnectedNN
 
 			Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
-			Matrix wo_d_E = Matrix.MatrixProduct(neto_d_E, Matrix.Transpose(wo_d_neto));
+			Matrix wo_d_E = Matrix.SlowMultiply(neto_d_E, Matrix.Transpose(wo_d_neto));
 
 			Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
@@ -94,7 +95,7 @@ namespace FullyConnectedNN
 
 			//Console.WriteLine(weights_ho);
 
-			Matrix outh_d_E = Matrix.MatrixProduct(Matrix.Transpose(outh_d_neto), neto_d_E);
+			Matrix outh_d_E = Matrix.SlowMultiply(Matrix.Transpose(outh_d_neto), neto_d_E);
 
 			Matrix neth_d_outh = Matrix.Map(out_hid, DerSigmoid);
 
@@ -102,7 +103,7 @@ namespace FullyConnectedNN
 
 			Matrix wh_d_neth = Matrix.Map(input, DerNetFunc);
 
-			Matrix wh_d_E = Matrix.MatrixProduct(wh_d_neth, Matrix.Transpose(neth_d_E));
+			Matrix wh_d_E = Matrix.SlowMultiply(wh_d_neth, Matrix.Transpose(neth_d_E));
 
 			weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
 		}
