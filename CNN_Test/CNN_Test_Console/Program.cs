@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConvNeuralNetwork;
 
 namespace CNN_Test_Console
 {
@@ -11,7 +12,9 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
 
-            Console.WriteLine("hello");
+            CNN cnn = new CNN();
+            cnn.Train();
+
             Console.ReadLine();
         }
     }

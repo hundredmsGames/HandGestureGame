@@ -6,8 +6,8 @@ namespace MatrixLib
 	{
         #region Variables
 
-        int rows;
-		int cols;
+        public int rows;
+		public int cols;
 		public double[,] data;
 
 		static Random randomize = new Random();
@@ -36,6 +36,19 @@ namespace MatrixLib
 				for(int j = 0; j < cols; j++)
 					this.data[i, j] = m.data[i, j];
 		}
+
+        public double this[int r, int c]
+        {
+            get
+            {
+                return data[r, c];
+            }
+
+            set
+            {
+                data[r, c] = value;
+            }
+        }
 
         #endregion
 
@@ -245,6 +258,25 @@ namespace MatrixLib
 
         #endregion
 
+        #region Dot Product
+
+        public static double DotProduct(Matrix m1, Matrix m2, int m1_r, int m1_c)
+        {
+            double sum = 0.0f;
+
+            for(int i = 0; i < m2.rows; i++)
+            {
+                for(int j = 0; j < m2.cols; j++)
+                {
+                    sum += m2[i, j] * m1[m1_r + i, m1_c + j];
+                }
+            }
+
+            return sum;
+        }
+
+        #endregion
+
         #region Transpose
 
         // Transpose of matrix m.
@@ -424,7 +456,7 @@ namespace MatrixLib
 			{
 				for(int j = 0; j < cols; j++)
 				{
-					ret += data[i, j] + "\t";
+					ret += data[i, j].ToString("F4") + "\t";
 				}
 				ret += "\n";
 			}

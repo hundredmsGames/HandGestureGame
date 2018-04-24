@@ -14,7 +14,6 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_filter_size = 2;
         private static int l1_filter_rows = 3;
         private static int l1_filter_cols = 3;
         private static int l1_stride = 1;
@@ -24,95 +23,97 @@ namespace ConvNeuralNetwork
         #region Variables
 
         // Input (Array of Matrix)
-        private Matrix[] input;
+        private Matrix input;
 
         // Weights of layer1 (filters)
-        private Matrix[] l1_w;
+        private Matrix l1_w;
 
         // Feature Maps of layer1
-        private Matrix[] f_map1;
-
-
-        // Size of input
-        private int input_size;
-
-        // Size of layer1
-        private int l1_size = l1_filter_size;
+        private Matrix f_map1;
 
         #endregion
 
         /* Helper Example
          * 
-         * Input:        3 x 8 x 8
-         * L1_Filter:    2 x 3 x 3
-         * Feature_Map:  6 x 6 x 6
+         * Input:        8 x 8
+         * L1_Filter:    3 x 3
+         * Feature_Map:  6 x 6
          * 
          */
 
         #region Constructors
 
-        public CNN(Matrix[] input)
-        {
-            this.input = input;
-            this.input_size = input.Length;
 
+        
+        public CNN()
+        {
             //// Randomize weights
-            //l1_w = new Matrix[l1_size];
-            //for (int i = 0; i < l1_size; i++)
-            //{
-            //    l1_w[i] = new Matrix(l1_filter_rows, l1_filter_cols);
-            //    l1_w[i].Randomize();
-            //}
+            //l1_w = new Matrix(l1_filter_rows, l1_filter_cols);
+            //l1_w.Randomize();
 
             #region This will help while testing
 
-            l1_w = new Matrix[l1_size];
-            l1_w[0] = new Matrix(l1_filter_rows, l1_filter_cols);
-            l1_w[1] = new Matrix(l1_filter_rows, l1_filter_cols);
+            Random r = new Random(1231234124);
+            
+            this.input = new Matrix(8, 8);
+            for (int i = 0; i < this.input.rows; i++)
+            {
+                for (int j = 0; j < this.input.cols; j++)
+                {
+                    this.input[i, j] = r.NextDouble();
+                }
+            }
 
-            l1_w[0].data[0, 0] = 0.12f;
-            l1_w[0].data[0, 1] = -0.3f;
-            l1_w[0].data[0, 2] = -0.9f;
-            l1_w[0].data[1, 0] = 0.54f;
-            l1_w[0].data[1, 1] = 0.45f;
-            l1_w[0].data[1, 2] = 0.99f;
-            l1_w[0].data[2, 0] = 0.01f;
-            l1_w[0].data[2, 1] = -0.04f;
-            l1_w[0].data[2, 2] = -0.4f;
-
-            l1_w[1].data[0, 0] = -0.42f;
-            l1_w[1].data[0, 1] = 0.5f;
-            l1_w[1].data[0, 2] = -0.1f;
-            l1_w[1].data[1, 0] = 0.74f;
-            l1_w[1].data[1, 1] = 0.15f;
-            l1_w[1].data[1, 2] = -0.19f;
-            l1_w[1].data[2, 0] = -0.51f;
-            l1_w[1].data[2, 1] = 0.06f;
-            l1_w[1].data[2, 2] = 0.3f;
+            l1_w = new Matrix(l1_filter_rows, l1_filter_cols);
+            for (int i = 0; i < l1_w.rows; i++)
+            {
+                for (int j = 0; j < l1_w.cols; j++)
+                {
+                    l1_w[i, j] = r.NextDouble();
+                }
+            }
 
             #endregion
         }
-
+        
         #endregion
 
         #region Methods
 
         public void Train()
         {
-
+            FeedForward(null);
         }
 
-        private void FeedForward()
+        private void FeedForward(Matrix input)
         {
-            f_map1 = new Matrix[input_size * l1_size];
+            // TESTING
+            //this.input = input;
 
-            for(int i = 0; i < input_size; i++)
+            // (W−F+2P)/S+1
+            int r_w = this.input.rows;
+            int c_w = this.input.cols;
+            int f = l1_filter_rows;
+            int p = 0;
+            int s = l1_stride;
+
+            f_map1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+
+            int f_i = 0, f_j = 0;
+            for (int i = 0; f_i < f_map1.rows && i < this.input.rows; i += s)
             {
-                for(int j = 0; j < l1_size; j++)
+                for (int j = 0; f_j < f_map1.cols && j < this.input.cols; j += s)
                 {
-                    
+                    f_map1[f_i, f_j] = Matrix.DotProduct(this.input, l1_w, i, j);
+                    f_j++;
                 }
+                f_j = 0;
+                f_i++;
             }
+
+            Console.WriteLine(this.input.ToString());
+            Console.WriteLine(l1_w.ToString());
+            Console.WriteLine(f_map1.ToString());
         }
 
         private void BackPropagation()
