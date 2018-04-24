@@ -258,25 +258,6 @@ namespace MatrixLib
 
         #endregion
 
-        #region Dot Product
-
-        public static double DotProduct(Matrix m1, Matrix m2, int m1_r, int m1_c)
-        {
-            double sum = 0.0f;
-
-            for(int i = 0; i < m2.rows; i++)
-            {
-                for(int j = 0; j < m2.cols; j++)
-                {
-                    sum += m2[i, j] * m1[m1_r + i, m1_c + j];
-                }
-            }
-
-            return sum;
-        }
-
-        #endregion
-
         #region Transpose
 
         // Transpose of matrix m.
