@@ -14,8 +14,11 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_filter_size = 3;
+        private static int l1_kernel_size = 3;
         private static int l1_stride = 1;
+
+        private static int l2_kernel_size = 2;
+        private static int l2_stride = 2;
 
         #endregion
 
@@ -30,6 +33,9 @@ namespace ConvNeuralNetwork
         // Feature Maps of layer1
         private Matrix f_map1;
 
+        // Max Pooling Map of layer2
+        private Matrix m_pool1;
+
         #endregion
 
         /* Helper Example
@@ -38,12 +44,12 @@ namespace ConvNeuralNetwork
          * L1_Filter:    3 x 3
          * Feature_Map:  6 x 6
          * 
+         * 
+         * 
          */
 
         #region Constructors
 
-
-        
         public CNN()
         {
             //// Randomize weights
@@ -92,9 +98,9 @@ namespace ConvNeuralNetwork
             // (W−F+2P)/S+1
             int r_w = this.input.rows;
             int c_w = this.input.cols;
-            int f = l1_filter_size;
-            int p = 0;
-            int s = l1_stride;
+            int f   = l1_kernel_size;
+            int p   = 0;
+            int s   = l1_stride;
 
             f_map1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
@@ -113,6 +119,17 @@ namespace ConvNeuralNetwork
             Console.WriteLine(this.input.ToString());
             Console.WriteLine(l1_w.ToString());
             Console.WriteLine(f_map1.ToString());
+
+            r_w = f_map1.rows;
+            c_w = f_map1.cols;
+            f   = l2_kernel_size;
+            p   = 0;
+            s   = l2_stride;
+
+            m_pool1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+
+
+
         }
 
         private void BackPropagation()
