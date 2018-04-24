@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MatrixLib;
+using FullyConnectedNN;
 
 namespace ConvNeuralNetwork
 {
@@ -131,6 +132,24 @@ namespace ConvNeuralNetwork
 
             Console.WriteLine("\nReLu\n");
             Console.WriteLine(relu1.ToString());
+            double[] inputDataforANN = new double[relu1.cols * relu1.rows];
+            int ind = 0;
+            for (int i = 0; i < relu1.rows; i++)
+            {
+                for (int j = 0; j < relu1.cols; j++)
+                {
+                    inputDataforANN[ind] = relu1[i, j];
+                    ind++;
+                }
+            }
+            //writing input data to console
+            //for (int i = 0; i < inputDataforANN.Length; i++)
+            //{
+            //    Console.Write(inputDataforANN[i].ToString("F4") + "  ");
+            //}
+            FCNN fCNN = new FCNN(inputDataforANN.Length, 32, 5, 0.1);
+            fCNN.FeedForward(inputDataforANN);
+            
         }
 
         private void BackPropagation()
