@@ -59,7 +59,7 @@ namespace ConvNeuralNetwork
             #region This will help while testing
 
             Random r = new Random(1231234124);
-            
+
             this.input = new Matrix(8, 8);
             for (int i = 0; i < this.input.rows; i++)
             {
@@ -69,7 +69,7 @@ namespace ConvNeuralNetwork
                 }
             }
 
-            l1_w = new Matrix(l1_filter_size, l1_filter_size);
+            l1_w = new Matrix(l1_kernel_size, l1_kernel_size);
             for (int i = 0; i < l1_w.rows; i++)
             {
                 for (int j = 0; j < l1_w.cols; j++)
@@ -80,7 +80,7 @@ namespace ConvNeuralNetwork
 
             #endregion
         }
-        
+
         #endregion
 
         #region Methods
@@ -98,9 +98,9 @@ namespace ConvNeuralNetwork
             // (W−F+2P)/S+1
             int r_w = this.input.rows;
             int c_w = this.input.cols;
-            int f   = l1_kernel_size;
-            int p   = 0;
-            int s   = l1_stride;
+            int f = l1_kernel_size;
+            int p = 0;
+            int s = l1_stride;
 
             f_map1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
@@ -122,21 +122,56 @@ namespace ConvNeuralNetwork
 
             r_w = f_map1.rows;
             c_w = f_map1.cols;
-            f   = l2_kernel_size;
-            p   = 0;
-            s   = l2_stride;
+            f = l2_kernel_size;
+            p = 0;
+            s = l2_stride;
 
-            m_pool1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+
+            m_pool1 = MaxPooling(f_map1, f, s);
+            //new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
 
 
         }
 
+        //matrix, row_start, col_start, size
+        private Matrix MaxPooling(Matrix m, int size, int stride)
+        {
+            double max = 0;
+            int r_w = m.rows;
+            int c_w = m.cols;
+            int p_r = 0, p_c = 0;
+            int p = 0;
+            int f = l2_kernel_size;
+            Matrix _matrix = new Matrix((r_w - f + 2 * p) / stride + 1, (c_w - f + 2 * p) / stride + 1);
+            for (int k = 0; k < m.rows; k += stride)
+            {
+                for (int l = 0; l < m.cols; l += stride)
+                {
+                    for (int i = k; i < k + size; i++)
+                    {
+                        for (int j = l; j < l + size; j++)
+                        {
+                            if (m[i, j] > max)
+                            {
+                                max = m[i, j];
+                            }
+                        }
+                    }
+                    //pull max and push to the matrix
+                    _matrix[p_r, p_c] = max;
+
+                    p_c++;
+                }
+                p_r++;
+            }
+            return _matrix;
+        }
         private void BackPropagation()
         {
 
         }
-
-        #endregion
     }
 }
+
+        #endregion

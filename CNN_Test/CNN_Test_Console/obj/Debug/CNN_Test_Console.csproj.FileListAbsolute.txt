@@ -12,3 +12,10 @@ D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.csproj.CoreCompileInputs.cache
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.exe
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.pdb
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.csprojResolveAssemblyReference.cache
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.csproj.CoreCompileInputs.cache
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.exe
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.pdb
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.exe.config
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.exe
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.pdb
