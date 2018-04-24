@@ -14,8 +14,7 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_filter_rows = 3;
-        private static int l1_filter_cols = 3;
+        private static int l1_filter_size = 3;
         private static int l1_stride = 1;
 
         #endregion
@@ -64,7 +63,7 @@ namespace ConvNeuralNetwork
                 }
             }
 
-            l1_w = new Matrix(l1_filter_rows, l1_filter_cols);
+            l1_w = new Matrix(l1_filter_size, l1_filter_size);
             for (int i = 0; i < l1_w.rows; i++)
             {
                 for (int j = 0; j < l1_w.cols; j++)
@@ -93,7 +92,7 @@ namespace ConvNeuralNetwork
             // (W−F+2P)/S+1
             int r_w = this.input.rows;
             int c_w = this.input.cols;
-            int f = l1_filter_rows;
+            int f = l1_filter_size;
             int p = 0;
             int s = l1_stride;
 
