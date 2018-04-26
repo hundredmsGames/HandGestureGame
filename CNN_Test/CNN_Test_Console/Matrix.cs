@@ -10,7 +10,7 @@ namespace MatrixLib
 		public int cols;
 		public double[,] data;
 
-		static Random randomize = new Random();
+		static Random randomize = new Random(14324);
 
         #endregion
 
@@ -21,8 +21,18 @@ namespace MatrixLib
 			this.rows = rows;
 			this.cols = cols;
 
-			data = new double[rows, cols];
+			data = new double[this.rows, this.cols];
 		}
+
+        public Matrix(double[] arr)
+        {
+            this.rows = arr.Length;
+            this.cols = 1;
+            this.data = new double[this.rows, this.cols];
+
+            for (int i = 0; i < arr.Length; i++)
+                data[i, 0] = arr[i];
+        }
 
 		// Copy Constructor
 		public Matrix(Matrix m)
@@ -292,7 +302,7 @@ namespace MatrixLib
 
         public static Matrix operator *(Matrix m1, Matrix m2)
         {
-            return Multiply(m1, m2);
+            return SlowMultiply(m1, m2);
         }
 
         public static Matrix operator /(Matrix m1, Matrix m2)
@@ -396,6 +406,23 @@ namespace MatrixLib
         #endregion
 
         #region Transform Methods
+
+        public static Matrix ReduceToOneDimension(Matrix m)
+        {
+            Matrix reduced = new Matrix(m.rows * m.cols, 1);
+            int idx = 0;
+
+            for (int i = 0; i < m.rows; i++)
+            {
+                for (int j = 0; j < m.cols; j++)
+                {
+                    reduced[idx++, 0] = m[i, j];
+                }
+            }
+
+            return reduced;
+        }
+
         // Convert matrix from array.
         public static Matrix FromArray(double[] arr)
 		{

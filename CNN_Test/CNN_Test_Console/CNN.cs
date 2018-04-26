@@ -109,9 +109,11 @@ namespace ConvNeuralNetwork
 
             Convolve(this.input, f_map1, l1_kernel, DotProduct, l1_kernel_size, l1_stride);
 
-            Console.WriteLine("Convolution\n");
+            Console.WriteLine("Input\n");
             Console.WriteLine(this.input.ToString());
+            Console.WriteLine("Kernel1\n");
             Console.WriteLine(l1_kernel.ToString());
+            Console.WriteLine("FeatureMap1\n");
             Console.WriteLine(f_map1.ToString());
 
             r_w = f_map1.rows;
@@ -124,32 +126,34 @@ namespace ConvNeuralNetwork
 
             Convolve(f_map1, m_pool1, null, MaxPooling, l2_kernel_size, l2_stride);
 
-            Console.WriteLine("\nMax Pooling\n");
+            Console.WriteLine("\nMax Pooling1\n");
             Console.WriteLine(m_pool1.ToString());
 
             relu1 = new Matrix(m_pool1.rows, m_pool1.cols);
             relu1 = Matrix.Map(m_pool1, ReLu);
 
-            Console.WriteLine("\nReLu\n");
+            Console.WriteLine("\nReLu1\n");
             Console.WriteLine(relu1.ToString());
-            double[] inputDataforANN = new double[relu1.cols * relu1.rows];
-            int ind = 0;
-            for (int i = 0; i < relu1.rows; i++)
-            {
-                for (int j = 0; j < relu1.cols; j++)
-                {
-                    inputDataforANN[ind] = relu1[i, j];
-                    ind++;
-                }
-            }
-            //writing input data to console
-            //for (int i = 0; i < inputDataforANN.Length; i++)
-            //{
-            //    Console.Write(inputDataforANN[i].ToString("F4") + "  ");
-            //}
-            FCNN fCNN = new FCNN(inputDataforANN.Length, 32, 5, 0.1);
-            fCNN.FeedForward(inputDataforANN);
-            
+
+            Matrix inputDataforFCNN = Matrix.ReduceToOneDimension(relu1);
+
+            // writing input data to console
+            Console.WriteLine("\nFCNN Input\n");
+            Console.WriteLine(inputDataforFCNN.ToString());
+
+            FCNN fcnn = new FCNN(
+                inputDataforFCNN.rows * inputDataforFCNN.cols,
+                32,
+                5,
+                0.1,
+                FCNN.Sigmoid,
+                FCNN.DerSigmoid
+            );
+
+            Matrix outputOfFCNN = fcnn.FeedForward(inputDataforFCNN);
+
+            Console.WriteLine("\nFCNN Output\n");
+            Console.WriteLine(outputOfFCNN.ToString());
         }
 
         private void BackPropagation()
