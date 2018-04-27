@@ -39,6 +39,8 @@ namespace ConvNeuralNetwork
 
         private Matrix relu1;
 
+        private Matrix cnn_o;
+
         #endregion
 
         /* Helper Example
@@ -88,15 +90,37 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        public void Train()
+        public void Train(Matrix _input, Matrix _target)
         {
-            FeedForward(null);
+            cnn_o = FeedForward(_input);
+
+            Matrix inputDataforFCNN = Matrix.ReduceToOneDimension(cnn_o);
+
+            // writing input data to console
+            Console.WriteLine("\nFCNN Input\n");
+            Console.WriteLine(inputDataforFCNN.ToString());
+
+            FCNN fcnn = new FCNN(
+                inputDataforFCNN.rows * inputDataforFCNN.cols,
+                32,
+                2,
+                0.1,
+                FCNN.Sigmoid,
+                FCNN.DerSigmoid
+            );
+
+            Matrix in_d_E = fcnn.Train(inputDataforFCNN, _target);
+
+            //Console.WriteLine("\nin_d_E\n");
+           // Console.WriteLine(in_d_E.ToString());
+
+            BackPropagation(in_d_E);
         }
 
-        private void FeedForward(Matrix input)
+        private Matrix FeedForward(Matrix _input)
         {
-            // TESTING
-            //this.input = input;
+            //  T E S T I N G
+            //this.input = _input;
 
             // (W−F+2P)/S+1
             int r_w = this.input.rows;
@@ -135,29 +159,26 @@ namespace ConvNeuralNetwork
             Console.WriteLine("\nReLu1\n");
             Console.WriteLine(relu1.ToString());
 
-            Matrix inputDataforFCNN = Matrix.ReduceToOneDimension(relu1);
-
-            // writing input data to console
-            Console.WriteLine("\nFCNN Input\n");
-            Console.WriteLine(inputDataforFCNN.ToString());
-
-            FCNN fcnn = new FCNN(
-                inputDataforFCNN.rows * inputDataforFCNN.cols,
-                32,
-                5,
-                0.1,
-                FCNN.Sigmoid,
-                FCNN.DerSigmoid
-            );
-
-            Matrix outputOfFCNN = fcnn.FeedForward(inputDataforFCNN);
-
-            Console.WriteLine("\nFCNN Output\n");
-            Console.WriteLine(outputOfFCNN.ToString());
+            return relu1;
         }
 
-        private void BackPropagation()
+        private void BackPropagation(Matrix in_d_E)
         {
+
+            // m_pool1__d__E = m_pool1__d__ relu1  * in_d_E
+            Matrix m_pool1_d_relu1 = Matrix.Map(m_pool1, DerOfReLu);
+
+            Console.WriteLine(m_pool1_d_relu1.ToString());
+
+            //Matrix m_pool1_d_E;
+
+
+
+
+
+
+
+            // f_map1__d__E = f_map1__d__m_pool1 * m_pool1__d__E
 
         }
 
@@ -209,6 +230,11 @@ namespace ConvNeuralNetwork
         private static double ReLu(double x)
         {
             return Math.Max(x, 0);
+        }
+
+        private static double DerOfReLu(double x)
+        {
+            return (x > 0) ? 1.0 : 0.0;
         }
 
         #endregion

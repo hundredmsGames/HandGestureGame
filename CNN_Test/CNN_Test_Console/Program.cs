@@ -10,7 +10,9 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
             CNN cnn = new CNN();
-            cnn.Train();
+            cnn.Train(null, new Matrix(new double[]{ 2.0, 3.0 }));
+
+            //FCNN_Test();
 
             Console.ReadLine();
         }
