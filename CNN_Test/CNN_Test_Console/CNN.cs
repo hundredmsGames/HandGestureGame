@@ -94,7 +94,7 @@ namespace ConvNeuralNetwork
         {
             cnn_o = FeedForward(_input);
 
-            Matrix inputDataforFCNN = Matrix.ReduceToOneDimension(cnn_o);
+            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_o);
 
             // writing input data to console
             Console.WriteLine("\nFCNN Input\n");
@@ -102,19 +102,20 @@ namespace ConvNeuralNetwork
 
             FCNN fcnn = new FCNN(
                 inputDataforFCNN.rows * inputDataforFCNN.cols,
-                32,
+                3,
                 2,
                 0.1,
                 FCNN.Sigmoid,
                 FCNN.DerSigmoid
             );
 
-            Matrix in_d_E = fcnn.Train(inputDataforFCNN, _target);
+            Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
+            cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_o.rows, cnn_o.cols);
 
-            //Console.WriteLine("\nin_d_E\n");
-           // Console.WriteLine(in_d_E.ToString());
+            Console.WriteLine("\ncnno_d_E\n");
+            Console.WriteLine(cnno_d_E.ToString());
 
-            BackPropagation(in_d_E);
+            BackPropagation(cnno_d_E);
         }
 
         private Matrix FeedForward(Matrix _input)
@@ -162,13 +163,14 @@ namespace ConvNeuralNetwork
             return relu1;
         }
 
-        private void BackPropagation(Matrix in_d_E)
+        private void BackPropagation(Matrix cnno_d_E)
         {
 
-            // m_pool1__d__E = m_pool1__d__ relu1  * in_d_E
-            Matrix m_pool1_d_relu1 = Matrix.Map(m_pool1, DerOfReLu);
+            // m_pool1__d__E = m_pool1__d__cnno  * in_d_E
+            Matrix m_pool1_d_cnno = Matrix.Map(m_pool1, DerOfReLu);
 
-            Console.WriteLine(m_pool1_d_relu1.ToString());
+            Console.WriteLine("\nm_pool1_d_cnno\n");
+            Console.WriteLine(m_pool1_d_cnno.ToString());
 
             //Matrix m_pool1_d_E;
 

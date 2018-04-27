@@ -407,7 +407,23 @@ namespace MatrixLib
 
         #region Transform Methods
 
-        public static Matrix ReduceToOneDimension(Matrix m)
+        public static Matrix IncreaseToTwoDimension(Matrix m, int rows, int cols)
+        {
+            Matrix increased = new Matrix(rows, cols);
+            int idx = 0;
+
+            for(int i = 0; i < rows; i++)
+            {
+                for(int j = 0; j < cols; j++)
+                {
+                    increased[i, j] = m[idx++, 0];
+                }
+            }
+
+            return increased;
+        }
+
+        public static Matrix DecreaseToOneDimension(Matrix m)
         {
             Matrix reduced = new Matrix(m.rows * m.cols, 1);
             int idx = 0;
