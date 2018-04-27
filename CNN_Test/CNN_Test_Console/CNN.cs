@@ -172,8 +172,10 @@ namespace ConvNeuralNetwork
             Console.WriteLine("\nm_pool1_d_cnno\n");
             Console.WriteLine(m_pool1_d_cnno.ToString());
 
-            //Matrix m_pool1_d_E;
+            Matrix m_pool1_d_E = Matrix.Multiply(cnno_d_E, m_pool1_d_cnno);
 
+            Console.WriteLine("\nm_pool1_d_E\n");
+            Console.WriteLine(m_pool1_d_E.ToString());
 
 
 
