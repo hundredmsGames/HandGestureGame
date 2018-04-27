@@ -10,6 +10,7 @@ namespace ConvNeuralNetwork
 {
     struct Location
     {
+
         public int r;
         public int c;
 
@@ -197,11 +198,33 @@ namespace ConvNeuralNetwork
             Console.WriteLine("\nm_pool1_d_E\n");
             Console.WriteLine(m_pool1_d_E.ToString());
 
-
+            Matrix der_of_fmap = der_of_Fmap(m_pool1_list, m_pool1_d_E);
+            Console.WriteLine("\newF_Map\n");
+            Console.WriteLine(der_of_fmap.ToString());
             // f_map1__d__E = f_map1__d__m_pool1 * m_pool1__d__E
         }
 
+        private Matrix der_of_Fmap(List<Location> l_list, Matrix m_pool1_d_E)
+        {
+            //we need a new matrix that has the same rows and cols with f_map1
+            //and filled by zeros
+            Matrix d_fmap = new Matrix(f_map1.rows, f_map1.cols);
+            //in the list of locations
+            int k = 0;
+            Location location = l_list[k];
+            for (int i = 0; i < m_pool1_d_E.rows; i++)
+            {
+                for (int j = 0; j < m_pool1_d_E.cols; j++)
+                {
+                    d_fmap[location.r, location.c] = m_pool1_d_E[i, j];
+                    k++;
+                    if (k < l_list.Count)
+                        location = l_list[k];
+                }
+            }
 
+            return d_fmap;
+        }
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
             Func<Matrix, Matrix, List<Location>, int, int, int, double> func, int kernel_size, int stride)
