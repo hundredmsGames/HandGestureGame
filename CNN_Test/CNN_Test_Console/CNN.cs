@@ -215,8 +215,8 @@ namespace ConvNeuralNetwork
             }
         }
 
-        //FIXME : We use list for location_list but we can use arrays too.
-        //using arrays would be a better solution
+        // FIXME : We use list for location_list but we can use arrays too.
+        // using arrays would be a better solution
         // There is no kernel in max pooling so kernel is null.
         private static double MaxPooling(Matrix input, Matrix kernel,
             List<Location> loc_list, int kernel_size, int rows, int cols)
@@ -226,7 +226,6 @@ namespace ConvNeuralNetwork
 
             for (int i = 0; i < kernel_size; i++)
             {
-                max = double.MinValue;
                 for (int j = 0; j < kernel_size; j++)
                 {
                     if (input[i + rows, j + cols] > max)
@@ -236,9 +235,9 @@ namespace ConvNeuralNetwork
                         c = j + cols;
                     }
                 }
-
-                loc_list.Add(new Location(r, c));
             }
+
+            loc_list.Add(new Location(r, c));
 
             return max;
         }
