@@ -28,7 +28,7 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_kernel_size = 3;
+        private static int l1_kernel_size = 2;
         private static int l1_stride = 1;
 
         private static int l2_kernel_size = 2;
@@ -94,7 +94,7 @@ namespace ConvNeuralNetwork
 
             Random r = new Random(12312324);
 
-            this.input = new Matrix(8, 8);
+            this.input = new Matrix(3, 3);
             for (int i = 0; i < this.input.rows; i++)
             {
                 for (int j = 0; j < this.input.cols; j++)
@@ -215,7 +215,10 @@ namespace ConvNeuralNetwork
             Console.WriteLine("\nf_map1_d_E\n");
             Console.WriteLine(f_map1_d_E.ToString());
 
-            Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
+            Matrix kernel1_d_E = new Matrix(l1_kernel_size,l1_kernel_size);// DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
+            List<Location> l1_kernel_loc = new List<Location>();
+            Convolve(input, kernel1_d_E, f_map1_d_E, l1_kernel_loc, DotProduct, f_map1_d_E.cols, l1_stride);
+
             Console.WriteLine("\nkernel1_d_E\n");
             Console.WriteLine(kernel1_d_E.ToString());
 
@@ -311,7 +314,7 @@ namespace ConvNeuralNetwork
                         new Location(i + rows, j + cols),
                         new Location(rows, cols)
                     );
-
+                    if(kernel_loc_list!=null)
                     kernel_loc_list[i, j].Add(loc);
                 }
             }
@@ -320,24 +323,24 @@ namespace ConvNeuralNetwork
         }
 
 
-        private static Matrix DerOfConv(List<Tuple<Location, Location>>[,] loc_list, Matrix curr_layer, Matrix next_layer_d_E,
-            int kernel_size)
-        {
-            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+        //private static Matrix DerOfConv(List<Tuple<Location, Location>>[,] loc_list, Matrix curr_layer, Matrix next_layer_d_E,
+        //    int kernel_size)
+        //{
+        //    Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
 
-            for (int i = 0; i < kernel_size; i++)
-            {
-                for (int j = 0; j < kernel_size; j++)
-                {
-                    foreach (Tuple<Location, Location> loc in loc_list[i, j])
-                    {
-                        kernel_d_E[i, j] += curr_layer[loc.Item1.r, loc.Item1.c] * next_layer_d_E[loc.Item2.r, loc.Item2.c];
-                    }
-                }
-            }
+        //    for (int i = 0; i < kernel_size; i++)
+        //    {
+        //        for (int j = 0; j < kernel_size; j++)
+        //        {
+        //            foreach (Tuple<Location, Location> loc in loc_list[i, j])
+        //            {
+        //                kernel_d_E[i, j] += curr_layer[loc.Item1.r, loc.Item1.c] * next_layer_d_E[loc.Item2.r, loc.Item2.c];
+        //            }
+        //        }
+        //    }
 
-            return kernel_d_E;
-        }
+        //    return kernel_d_E;
+        //}
 
         #endregion
 
