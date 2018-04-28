@@ -44,6 +44,8 @@ namespace ConvNeuralNetwork
         // Weights of layer1 (filters)
         private Matrix l1_kernel;
 
+        private List<Tuple<Location, Location>>[,] l1_kernel_loc_list;
+
         // Feature Maps of layer1
         private Matrix f_map1;
 
@@ -77,6 +79,14 @@ namespace ConvNeuralNetwork
             //l1_w.Randomize();
 
             m_pool1_list = new List<Location>();
+            l1_kernel_loc_list = new List<Tuple<Location, Location>>[l1_kernel_size, l1_kernel_size];
+            for (int i = 0; i < l1_kernel_size; i++)
+            {
+                for (int j = 0; j < l1_kernel_size; j++)
+                {
+                    l1_kernel_loc_list[i, j] = new List<Tuple<Location, Location>>();
+                }
+            }
 
             #region This will help while testing
 
@@ -149,7 +159,7 @@ namespace ConvNeuralNetwork
 
             f_map1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
-            Convolve(this.input, f_map1, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride);
+            Convolve(this.input, f_map1, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride, l1_kernel_loc_list);
 
             Console.WriteLine("Input\n");
             Console.WriteLine(this.input.ToString());
@@ -202,6 +212,10 @@ namespace ConvNeuralNetwork
 
             Console.WriteLine("\nf_map1_d_E\n");
             Console.WriteLine(f_map1_d_E.ToString());
+
+            Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
+            Console.WriteLine("\nkernel1_d_E\n");
+            Console.WriteLine(kernel1_d_E.ToString());
         }
 
         #endregion
@@ -210,13 +224,14 @@ namespace ConvNeuralNetwork
         #region Helper Methods
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
-            Func<Matrix, Matrix, List<Location>, int, int, int, double> func, int kernel_size, int stride)
+            Func<Matrix, Matrix, List<Location>, int, int, int, List<Tuple<Location, Location>>[,], double> func, int kernel_size,
+                                     int stride, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             for (int i = 0, r = 0; r < output.rows && i < input.rows; i += stride, r++)
             {
                 for (int j = 0, c = 0; c < output.cols && j < input.cols; j += stride, c++)
                 {
-                    output[r, c] = func(input, kernel, loc_list, kernel_size, i, j);
+                    output[r, c] = func(input, kernel, loc_list, kernel_size, i, j, kernel_loc_list);
                 }
             }
         }
@@ -225,7 +240,7 @@ namespace ConvNeuralNetwork
         // using arrays would be a better solution
         // There is no kernel in max pooling so kernel is null.
         private static double MaxPooling(Matrix input, Matrix kernel,
-            List<Location> loc_list, int kernel_size, int rows, int cols)
+            List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             double max = double.MinValue;
             int r = -1, c = -1;
@@ -275,7 +290,7 @@ namespace ConvNeuralNetwork
         }
 
         private static double DotProduct(Matrix input, Matrix kernel,
-            List<Location> loc_list, int kernel_size, int rows, int cols)
+            List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             double sum = 0.0f;
 
@@ -284,10 +299,37 @@ namespace ConvNeuralNetwork
                 for (int j = 0; j < kernel_size; j++)
                 {
                     sum += kernel[i, j] * input[i + rows, j + cols];
+
+                    Tuple<Location, Location> loc = new Tuple<Location, Location>(
+                        new Location(i + rows, j + cols),
+                        new Location(rows, cols)
+                    );
+
+                    kernel_loc_list[i, j].Add(loc);
                 }
             }
 
             return sum;
+        }
+
+
+        private static Matrix DerOfConv(List<Tuple<Location, Location>>[,] loc_list, Matrix curr_layer, Matrix next_layer_d_E,
+            int kernel_size)
+        {
+            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+
+            for (int i = 0; i < kernel_size; i++)
+            {
+                for (int j = 0; j < kernel_size; j++)
+                {
+                    foreach (Tuple<Location, Location> loc in loc_list[i, j])
+                    {
+                        kernel_d_E[i, j] += curr_layer[loc.Item1.r, loc.Item1.c] * next_layer_d_E[loc.Item2.r, loc.Item2.c];
+                    }
+                }
+            }
+
+            return kernel_d_E;
         }
 
         #endregion
