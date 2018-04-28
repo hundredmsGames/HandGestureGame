@@ -122,8 +122,8 @@ namespace FullyConnectedNN
 
             Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
 
-            Console.WriteLine(neth_d_E.ToString());
-            Console.WriteLine(in_d_neth.ToString());
+           // Console.WriteLine(neth_d_E.ToString());
+           // Console.WriteLine(in_d_neth.ToString());
 
             weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
 

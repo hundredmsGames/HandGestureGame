@@ -34,6 +34,8 @@ namespace ConvNeuralNetwork
         private static int l2_kernel_size = 2;
         private static int l2_stride = 2;
 
+        private double learningRate = 0.01;
+
         #endregion
 
         #region Variables
@@ -124,8 +126,8 @@ namespace ConvNeuralNetwork
             Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_o);
 
             // writing input data to console
-            Console.WriteLine("\nFCNN Input\n");
-            Console.WriteLine(inputDataforFCNN.ToString());
+            //Console.WriteLine("\nFCNN Input\n");
+            //Console.WriteLine(inputDataforFCNN.ToString());
 
             FCNN fcnn = new FCNN(
                 inputDataforFCNN.rows * inputDataforFCNN.cols,
@@ -139,8 +141,8 @@ namespace ConvNeuralNetwork
             Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
             cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_o.rows, cnn_o.cols);
 
-            Console.WriteLine("\ncnno_d_E\n");
-            Console.WriteLine(cnno_d_E.ToString());
+            //Console.WriteLine("\ncnno_d_E\n");
+            //Console.WriteLine(cnno_d_E.ToString());
 
             BackPropagation(cnno_d_E);
         }
@@ -216,6 +218,11 @@ namespace ConvNeuralNetwork
             Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
             Console.WriteLine("\nkernel1_d_E\n");
             Console.WriteLine(kernel1_d_E.ToString());
+
+            l1_kernel = l1_kernel - (learningRate * kernel1_d_E);
+            Console.WriteLine("\nl1_kernel\n");
+            Console.WriteLine(l1_kernel.ToString());
+
         }
 
         #endregion
