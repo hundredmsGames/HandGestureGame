@@ -10,12 +10,33 @@ namespace CNN_Test_Console
 
     class Program
     {
+
         static void Main(string[] args)
         {
-            //CNN cnn = new CNN();
-            //cnn.Train(null, new Matrix(new double[] { 2.0, 3.0 }));
+            Random r = new Random(12312324);
+
+            Matrix input = new Matrix(28, 28);
+            for (int i = 0; i < input.rows; i++)
+            {
+                for (int j = 0; j < input.cols; j++)
+                {
+                    input[i, j] = r.NextDouble() * 2f - 1f;
+                }
+            }
+
+
+            CNN cnn = new CNN();   
+
+            double[] output = new double[10];
+            for (int i = 0; i < 10; i++)
+            {
+                output[i] = i;
+            }
+
+            cnn.Train(input, new Matrix(output));
+
             //Matrix.Normalize(new Matrix(/*Buraya verimiz gelecek ve bu metod geri normalized matrix döndürecek*/),/*other vars*/);
-            MNIST_Parser.ReadFromFile();
+            //MNIST_Parser.ReadFromFile();
             //FCNN_Test();
 
             Console.ReadLine();

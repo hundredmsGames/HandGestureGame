@@ -27,13 +27,17 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_kernel_size = 3;
+        private static int l1_kernel_size = 7;
         private static int l1_stride = 1;
 
         private static int l2_kernel_size = 2;
         private static int l2_stride = 2;
 
-        private double learningRate = 0.01;
+        private static int fcnn_hidden_neurons = 31;
+        private static int fcnn_output_neurons = 10;
+        private static double fcnn_learning_rate = 0.01;
+
+        private double cnn_learning_rate = 0.01;
 
         #endregion
 
@@ -76,8 +80,8 @@ namespace ConvNeuralNetwork
         public CNN()
         {
             //// Randomize weights
-            //l1_w = new Matrix(l1_filter_rows, l1_filter_cols);
-            //l1_w.Randomize();
+            l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
+            l1_kernel.Randomize();
 
             m_pool1_list = new List<Location>();
             l1_kernel_loc_list = new List<Tuple<Location, Location>>[l1_kernel_size, l1_kernel_size];
@@ -91,25 +95,25 @@ namespace ConvNeuralNetwork
 
             #region This will help while testing
 
-            Random r = new Random(12312324);
+            //Random r = new Random(12312324);
 
-            this.input = new Matrix(8, 8);
-            for (int i = 0; i < this.input.rows; i++)
-            {
-                for (int j = 0; j < this.input.cols; j++)
-                {
-                    this.input[i, j] = r.NextDouble() * 2f - 1f;
-                }
-            }
+            //this.input = new Matrix(8, 8);
+            //for (int i = 0; i < this.input.rows; i++)
+            //{
+            //    for (int j = 0; j < this.input.cols; j++)
+            //    {
+            //        this.input[i, j] = r.NextDouble() * 2f - 1f;
+            //    }
+            //}
 
-            l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
-            for (int i = 0; i < l1_kernel.rows; i++)
-            {
-                for (int j = 0; j < l1_kernel.cols; j++)
-                {
-                    l1_kernel[i, j] = r.NextDouble() * 2f - 1f;
-                }
-            }
+            //l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
+            //for (int i = 0; i < l1_kernel.rows; i++)
+            //{
+            //    for (int j = 0; j < l1_kernel.cols; j++)
+            //    {
+            //        l1_kernel[i, j] = r.NextDouble() * 2f - 1f;
+            //    }
+            //}
 
             #endregion
         }
@@ -130,9 +134,9 @@ namespace ConvNeuralNetwork
 
             FCNN fcnn = new FCNN(
                 inputDataforFCNN.rows * inputDataforFCNN.cols,
-                3,
-                2,
-                0.1,
+                fcnn_hidden_neurons,
+                fcnn_output_neurons,
+                fcnn_learning_rate,
                 FCNN.Sigmoid,
                 FCNN.DerSigmoid
             );
@@ -148,8 +152,7 @@ namespace ConvNeuralNetwork
 
         private Matrix FeedForward(Matrix _input)
         {
-            //  T E S T I N G
-            //this.input = _input;
+            this.input = _input;
 
             // (W−F+2P)/S+1
             int r_w = this.input.rows;
@@ -162,12 +165,12 @@ namespace ConvNeuralNetwork
 
             Convolve(this.input, f_map1, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride, l1_kernel_loc_list);
 
-            Console.WriteLine("Input\n");
-            Console.WriteLine(this.input.ToString());
-            Console.WriteLine("Kernel1\n");
-            Console.WriteLine(l1_kernel.ToString());
-            Console.WriteLine("FeatureMap1\n");
-            Console.WriteLine(f_map1.ToString());
+            //Console.WriteLine("Input\n");
+            //Console.WriteLine(this.input.ToString());
+            //Console.WriteLine("Kernel1\n");
+            //Console.WriteLine(l1_kernel.ToString());
+            //Console.WriteLine("FeatureMap1\n");
+            //Console.WriteLine(f_map1.ToString());
 
             r_w = f_map1.rows;
             c_w = f_map1.cols;
@@ -179,18 +182,18 @@ namespace ConvNeuralNetwork
 
             Convolve(f_map1, m_pool1, null, m_pool1_list, MaxPooling, l2_kernel_size, l2_stride);
 
-            Console.WriteLine("\nMax Pooling1\n");
-            Console.WriteLine(m_pool1.ToString());
+            //Console.WriteLine("\nMax Pooling1\n");
+            //Console.WriteLine(m_pool1.ToString());
 
-            Console.WriteLine("\nMax Pooling1 List\n");
-            foreach (Location l in m_pool1_list)
-                Console.WriteLine(l.r + ", " + l.c);
+            //Console.WriteLine("\nMax Pooling1 List\n");
+            //foreach (Location l in m_pool1_list)
+            //    Console.WriteLine(l.r + ", " + l.c);
 
             relu1 = new Matrix(m_pool1.rows, m_pool1.cols);
             relu1 = Matrix.Map(m_pool1, ReLu);
 
-            Console.WriteLine("\nReLu1\n");
-            Console.WriteLine(relu1.ToString());
+            //Console.WriteLine("\nReLu1\n");
+            //Console.WriteLine(relu1.ToString());
 
             return relu1;
         }
@@ -199,30 +202,30 @@ namespace ConvNeuralNetwork
         {
             Matrix m_pool1_d_cnno = Matrix.Map(m_pool1, DerOfReLu);
 
-            Console.WriteLine("\nm_pool1_d_cnno\n");
-            Console.WriteLine(m_pool1_d_cnno.ToString());
+            //Console.WriteLine("\nm_pool1_d_cnno\n");
+            //Console.WriteLine(m_pool1_d_cnno.ToString());
 
 
             Matrix m_pool1_d_E = Matrix.Multiply(cnno_d_E, m_pool1_d_cnno);
 
-            Console.WriteLine("\nm_pool1_d_E\n");
-            Console.WriteLine(m_pool1_d_E.ToString());
+            //Console.WriteLine("\nm_pool1_d_E\n");
+            //Console.WriteLine(m_pool1_d_E.ToString());
 
 
             Matrix f_map1_d_E = DerOfMaxPooling(m_pool1_list, m_pool1_d_E, f_map1.rows, f_map1.cols);
 
-            Console.WriteLine("\nf_map1_d_E\n");
-            Console.WriteLine(f_map1_d_E.ToString());
+            //Console.WriteLine("\nf_map1_d_E\n");
+            //Console.WriteLine(f_map1_d_E.ToString());
 
 
             Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
-            Console.WriteLine("\nkernel1_d_E\n");
-            Console.WriteLine(kernel1_d_E.ToString());
+            //Console.WriteLine("\nkernel1_d_E\n");
+            //Console.WriteLine(kernel1_d_E.ToString());
 
 
-            l1_kernel = l1_kernel - (learningRate * kernel1_d_E);
-            Console.WriteLine("\nl1_kernel\n");
-            Console.WriteLine(l1_kernel.ToString());
+            l1_kernel = l1_kernel - (cnn_learning_rate * kernel1_d_E);
+            //Console.WriteLine("\nl1_kernel\n");
+            //Console.WriteLine(l1_kernel.ToString());
         }
 
         #endregion
