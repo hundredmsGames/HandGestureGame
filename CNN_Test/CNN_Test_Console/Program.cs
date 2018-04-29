@@ -14,7 +14,7 @@ namespace CNN_Test_Console
         {
             //CNN cnn = new CNN();
             //cnn.Train(null, new Matrix(new double[] { 2.0, 3.0 }));
-
+            //Matrix.Normalize(new Matrix(/*Buraya verimiz gelecek ve bu metod geri normalized matrix döndürecek*/),/*other vars*/);
             MNIST_Parser.ReadFromFile();
             //FCNN_Test();
 

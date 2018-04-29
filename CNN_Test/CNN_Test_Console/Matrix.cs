@@ -469,6 +469,23 @@ namespace MatrixLib
 
         #endregion
 
+        #region Normalization
+        public static Matrix Normalize(Matrix matrix, double oldMin, double oldMax, double newMin, double newMax)
+        {
+            Matrix normalized = new Matrix(matrix.rows, matrix.cols);
+
+            for (int i = 0; i < matrix.rows; i++)
+            {
+                for (int j = 0; j < matrix.cols; j++)
+                {
+                    normalized[i,j] = ((matrix[i,j] - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+                }
+            }
+
+            return normalized;
+        }
+        #endregion
+
         #region ToString Override
 
         public override string ToString()
