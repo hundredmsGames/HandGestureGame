@@ -63,6 +63,8 @@ namespace ConvNeuralNetwork
 
         private Matrix cnn_o;
 
+        FCNN fcnn;
+
         #endregion
 
         /* Helper Example
@@ -132,14 +134,17 @@ namespace ConvNeuralNetwork
             //Console.WriteLine("\nFCNN Input\n");
             //Console.WriteLine(inputDataforFCNN.ToString());
 
-            FCNN fcnn = new FCNN(
-                inputDataforFCNN.rows * inputDataforFCNN.cols,
-                fcnn_hidden_neurons,
-                fcnn_output_neurons,
-                fcnn_learning_rate,
-                FCNN.Sigmoid,
-                FCNN.DerSigmoid
-            );
+            if (fcnn == null)
+            {
+                fcnn = new FCNN(
+                    inputDataforFCNN.rows * inputDataforFCNN.cols,
+                    fcnn_hidden_neurons,
+                    fcnn_output_neurons,
+                    fcnn_learning_rate,
+                    FCNN.Sigmoid,
+                    FCNN.DerSigmoid
+                );
+            }
 
             Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
             cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_o.rows, cnn_o.cols);
@@ -148,6 +153,31 @@ namespace ConvNeuralNetwork
             //Console.WriteLine(cnno_d_E.ToString());
 
             BackPropagation(cnno_d_E);
+        }
+
+        public Matrix Predict(Matrix _input)
+        {
+            cnn_o = FeedForward(_input);
+
+            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_o);
+
+            // writing input data to console
+            //Console.WriteLine("\nFCNN Input\n");
+            //Console.WriteLine(inputDataforFCNN.ToString());
+
+            if (fcnn == null)
+            {
+                fcnn = new FCNN(
+                    inputDataforFCNN.rows * inputDataforFCNN.cols,
+                    fcnn_hidden_neurons,
+                    fcnn_output_neurons,
+                    fcnn_learning_rate,
+                    FCNN.Sigmoid,
+                    FCNN.DerSigmoid
+                );
+            }
+
+            return fcnn.FeedForward(inputDataforFCNN);
         }
 
         private Matrix FeedForward(Matrix _input)

@@ -14,27 +14,52 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            
             CNN cnn = new CNN();
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile();
 
-
-            for (int i = 0; i < digitImages.Length; i++)
+            double[][] outputs = new double[10][];
+            for(int i = 0; i < 10; i++)
             {
-                double[] target = new double[10];
+                outputs[i] = new double[10];
+                for(int j = 0; j < 10; j++)
+                {
+                    outputs[i][j] = (i == j) ? 1.0 : 0.0;
+                }
+            }
 
-                target[(int)(digitImages[i].label)] = 1;
+            stopwatch.Start();
+
+            double[] target;
+
+            int training_count = (int) (digitImages.Length * 0.7);
+
+            for (int i = 0; i < training_count; i++)
+            {
+                target = outputs[(int)(digitImages[i].label)];
+
                 Matrix inMatrix = new Matrix(digitImages[i].pixels);
                 cnn.Train(inMatrix, new Matrix(target));
             }
 
+            int correct_count = 0;
 
-            Console.WriteLine("End");
+            for (int i = training_count + 1; i < digitImages.Length; i++)
+            {
+                Matrix ans = cnn.Predict(new Matrix(digitImages[i].pixels));
+                if(ans[digitImages[i].label, 0] > 0.7)
+                {
+                    correct_count++;
+                }
+            }
+
+            Console.WriteLine("\nEnd");
             Console.WriteLine((stopwatch.ElapsedMilliseconds/1000.0).ToString("F4"));
-            //cnn.Train(input, new Matrix(output));
+            Console.WriteLine("\n%{0}\n", (correct_count * 1f / (digitImages.Length - training_count)) * 100);
+            Console.WriteLine("{0}/{1}", correct_count, digitImages.Length - training_count);
+
 
             //Matrix.Normalize(new Matrix(/*Buraya verimiz gelecek ve bu metod geri normalized matrix döndürecek*/),/*other vars*/);
             //MNIST_Parser.ReadFromFile();
