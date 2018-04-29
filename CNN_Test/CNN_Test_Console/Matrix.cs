@@ -33,9 +33,18 @@ namespace MatrixLib
             for (int i = 0; i < arr.Length; i++)
                 data[i, 0] = arr[i];
         }
+        public Matrix(byte[][] pixels)
+        {
+            this.rows = pixels.Length;
+            this.cols = pixels.Length;
+            this.data = new double[this.rows, this.cols];
 
-		// Copy Constructor
-		public Matrix(Matrix m)
+            for (int i = 0; i < pixels.Length; i++)
+                for (int j = 0; j < pixels.Length; j++)
+                    data[i, j] = pixels[i][j];
+        }
+        // Copy Constructor
+        public Matrix(Matrix m)
 		{
 			this.rows = m.rows;
 			this.cols = m.cols;

@@ -9,11 +9,28 @@ namespace CNN_Test_Console
 {
     class MNIST_Parser
     {
+        const int MaxImageCount = 10000;
         private static string path_test_images = Path.Combine("..", "..", "..", "..", "MNIST", "t10k-images.idx3-ubyte");
         private static string path_test_labels = Path.Combine("..", "..", "..", "..", "MNIST", "t10k-labels.idx1-ubyte");
+        private static int imageCount;
 
-        public static void ReadFromFile()
+        public static int ImageCount
         {
+            get { return imageCount <= MaxImageCount ? imageCount : MaxImageCount; }
+            set
+            {
+                if (value <= MaxImageCount)
+                    imageCount = value;
+                else
+                    imageCount = MaxImageCount;
+            }
+        }
+
+        public static DigitImage[] ReadFromFile()
+        {
+            
+            ImageCount = 200;
+            DigitImage[] digitImages = new DigitImage[ImageCount];
             FileStream ifsLabels;
             FileStream ifsImages;
             try
@@ -46,9 +63,10 @@ namespace CNN_Test_Console
                     pixels[i] = new byte[28];
 
                 // each test image
-                for (int di = 0; di < 10000; ++di)
+                //there are 10 000 images so you have this limit
+                for (int di = 0; di < ImageCount; ++di)
                 {
-                    Console.Clear();
+                    //Console.Clear();
                     for (int i = 0; i < 28; ++i)
                     {
                         for (int j = 0; j < 28; ++j)
@@ -62,8 +80,10 @@ namespace CNN_Test_Console
 
                     DigitImage dImage =
                       new DigitImage(pixels, lbl);
-                    Console.WriteLine(dImage.ToString());
-                    Console.ReadLine();
+                    digitImages[di] = dImage;
+                    //Console.WriteLine(dImage.ToString());
+                    //Console.ReadLine();
+
                 } // each image
 
                 ifsImages.Close();
@@ -71,14 +91,17 @@ namespace CNN_Test_Console
                 ifsLabels.Close();
                 brLabels.Close();
 
-                Console.WriteLine("\nEnd\n");
-                Console.ReadLine();
+                //Console.WriteLine("\nEnd\n");
+                //Console.ReadLine();
+                return digitImages;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                Console.ReadLine();
+                //Console.ReadLine();
+                
             }
+            return null;
         }
     }
 

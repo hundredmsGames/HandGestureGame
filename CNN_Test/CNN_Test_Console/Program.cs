@@ -13,27 +13,27 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            Random r = new Random(12312324);
 
-            Matrix input = new Matrix(28, 28);
-            for (int i = 0; i < input.rows; i++)
+
+
+            CNN cnn = new CNN();
+
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile();
+
+
+            for (int i = 0; i < digitImages.Length; i++)
             {
-                for (int j = 0; j < input.cols; j++)
-                {
-                    input[i, j] = r.NextDouble() * 2f - 1f;
-                }
+                double[] target = new double[10];
+
+                target[(int)(digitImages[i].label)] = 1;
+                Matrix inMatrix = new Matrix(digitImages[i].pixels);
+                cnn.Train(inMatrix, new Matrix(target));
             }
 
 
-            CNN cnn = new CNN();   
+            Console.WriteLine("End");
 
-            double[] output = new double[10];
-            for (int i = 0; i < 10; i++)
-            {
-                output[i] = i;
-            }
-
-            cnn.Train(input, new Matrix(output));
+            //cnn.Train(input, new Matrix(output));
 
             //Matrix.Normalize(new Matrix(/*Buraya verimiz gelecek ve bu metod geri normalized matrix döndürecek*/),/*other vars*/);
             //MNIST_Parser.ReadFromFile();
@@ -59,6 +59,6 @@ namespace CNN_Test_Console
             Console.WriteLine(o.ToString());
         }
     }
-       
+
 }
 
