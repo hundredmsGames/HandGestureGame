@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using ConvNeuralNetwork;
@@ -14,8 +15,8 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
 
-
-
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             CNN cnn = new CNN();
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile();
@@ -32,7 +33,7 @@ namespace CNN_Test_Console
 
 
             Console.WriteLine("End");
-
+            Console.WriteLine((stopwatch.ElapsedMilliseconds/1000.0).ToString("F4"));
             //cnn.Train(input, new Matrix(output));
 
             //Matrix.Normalize(new Matrix(/*Buraya verimiz gelecek ve bu metod geri normalized matrix döndürecek*/),/*other vars*/);
