@@ -29,7 +29,7 @@ namespace CNN_Test_Console
         public static DigitImage[] ReadFromFile()
         {
             
-            ImageCount = 100;
+            ImageCount = 50;
             DigitImage[] digitImages = new DigitImage[ImageCount];
             FileStream ifsLabels;
             FileStream ifsImages;
