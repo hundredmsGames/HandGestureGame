@@ -26,10 +26,10 @@ namespace CNN_Test_Console
             }
         }
 
-        public static DigitImage[] ReadFromFile()
+        public static DigitImage[] ReadFromFile(int count)
         {
             
-            ImageCount = 50;
+            ImageCount = count;
             DigitImage[] digitImages = new DigitImage[ImageCount];
             FileStream ifsLabels;
             FileStream ifsImages;

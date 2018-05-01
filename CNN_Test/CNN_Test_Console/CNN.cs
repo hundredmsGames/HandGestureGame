@@ -27,17 +27,16 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_kernel_size = 7;
-        private static int l1_stride = 1;
+        private static int l1_kernel_size = 10;
+        private static int l1_stride = 2;
 
-        private static int l2_kernel_size = 2;
+        private static int l2_kernel_size = 3;
         private static int l2_stride = 2;
 
-        private static int fcnn_hidden_neurons = 31;
+        private static int fcnn_hidden_neurons = 20;
         private static int fcnn_output_neurons = 10;
-        private static double fcnn_learning_rate = 0.01;
 
-        private double cnn_learning_rate = 0.01;
+        private double learning_rate = 0.01;
 
         #endregion
 
@@ -140,7 +139,7 @@ namespace ConvNeuralNetwork
                     inputDataforFCNN.rows * inputDataforFCNN.cols,
                     fcnn_hidden_neurons,
                     fcnn_output_neurons,
-                    fcnn_learning_rate,
+                    learning_rate,
                     FCNN.Sigmoid,
                     FCNN.DerSigmoid
                 );
@@ -171,7 +170,7 @@ namespace ConvNeuralNetwork
                     inputDataforFCNN.rows * inputDataforFCNN.cols,
                     fcnn_hidden_neurons,
                     fcnn_output_neurons,
-                    fcnn_learning_rate,
+                    learning_rate,
                     FCNN.Sigmoid,
                     FCNN.DerSigmoid
                 );
@@ -201,6 +200,22 @@ namespace ConvNeuralNetwork
             //Console.WriteLine(l1_kernel.ToString());
             //Console.WriteLine("FeatureMap1\n");
             //Console.WriteLine(f_map1.ToString());
+
+            //for (int i = 0; i < l1_kernel_size; i++)
+            //{
+            //    for (int j = 0; j < l1_kernel_size; j++)
+            //    {
+            //        if (i == 0 && j == 0)
+            //        {
+            //            Console.WriteLine("Kernel[{0}, {1}]", i, j);
+            //            Console.WriteLine(l1_kernel_loc_list[i, j].Count);
+            //            foreach (Tuple<Location, Location> t in l1_kernel_loc_list[i, j])
+            //            {
+            //                Console.WriteLine("{0}, {1}  -  {2}, {3}", t.Item1.r, t.Item1.c, t.Item2.r, t.Item2.c);
+            //            }
+            //        }
+            //    }
+            //}
 
             r_w = f_map1.rows;
             c_w = f_map1.cols;
@@ -253,7 +268,7 @@ namespace ConvNeuralNetwork
             //Console.WriteLine(kernel1_d_E.ToString());
 
 
-            l1_kernel = l1_kernel - (cnn_learning_rate * kernel1_d_E);
+            l1_kernel = l1_kernel - (learning_rate * kernel1_d_E);
             //Console.WriteLine("\nl1_kernel\n");
             //Console.WriteLine(l1_kernel.ToString());
         }
@@ -263,14 +278,14 @@ namespace ConvNeuralNetwork
         #region Helper Methods
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
-            Func<Matrix, Matrix, List<Location>, int, int, int, List<Tuple<Location, Location>>[,], double> func, int kernel_size,
+            Func<int, int, Matrix, Matrix, List<Location>, int, int, int, List<Tuple<Location, Location>>[,], double> func, int kernel_size,
                                      int stride, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             for (int i = 0, r = 0; r < output.rows && i < input.rows; i += stride, r++)
             {
                 for (int j = 0, c = 0; c < output.cols && j < input.cols; j += stride, c++)
                 {
-                    output[r, c] = func(input, kernel, loc_list, kernel_size, i, j, kernel_loc_list);
+                    output[r, c] = func(r, c, input, kernel, loc_list, kernel_size, i, j, kernel_loc_list);
                 }
             }
         }
@@ -278,7 +293,7 @@ namespace ConvNeuralNetwork
         // FIXME : We use list for location_list but we can use arrays too.
         // using arrays would be a better solution
         // There is no kernel in max pooling so kernel is null.
-        private static double MaxPooling(Matrix input, Matrix kernel,
+        private static double MaxPooling(int out_r, int out_c, Matrix input, Matrix kernel,
             List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             double max = double.MinValue;
@@ -328,7 +343,7 @@ namespace ConvNeuralNetwork
             return prev_layer_d_E;
         }
 
-        private static double DotProduct(Matrix input, Matrix kernel,
+        private static double DotProduct(int out_r, int out_c, Matrix input, Matrix kernel,
             List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
         {
             double sum = 0.0f;
@@ -341,7 +356,7 @@ namespace ConvNeuralNetwork
 
                     Tuple<Location, Location> loc = new Tuple<Location, Location>(
                         new Location(i + rows, j + cols),
-                        new Location(rows, cols)
+                        new Location(out_r, out_c)
                     );
 
                     kernel_loc_list[i, j].Add(loc);
