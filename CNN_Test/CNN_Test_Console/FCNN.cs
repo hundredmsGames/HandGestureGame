@@ -82,7 +82,7 @@ namespace FullyConnectedNN
 		{
             // Generating the hidden outputs.
             this.input = input;
-			this.out_hid = this.weights_ih * this.input;
+            this.out_hid = this.weights_ih * this.input;
             this.out_hid += this.bias_h;
             this.out_hid.Map(activationFunc);
 
@@ -99,11 +99,11 @@ namespace FullyConnectedNN
             // Backpropagation Process
 			Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
 
-			Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
+            Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
-			Matrix wo_d_E = neto_d_E * Matrix.Transpose(wo_d_neto);
+            Matrix wo_d_E = neto_d_E * Matrix.Transpose(wo_d_neto);
 
-			Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
+            Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
 			weights_ho = weights_ho - (learningRate * wo_d_E);
 
@@ -121,9 +121,6 @@ namespace FullyConnectedNN
             Matrix in_d_neth = Matrix.Map(weights_ih, DerNetFunc);
 
             Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
-
-           // Console.WriteLine(neth_d_E.ToString());
-           // Console.WriteLine(in_d_neth.ToString());
 
             weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
 

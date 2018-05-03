@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MatrixLib;
 using FullyConnectedNN;
 
@@ -66,21 +63,11 @@ namespace ConvNeuralNetwork
 
         #endregion
 
-        /* Helper Example
-         * 
-         * Input:        8 x 8
-         * L1_Filter:    3 x 3
-         * Feature_Map:  6 x 6
-         * 
-         * 
-         * 
-         */
-
         #region Constructors
 
         public CNN()
         {
-            //// Randomize weights
+            // Randomize weights
             l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
             l1_kernel.Randomize();
 
@@ -98,7 +85,7 @@ namespace ConvNeuralNetwork
 
             //Random r = new Random(12312324);
 
-            //this.input = new Matrix(8, 8);
+            //this.input = new Matrix(28, 28);
             //for (int i = 0; i < this.input.rows; i++)
             //{
             //    for (int j = 0; j < this.input.cols; j++)
@@ -201,22 +188,6 @@ namespace ConvNeuralNetwork
             //Console.WriteLine("FeatureMap1\n");
             //Console.WriteLine(f_map1.ToString());
 
-            //for (int i = 0; i < l1_kernel_size; i++)
-            //{
-            //    for (int j = 0; j < l1_kernel_size; j++)
-            //    {
-            //        if (i == 0 && j == 0)
-            //        {
-            //            Console.WriteLine("Kernel[{0}, {1}]", i, j);
-            //            Console.WriteLine(l1_kernel_loc_list[i, j].Count);
-            //            foreach (Tuple<Location, Location> t in l1_kernel_loc_list[i, j])
-            //            {
-            //                Console.WriteLine("{0}, {1}  -  {2}, {3}", t.Item1.r, t.Item1.c, t.Item2.r, t.Item2.c);
-            //            }
-            //        }
-            //    }
-            //}
-
             r_w = f_map1.rows;
             c_w = f_map1.cols;
             f = l2_kernel_size;
@@ -263,9 +234,15 @@ namespace ConvNeuralNetwork
             //Console.WriteLine(f_map1_d_E.ToString());
 
 
-            Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
+            //Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
+            Matrix kernel1_d_E = DerOfConv(input, f_map1_d_E, l1_kernel_size, l1_stride);
+
+
             //Console.WriteLine("\nkernel1_d_E\n");
             //Console.WriteLine(kernel1_d_E.ToString());
+            //Console.WriteLine("If this is same as above. Thats cool");
+            //Console.WriteLine(DerOfConv(input, f_map1_d_E, l1_kernel_size, l1_stride).ToString());
+
 
 
             l1_kernel = l1_kernel - (learning_rate * kernel1_d_E);
@@ -354,13 +331,13 @@ namespace ConvNeuralNetwork
                 {
                     sum += kernel[i, j] * input[i + rows, j + cols];
 
-                    Tuple<Location, Location> loc = new Tuple<Location, Location>(
-                        new Location(i + rows, j + cols),
-                        new Location(out_r, out_c)
-                    );
-                    if(kernel_loc_list[i,j].Count < kernel_size * kernel_size )
-                        kernel_loc_list[i, j].Add(loc);
-                
+                    //Tuple<Location, Location> loc = new Tuple<Location, Location>(
+                    //    new Location(i + rows, j + cols),
+                    //    new Location(out_r, out_c)
+                    //);
+                    //if (kernel_loc_list[i, j].Count < kernel_size * kernel_size)
+                    //    kernel_loc_list[i, j].Add(loc);
+
                 }
             }
 
@@ -380,6 +357,29 @@ namespace ConvNeuralNetwork
                     foreach (Tuple<Location, Location> loc in loc_list[i, j])
                     {
                         kernel_d_E[i, j] += curr_layer[loc.Item1.r, loc.Item1.c] * next_layer_d_E[loc.Item2.r, loc.Item2.c];
+                    }
+                }
+            }
+
+            return kernel_d_E;
+        }
+
+        private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride)
+        {
+            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+
+            // i and j are inputs' indexes
+            // r and c are output_d_Es' indexes
+            for (int i = 0, r = 0; r < output_d_E.rows && i < input.rows; i += stride, r++)
+            {
+                for (int j = 0, c = 0; c < output_d_E.cols && j < input.cols; j += stride, c++)
+                {
+                    for(int p = 0; p < kernel_size; p++)
+                    {
+                        for(int q = 0; q < kernel_size; q++)
+                        {
+                            kernel_d_E[p, q] += output_d_E[r, c] * input[i + p, j + q];
+                        }
                     }
                 }
             }
