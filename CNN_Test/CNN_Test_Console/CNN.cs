@@ -358,8 +358,9 @@ namespace ConvNeuralNetwork
                         new Location(i + rows, j + cols),
                         new Location(out_r, out_c)
                     );
-
-                    kernel_loc_list[i, j].Add(loc);
+                    if(kernel_loc_list[i,j].Count < kernel_size * kernel_size )
+                        kernel_loc_list[i, j].Add(loc);
+                
                 }
             }
 

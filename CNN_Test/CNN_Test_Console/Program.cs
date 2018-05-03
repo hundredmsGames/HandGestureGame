@@ -15,7 +15,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_OverfittingTest();
+             CNN_OverfittingTest();
+            //CNN_Test();
 
             Console.ReadLine();
         }
@@ -26,7 +27,7 @@ namespace CNN_Test_Console
 
             CNN cnn = new CNN();
 
-            int test_image_idx = 1;
+            int test_image_idx = 3;
             Matrix input = new Matrix(digitImages[test_image_idx].pixels);
             Matrix target = new Matrix(10, 1);
             target[(int) digitImages[test_image_idx].label, 0] = 1.0;
@@ -50,7 +51,7 @@ namespace CNN_Test_Console
 
         static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(500);
 
             CNN cnn = new CNN();
             Matrix input = new Matrix(28, 28);
