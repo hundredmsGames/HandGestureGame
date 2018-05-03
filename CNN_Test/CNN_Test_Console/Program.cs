@@ -9,12 +9,47 @@ using MatrixLib;
 namespace CNN_Test_Console
 {
 
-    class Program
+    class DriverProgram
     {
         static int cursorTop = 0;
 
         static void Main(string[] args)
-        {     
+        {
+            CNN_OverfittingTest();
+
+            Console.ReadLine();
+        }
+
+        static void CNN_OverfittingTest()
+        {
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50);
+
+            CNN cnn = new CNN();
+
+            int test_image_idx = 1;
+            Matrix input = new Matrix(digitImages[test_image_idx].pixels);
+            Matrix target = new Matrix(10, 1);
+            target[(int) digitImages[test_image_idx].label, 0] = 1.0;
+
+            int iteration_count = 300;
+            for(int i = 0; i < iteration_count; i++)
+            {
+                cnn.Train(input, target);
+
+                int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
+                ProgressBar(val);
+            }
+
+            Matrix output = cnn.Predict(input);
+
+            Console.WriteLine("Output");
+            Console.WriteLine(output.ToString());
+
+            Console.WriteLine(digitImages[test_image_idx].ToString());
+        }
+
+        static void CNN_Test()
+        {
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50);
 
             CNN cnn = new CNN();
@@ -61,7 +96,7 @@ namespace CNN_Test_Console
                         input[j, k] = digitImages[i].pixels[j][k];
 
                 Matrix ans = cnn.Predict(input);
-                if(ans[digitImages[i].label, 0] > 0.7)
+                if (ans[digitImages[i].label, 0] > 0.7)
                 {
                     correct_count++;
                 }
@@ -71,11 +106,9 @@ namespace CNN_Test_Console
             }
 
             Console.WriteLine("\nEnd");
-            Console.WriteLine("Time :"+(stopwatch.ElapsedMilliseconds/1000.0).ToString("F4"));
-            Console.WriteLine( "\nAccuracy: %{0}\n", (correct_count * 1f / (digitImages.Length - training_count)) * 100);
+            Console.WriteLine("Time :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
+            Console.WriteLine("\nAccuracy: %{0}\n", (correct_count * 1f / (digitImages.Length - training_count)) * 100);
             Console.WriteLine("correct/all :{0}/{1}", correct_count, digitImages.Length - training_count);
-
-            Console.ReadLine();
         }
 
         public static void FCNN_Test()

@@ -36,7 +36,7 @@ namespace ConvNeuralNetwork
         private static int fcnn_hidden_neurons = 20;
         private static int fcnn_output_neurons = 10;
 
-        private double learning_rate = 0.01;
+        private double learning_rate = 0.02;
 
         #endregion
 

@@ -35,7 +35,7 @@ namespace CNN_Test_Console
             FileStream ifsImages;
             try
             {
-                Console.WriteLine("\nBegin\n");
+                //Console.WriteLine("\nBegin\n");
 
                 ifsLabels =
                 new FileStream(path_test_labels,
