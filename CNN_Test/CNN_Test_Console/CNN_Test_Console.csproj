@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CNN.cs" />
+    <Compile Include="CNN_Part.cs" />
     <Compile Include="JsonFileController.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="FCNN.cs" />

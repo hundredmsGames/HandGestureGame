@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MatrixLib;
 using FullyConnectedNN;
+using System.IO;
 
 namespace ConvNeuralNetwork
 {
@@ -17,23 +18,26 @@ namespace ConvNeuralNetwork
         }
     }
 
-    class CNN
+  partial class CNN
     {
         #region Configuration
 
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_kernel_size = 5;
-        private static int l1_stride = 2;
+        private  int l1_kernel_size = 5;
+        private  int l1_stride = 2;
 
-        private static int l2_kernel_size = 2;
-        private static int l2_stride = 2;
+        private  int l2_kernel_size = 2;
+        private  int l2_stride = 2;
 
-        private static int fcnn_hidden_neurons = 100;
-        private static int fcnn_output_neurons = 10;
+        private  int fcnn_hidden_neurons = 100;
+        private  int fcnn_output_neurons = 10;
 
         private double learning_rate = 0.04;
+
+        Func<double, double> activation;
+        Func<double, double> derOfActivation;
 
         #endregion
 
@@ -70,6 +74,9 @@ namespace ConvNeuralNetwork
             // Randomize weights
             l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
             l1_kernel.Randomize();
+
+            activation = ReLu;
+            derOfActivation = DerOfReLu;
 
             m_pool1_list = new List<Location>();
             l1_kernel_loc_list = new List<Tuple<Location, Location>>[l1_kernel_size, l1_kernel_size];
@@ -206,7 +213,7 @@ namespace ConvNeuralNetwork
             //    Console.WriteLine(l.r + ", " + l.c);
 
             relu1 = new Matrix(m_pool1.rows, m_pool1.cols);
-            relu1 = Matrix.Map(m_pool1, ReLu);
+            relu1 = Matrix.Map(m_pool1, activation);
 
             //Console.WriteLine("\nReLu1\n");
             //Console.WriteLine(relu1.ToString());
@@ -216,7 +223,7 @@ namespace ConvNeuralNetwork
 
         private void BackPropagation(Matrix cnno_d_E)
         {
-            Matrix m_pool1_d_cnno = Matrix.Map(m_pool1, DerOfReLu);
+            Matrix m_pool1_d_cnno = Matrix.Map(m_pool1, derOfActivation);
 
             //Console.WriteLine("\nm_pool1_d_cnno\n");
             //Console.WriteLine(m_pool1_d_cnno.ToString());
@@ -390,17 +397,21 @@ namespace ConvNeuralNetwork
         #endregion
 
         #region Activation Function (ReLu)
-
+        
         private static double ReLu(double x)
         {
+            
             return Math.Max(x, 0);
         }
 
         private static double DerOfReLu(double x)
         {
+           
             return (x > 0) ? 1.0 : 0.0;
         }
 
         #endregion
+
+       
     }
 }
