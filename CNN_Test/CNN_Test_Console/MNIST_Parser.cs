@@ -10,6 +10,8 @@ namespace CNN_Test_Console
     class MNIST_Parser
     {
         const int MaxImageCount = 10000;
+        private static string path_training_images = Path.Combine("..", "..", "..", "..", "MNIST", "train-images.idx3-ubyte");
+        private static string path_training_labels = Path.Combine("..", "..", "..", "..", "MNIST", "train-labels.idx1-ubyte");
         private static string path_test_images = Path.Combine("..", "..", "..", "..", "MNIST", "t10k-images.idx3-ubyte");
         private static string path_test_labels = Path.Combine("..", "..", "..", "..", "MNIST", "t10k-labels.idx1-ubyte");
         private static int imageCount;
@@ -28,7 +30,6 @@ namespace CNN_Test_Console
 
         public static DigitImage[] ReadFromFile(int count)
         {
-            
             ImageCount = count;
             DigitImage[] digitImages = new DigitImage[ImageCount];
             FileStream ifsLabels;
@@ -38,11 +39,11 @@ namespace CNN_Test_Console
                 //Console.WriteLine("\nBegin\n");
 
                 ifsLabels =
-                new FileStream(path_test_labels,
+                new FileStream(path_training_labels,
                 FileMode.Open); // test labels
 
                 ifsImages =
-                 new FileStream(path_test_images,
+                 new FileStream(path_training_images,
                  FileMode.Open); // test images
 
                 BinaryReader brLabels =

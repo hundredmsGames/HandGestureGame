@@ -49,7 +49,7 @@ namespace CNN_Test_Console
 
         static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(10000);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50000);
 
             CNN cnn = new CNN();
             Matrix input = new Matrix(28, 28);
