@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MatrixLib;
 using FullyConnectedNN;
-using System.IO;
 
 namespace ConvNeuralNetwork
 {
@@ -25,14 +24,14 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private  int l1_kernel_size = 5;
-        private  int l1_stride = 2;
+        private int l1_kernel_size = 5;
+        private int l1_stride = 2;
 
-        private  int l2_kernel_size = 2;
-        private  int l2_stride = 2;
+        private int l2_kernel_size = 2;
+        private int l2_stride = 2;
 
-        private  int fcnn_hidden_neurons = 100;
-        private  int fcnn_output_neurons = 10;
+        private int fcnn_hidden_neurons = 100;
+        private int fcnn_output_neurons = 10;
 
         private double learning_rate = 0.04;
 
@@ -87,6 +86,9 @@ namespace ConvNeuralNetwork
                     l1_kernel_loc_list[i, j] = new List<Tuple<Location, Location>>();
                 }
             }
+
+            // We are deserializing config file here
+            Deserialize();
 
             #region This will help while testing
 

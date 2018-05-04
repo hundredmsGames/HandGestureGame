@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
 using ConvNeuralNetwork;
 using FullyConnectedNN;
 using MatrixLib;
-using JsonController;
+
 namespace CNN_Test_Console
 {
 
@@ -132,6 +130,8 @@ namespace CNN_Test_Console
       
         static void ProgressBar(int currentValue)
         {
+            Console.CursorVisible = false;
+
             int pos = currentValue / 10;
             if (currentValue == 0)
             {
@@ -145,6 +145,8 @@ namespace CNN_Test_Console
             Console.Write("#");
             Console.SetCursorPosition(14, cursorTop);
             Console.WriteLine(currentValue + "%");
+
+            Console.CursorVisible = true;
         }
     }
 
