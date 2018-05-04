@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using ConvNeuralNetwork;
 using FullyConnectedNN;
 using MatrixLib;
-
+using JsonController;
 namespace CNN_Test_Console
 {
 
@@ -17,7 +17,7 @@ namespace CNN_Test_Console
         {
             //CNN_OverfittingTest();
             CNN_Test();
-
+    
             Console.ReadLine();
         }
 
@@ -66,7 +66,7 @@ namespace CNN_Test_Console
                 }
             }
 
-            int training_count = (int)(digitImages.Length * 0.9);
+            int training_count = (int)(digitImages.Length * 0.8);
             cursorTop = Console.CursorTop;
 
             Stopwatch stopwatch = new Stopwatch();

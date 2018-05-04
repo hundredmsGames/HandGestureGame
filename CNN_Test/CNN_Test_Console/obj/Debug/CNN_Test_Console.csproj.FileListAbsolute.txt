@@ -19,3 +19,6 @@ C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\De
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.exe.config
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.exe
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\CNN_Test_Console.pdb
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\Newtonsoft.Json.dll
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Debug\Newtonsoft.Json.xml
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Debug\CNN_Test_Console.csproj.CopyComplete
