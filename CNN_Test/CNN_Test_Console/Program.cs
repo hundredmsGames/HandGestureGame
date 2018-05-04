@@ -15,8 +15,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_OverfittingTest();
-            //CNN_Test();
+            //CNN_OverfittingTest();
+            CNN_Test();
 
             Console.ReadLine();
         }
@@ -32,7 +32,7 @@ namespace CNN_Test_Console
             Matrix target = new Matrix(10, 1);
             target[(int) digitImages[test_image_idx].label, 0] = 1.0;
 
-            int iteration_count = 10000;
+            int iteration_count = 1000;
             for(int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
@@ -51,7 +51,7 @@ namespace CNN_Test_Console
 
         static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(1000);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(10000);
 
             CNN cnn = new CNN();
             Matrix input = new Matrix(28, 28);
@@ -66,7 +66,7 @@ namespace CNN_Test_Console
                 }
             }
 
-            int training_count = (int)(digitImages.Length * 0.7);
+            int training_count = (int)(digitImages.Length * 0.9);
             cursorTop = Console.CursorTop;
 
             Stopwatch stopwatch = new Stopwatch();
@@ -78,8 +78,9 @@ namespace CNN_Test_Console
                     for (int k = 0; k < 28; k++)
                         input[j, k] = digitImages[i].pixels[j][k];
 
-                cnn.Train(input, targets[digitImages[i].label]);
 
+                input.Normalize(0.0, 255.0, 0.0, 1.0);
+                cnn.Train(input, targets[digitImages[i].label]);
 
                 //Y = (X-A)/(B-A) * (D-C) + C
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
@@ -96,20 +97,20 @@ namespace CNN_Test_Console
                     for (int k = 0; k < 28; k++)
                         input[j, k] = digitImages[i].pixels[j][k];
 
+                input.Normalize(0.0, 255.0, 0.0, 1.0);
                 Matrix ans = cnn.Predict(input);
-                if (ans[digitImages[i].label, 0] > 0.7)
-                {
+
+                if (ans.GetMaxRowIndex() == digitImages[i].label)
                     correct_count++;
-                }
+                
 
                 int val = (int)((i - training_count - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val);
             }
 
-            Console.WriteLine("\nEnd");
-            Console.WriteLine("Time :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
-            Console.WriteLine("\nAccuracy: %{0}\n", (correct_count * 1f / (digitImages.Length - training_count)) * 100);
-            Console.WriteLine("correct/all :{0}/{1}", correct_count, digitImages.Length - training_count);
+            Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
+            Console.WriteLine("\nAccuracy: %{0:F2}\n", (correct_count * 1f / testing_count) * 100.0);
+            Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
         }
 
         public static void FCNN_Test()

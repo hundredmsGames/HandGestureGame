@@ -24,16 +24,16 @@ namespace ConvNeuralNetwork
         // This should be in a file (txt or json) in future.
         // For simplicity I'll make them static int.
 
-        private static int l1_kernel_size = 10;
+        private static int l1_kernel_size = 5;
         private static int l1_stride = 2;
 
-        private static int l2_kernel_size = 3;
+        private static int l2_kernel_size = 2;
         private static int l2_stride = 2;
 
-        private static int fcnn_hidden_neurons = 20;
+        private static int fcnn_hidden_neurons = 100;
         private static int fcnn_output_neurons = 10;
 
-        private double learning_rate = 0.02;
+        private double learning_rate = 0.04;
 
         #endregion
 

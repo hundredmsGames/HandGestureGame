@@ -299,6 +299,100 @@ namespace MatrixLib
 
         #endregion
 
+        #region Normalization
+
+        public void Normalize(double oldMin, double oldMax, double newMin, double newMax)
+        {
+            for (int i = 0; i < this.rows; i++)
+            {
+                for (int j = 0; j < this.cols; j++)
+                {
+                    this[i, j] = ((this[i, j] - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+                }
+            }
+        }
+
+        public static Matrix Normalize(Matrix matrix, double oldMin, double oldMax, double newMin, double newMax)
+        {
+            Matrix normalized = new Matrix(matrix.rows, matrix.cols);
+
+            for (int i = 0; i < matrix.rows; i++)
+            {
+                for (int j = 0; j < matrix.cols; j++)
+                {
+                    normalized[i, j] = ((matrix[i, j] - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+                }
+            }
+
+            return normalized;
+        }
+
+        #endregion
+
+        #region Map Functions
+
+        // Maps the matrix according to given func.
+        // i.e: Changes each element according to given func.
+        public void Map(Func<double, double> mapFunc)
+        {
+            for (int i = 0; i < this.rows; i++)
+            {
+                for (int j = 0; j < this.cols; j++)
+                {
+                    this.data[i, j] = mapFunc(this.data[i, j]);
+                }
+            }
+        }
+
+        // Same as the non-static version of Map
+        public static Matrix Map(Matrix m, Func<double, double> mapFunc)
+        {
+            Matrix mapped = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < m.rows; i++)
+            {
+                for (int j = 0; j < m.cols; j++)
+                {
+                    mapped.data[i, j] = mapFunc(m.data[i, j]);
+                }
+            }
+
+            return mapped;
+        }
+
+        #endregion
+
+        #region Randomize Method
+
+        // Randomize numbers in matrix
+        public void Randomize()
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    this.data[i, j] = randomize.NextDouble() * 2.0 - 1.0;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Get Max Row Index
+
+        public int GetMaxRowIndex()
+        {
+            int maxRow = 0;
+            for (int i = 0; i < this.rows; i++)
+            {
+                if (this[i, 0] > this[maxRow, 0])
+                    maxRow = i;
+            }
+
+            return maxRow;
+        }
+
+        #endregion
+
         #region Operator Overloading
 
         public static Matrix operator +(Matrix m1, Matrix m2)
@@ -368,54 +462,6 @@ namespace MatrixLib
 
         #endregion
 
-        #region Map Functions
-
-        // Maps the matrix according to given func.
-        // i.e: Changes each element according to given func.
-        public void Map(Func<double, double> mapFunc)
-		{
-			for(int i = 0; i < this.rows; i++)
-			{
-				for(int j = 0; j < this.cols; j++)
-				{
-					this.data[i, j] = mapFunc(this.data[i, j]);
-				}
-			}
-		}
-
-		// Same as the non-static version of Map
-		public static Matrix Map(Matrix m, Func<double, double> mapFunc)
-		{
-			Matrix mapped = new Matrix(m.rows, m.cols);
-			for(int i = 0; i < m.rows; i++)
-			{
-				for(int j = 0; j < m.cols; j++)
-				{
-					mapped.data[i, j] = mapFunc(m.data[i, j]);
-				}
-			}
-
-			return mapped;
-		}
-
-        #endregion
-
-        #region Randomize Method
-
-        // Randomize numbers in matrix
-        public void Randomize()
-		{
-			for(int i = 0; i < rows; i++)
-			{
-				for(int j = 0; j < cols; j++)
-				{
-					this.data[i, j] = randomize.NextDouble() * 2.0 - 1.0;
-				}
-			}
-		}
-
-        #endregion
-
         #region Transform Methods
 
         public static Matrix IncreaseToTwoDimension(Matrix m, int rows, int cols)
@@ -478,23 +524,6 @@ namespace MatrixLib
 			return arr;
 		}
 
-        #endregion
-
-        #region Normalization
-        public static Matrix Normalize(Matrix matrix, double oldMin, double oldMax, double newMin, double newMax)
-        {
-            Matrix normalized = new Matrix(matrix.rows, matrix.cols);
-
-            for (int i = 0; i < matrix.rows; i++)
-            {
-                for (int j = 0; j < matrix.cols; j++)
-                {
-                    normalized[i,j] = ((matrix[i,j] - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
-                }
-            }
-
-            return normalized;
-        }
         #endregion
 
         #region ToString Override
