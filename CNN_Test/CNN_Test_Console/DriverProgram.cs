@@ -35,7 +35,7 @@ namespace CNN_Test_Console
                 cnn.Train(input, target);
 
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val);
+                ProgressBar(val,0,0);
             }
 
             Matrix output = cnn.Predict(input);
@@ -64,10 +64,12 @@ namespace CNN_Test_Console
             }
 
             int training_count = digitImages.Length;
-            cursorTop = Console.CursorTop;
+            
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            Console.WriteLine("System is getting trained...");
+            cursorTop = Console.CursorTop;
 
             for (int i = 0; i < training_count; i++)
             {
@@ -81,11 +83,14 @@ namespace CNN_Test_Console
 
                 //Y = (X-A)/(B-A) * (D-C) + C
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val);
+                ProgressBar(val,i,training_count, stopwatch.ElapsedMilliseconds / 1000.0);
             }
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
             int correct_count = 0;
             int testing_count = digitImages.Length;
+
+            Console.WriteLine("\nSystem has been trained.");
+            Console.WriteLine("System is getting tested. You will see the results when it is done...\n");
             cursorTop = Console.CursorTop;
 
             for (int i = 0; i < testing_count; i++)
@@ -102,7 +107,7 @@ namespace CNN_Test_Console
                 
 
                 int val = (int)((i  - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val);
+                ProgressBar(val,i,testing_count, stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
@@ -127,7 +132,7 @@ namespace CNN_Test_Console
             Console.WriteLine(o.ToString());
         }
       
-        static void ProgressBar(int currentValue)
+        static void ProgressBar(int currentValue,int currentCount,int maxCount,double timePassed=0)
         {
             Console.CursorVisible = false;
 
@@ -144,7 +149,10 @@ namespace CNN_Test_Console
             Console.Write("#");
             Console.SetCursorPosition(14, cursorTop);
             Console.WriteLine(currentValue + "%");
-
+            Console.SetCursorPosition(25, cursorTop);
+            Console.WriteLine(currentCount+1 + " / " + maxCount);
+            Console.SetCursorPosition(40, cursorTop);
+            Console.WriteLine("Time Passed:" + timePassed.ToString("F2"));
             Console.CursorVisible = true;
         }
     }
