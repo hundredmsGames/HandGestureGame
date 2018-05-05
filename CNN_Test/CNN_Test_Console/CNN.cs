@@ -19,21 +19,18 @@ namespace ConvNeuralNetwork
 
     partial class CNN
     {
-        #region Configuration
+        #region Configuration Variables
 
-        // This should be in a file (txt or json) in future.
-        // For simplicity I'll make them static int.
+        private int l1_kernel_size;
+        private int l1_stride;
 
-        private int l1_kernel_size = 5;
-        private int l1_stride = 2;
+        private int l2_kernel_size;
+        private int l2_stride;
 
-        private int l2_kernel_size = 2;
-        private int l2_stride = 2;
+        private int fcnn_hidden_neurons;
+        private int fcnn_output_neurons;
 
-        private int fcnn_hidden_neurons = 100;
-        private int fcnn_output_neurons = 10;
-
-        private double learning_rate = 0.04;
+        private double learning_rate;
 
         Func<double, double> activation;
         Func<double, double> derOfActivation;
@@ -68,41 +65,14 @@ namespace ConvNeuralNetwork
 
         public CNN()
         {
-            // Randomize weights
+            // We are deserializing config file at the top of the constructor
+            Deserialize(true);
+
+            // Randomize kernel
             l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
             l1_kernel.Randomize();
 
-            activation = ReLu;
-            derOfActivation = DerOfReLu;
-
             l2_mpool_list = new List<Location>();
-
-            // We are deserializing config file here
-            Deserialize();
-
-            #region This will help while testing
-
-            //Random r = new Random(12312324);
-
-            //this.input = new Matrix(28, 28);
-            //for (int i = 0; i < this.input.rows; i++)
-            //{
-            //    for (int j = 0; j < this.input.cols; j++)
-            //    {
-            //        this.input[i, j] = r.NextDouble() * 2f - 1f;
-            //    }
-            //}
-
-            //l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
-            //for (int i = 0; i < l1_kernel.rows; i++)
-            //{
-            //    for (int j = 0; j < l1_kernel.cols; j++)
-            //    {
-            //        l1_kernel[i, j] = r.NextDouble() * 2f - 1f;
-            //    }
-            //}
-
-            #endregion
         }
 
         #endregion
@@ -115,7 +85,6 @@ namespace ConvNeuralNetwork
 
             Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_out);
 
-            // writing input data to console
             //Console.WriteLine("\nFCNN Input\n");
             //Console.WriteLine(inputDataforFCNN.ToString());
 
@@ -217,31 +186,31 @@ namespace ConvNeuralNetwork
         {
             Matrix l2_mpool_d_cnno = Matrix.Map(l2_mpool, derOfActivation);
 
-            //Console.WriteLine("\nm_pool1_d_cnno\n");
-            //Console.WriteLine(m_pool1_d_cnno.ToString());
+            Console.WriteLine("\nl2_mpool_d_cnno\n");
+            Console.WriteLine(l2_mpool_d_cnno.ToString());
 
 
             Matrix l2_mpool_d_E = Matrix.Multiply(cnno_d_E, l2_mpool_d_cnno);
 
-            //Console.WriteLine("\nm_pool1_d_E\n");
-            //Console.WriteLine(m_pool1_d_E.ToString());
+            Console.WriteLine("\nl2_mpool_d_E\n");
+            Console.WriteLine(l2_mpool_d_E.ToString());
 
 
             Matrix l1_fmap_d_E = DerOfMaxPooling(l2_mpool_list, l2_mpool_d_E, l1_fmap.rows, l1_fmap.cols);
 
-            //Console.WriteLine("\nf_map1_d_E\n");
-            //Console.WriteLine(f_map1_d_E.ToString());
+            Console.WriteLine("\nl1_fmap_d_E\n");
+            Console.WriteLine(l1_fmap_d_E.ToString());
 
 
             Matrix l1_kernel_d_E = DerOfConv(input, l1_fmap_d_E, l1_kernel_size, l1_stride);
 
-            //Console.WriteLine("\nkernel1_d_E\n");
-            //Console.WriteLine(kernel1_d_E.ToString());
+            Console.WriteLine("\nl1_kernel_d_E\n");
+            Console.WriteLine(l1_kernel_d_E.ToString());
 
 
             l1_kernel = l1_kernel - (learning_rate * l1_kernel_d_E);
-            //Console.WriteLine("\nl1_kernel\n");
-            //Console.WriteLine(l1_kernel.ToString());
+            Console.WriteLine("\nl1_kernel\n");
+            Console.WriteLine(l1_kernel.ToString());
         }
 
         #endregion

@@ -5,12 +5,14 @@ namespace ConvNeuralNetwork
 {
     partial class CNN
     {
-        string path = Path.Combine("..", "..", "config_files", "config.cfg");
+        string main_cfg_path = Path.Combine("..", "..", "config_files", "config.cfg");
+        string test_cfg_path = Path.Combine("..", "..", "config_files", "test.cfg");
 
         #region Deserialization
 
-        public void Deserialize()
+        public void Deserialize(bool test = false)
         {
+            string path = test ? test_cfg_path : main_cfg_path;
             StreamReader streamReader = new StreamReader(path);
 
             while (streamReader.EndOfStream == false)
