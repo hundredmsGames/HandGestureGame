@@ -17,7 +17,7 @@ namespace ConvNeuralNetwork
         }
     }
 
-  partial class CNN
+    partial class CNN
     {
         #region Configuration
 
@@ -42,25 +42,23 @@ namespace ConvNeuralNetwork
 
         #region Variables
 
-        // Input (Array of Matrix)
+        // Input Matrix
         private Matrix input;
 
-        // Weights of layer1 (filters)
+        // Kernel (filter) of layer1
         private Matrix l1_kernel;
 
-        private List<Tuple<Location, Location>>[,] l1_kernel_loc_list;
-
-        // Feature Maps of layer1
-        private Matrix f_map1;
+        // Feature Map of layer1
+        private Matrix l1_fmap;
 
         // Max Pooling Map of layer2
-        private Matrix m_pool1;
+        private Matrix l2_mpool;
 
-        private List<Location> m_pool1_list;
+        private List<Location> l2_mpool_list;
 
-        private Matrix relu1;
+        private Matrix l3_relu;
 
-        private Matrix cnn_o;
+        private Matrix cnn_out;
 
         FCNN fcnn;
 
@@ -77,15 +75,7 @@ namespace ConvNeuralNetwork
             activation = ReLu;
             derOfActivation = DerOfReLu;
 
-            m_pool1_list = new List<Location>();
-            l1_kernel_loc_list = new List<Tuple<Location, Location>>[l1_kernel_size, l1_kernel_size];
-            for (int i = 0; i < l1_kernel_size; i++)
-            {
-                for (int j = 0; j < l1_kernel_size; j++)
-                {
-                    l1_kernel_loc_list[i, j] = new List<Tuple<Location, Location>>();
-                }
-            }
+            l2_mpool_list = new List<Location>();
 
             // We are deserializing config file here
             Deserialize();
@@ -121,9 +111,9 @@ namespace ConvNeuralNetwork
 
         public void Train(Matrix _input, Matrix _target)
         {
-            cnn_o = FeedForward(_input);
+            cnn_out = FeedForward(_input);
 
-            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_o);
+            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_out);
 
             // writing input data to console
             //Console.WriteLine("\nFCNN Input\n");
@@ -142,7 +132,7 @@ namespace ConvNeuralNetwork
             }
 
             Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
-            cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_o.rows, cnn_o.cols);
+            cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_out.rows, cnn_out.cols);
 
             //Console.WriteLine("\ncnno_d_E\n");
             //Console.WriteLine(cnno_d_E.ToString());
@@ -152,9 +142,9 @@ namespace ConvNeuralNetwork
 
         public Matrix Predict(Matrix _input)
         {
-            cnn_o = FeedForward(_input);
+            cnn_out = FeedForward(_input);
 
-            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_o);
+            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_out);
 
             // writing input data to console
             //Console.WriteLine("\nFCNN Input\n");
@@ -186,9 +176,9 @@ namespace ConvNeuralNetwork
             int p = 0;
             int s = l1_stride;
 
-            f_map1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+            l1_fmap = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
-            Convolve(this.input, f_map1, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride, l1_kernel_loc_list);
+            Convolve(this.input, l1_fmap, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride);
 
             //Console.WriteLine("Input\n");
             //Console.WriteLine(this.input.ToString());
@@ -197,15 +187,15 @@ namespace ConvNeuralNetwork
             //Console.WriteLine("FeatureMap1\n");
             //Console.WriteLine(f_map1.ToString());
 
-            r_w = f_map1.rows;
-            c_w = f_map1.cols;
+            r_w = l1_fmap.rows;
+            c_w = l1_fmap.cols;
             f = l2_kernel_size;
             p = 0;
             s = l2_stride;
 
-            m_pool1 = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+            l2_mpool = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
-            Convolve(f_map1, m_pool1, null, m_pool1_list, MaxPooling, l2_kernel_size, l2_stride);
+            Convolve(l1_fmap, l2_mpool, null, l2_mpool_list, MaxPooling, l2_kernel_size, l2_stride);
 
             //Console.WriteLine("\nMax Pooling1\n");
             //Console.WriteLine(m_pool1.ToString());
@@ -214,47 +204,42 @@ namespace ConvNeuralNetwork
             //foreach (Location l in m_pool1_list)
             //    Console.WriteLine(l.r + ", " + l.c);
 
-            relu1 = new Matrix(m_pool1.rows, m_pool1.cols);
-            relu1 = Matrix.Map(m_pool1, activation);
+            l3_relu = new Matrix(l2_mpool.rows, l2_mpool.cols);
+            l3_relu = Matrix.Map(l2_mpool, activation);
 
             //Console.WriteLine("\nReLu1\n");
             //Console.WriteLine(relu1.ToString());
 
-            return relu1;
+            return l3_relu;
         }
 
         private void BackPropagation(Matrix cnno_d_E)
         {
-            Matrix m_pool1_d_cnno = Matrix.Map(m_pool1, derOfActivation);
+            Matrix l2_mpool_d_cnno = Matrix.Map(l2_mpool, derOfActivation);
 
             //Console.WriteLine("\nm_pool1_d_cnno\n");
             //Console.WriteLine(m_pool1_d_cnno.ToString());
 
 
-            Matrix m_pool1_d_E = Matrix.Multiply(cnno_d_E, m_pool1_d_cnno);
+            Matrix l2_mpool_d_E = Matrix.Multiply(cnno_d_E, l2_mpool_d_cnno);
 
             //Console.WriteLine("\nm_pool1_d_E\n");
             //Console.WriteLine(m_pool1_d_E.ToString());
 
 
-            Matrix f_map1_d_E = DerOfMaxPooling(m_pool1_list, m_pool1_d_E, f_map1.rows, f_map1.cols);
+            Matrix l1_fmap_d_E = DerOfMaxPooling(l2_mpool_list, l2_mpool_d_E, l1_fmap.rows, l1_fmap.cols);
 
             //Console.WriteLine("\nf_map1_d_E\n");
             //Console.WriteLine(f_map1_d_E.ToString());
 
 
-            //Matrix kernel1_d_E = DerOfConv(l1_kernel_loc_list, input, f_map1_d_E, l1_kernel_size);
-            Matrix kernel1_d_E = DerOfConv(input, f_map1_d_E, l1_kernel_size, l1_stride);
-
+            Matrix l1_kernel_d_E = DerOfConv(input, l1_fmap_d_E, l1_kernel_size, l1_stride);
 
             //Console.WriteLine("\nkernel1_d_E\n");
             //Console.WriteLine(kernel1_d_E.ToString());
-            //Console.WriteLine("If this is same as above. Thats cool");
-            //Console.WriteLine(DerOfConv(input, f_map1_d_E, l1_kernel_size, l1_stride).ToString());
 
 
-
-            l1_kernel = l1_kernel - (learning_rate * kernel1_d_E);
+            l1_kernel = l1_kernel - (learning_rate * l1_kernel_d_E);
             //Console.WriteLine("\nl1_kernel\n");
             //Console.WriteLine(l1_kernel.ToString());
         }
@@ -264,14 +249,14 @@ namespace ConvNeuralNetwork
         #region Helper Methods
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
-            Func<int, int, Matrix, Matrix, List<Location>, int, int, int, List<Tuple<Location, Location>>[,], double> func, int kernel_size,
-                                     int stride, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
+            Func<int, int, Matrix, Matrix, List<Location>, int, int, int, double> func, int kernel_size,
+                                     int stride)
         {
             for (int i = 0, r = 0; r < output.rows && i < input.rows; i += stride, r++)
             {
                 for (int j = 0, c = 0; c < output.cols && j < input.cols; j += stride, c++)
                 {
-                    output[r, c] = func(r, c, input, kernel, loc_list, kernel_size, i, j, kernel_loc_list);
+                    output[r, c] = func(r, c, input, kernel, loc_list, kernel_size, i, j);
                 }
             }
         }
@@ -280,7 +265,7 @@ namespace ConvNeuralNetwork
         // using arrays would be a better solution
         // There is no kernel in max pooling so kernel is null.
         private static double MaxPooling(int out_r, int out_c, Matrix input, Matrix kernel,
-            List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
+            List<Location> loc_list, int kernel_size, int rows, int cols)
         {
             double max = double.MinValue;
             int r = -1, c = -1;
@@ -330,7 +315,7 @@ namespace ConvNeuralNetwork
         }
 
         private static double DotProduct(int out_r, int out_c, Matrix input, Matrix kernel,
-            List<Location> loc_list, int kernel_size, int rows, int cols, List<Tuple<Location, Location>>[,] kernel_loc_list = null)
+            List<Location> loc_list, int kernel_size, int rows, int cols)
         {
             double sum = 0.0f;
 
@@ -339,38 +324,10 @@ namespace ConvNeuralNetwork
                 for (int j = 0; j < kernel_size; j++)
                 {
                     sum += kernel[i, j] * input[i + rows, j + cols];
-
-                    //Tuple<Location, Location> loc = new Tuple<Location, Location>(
-                    //    new Location(i + rows, j + cols),
-                    //    new Location(out_r, out_c)
-                    //);
-                    //if (kernel_loc_list[i, j].Count < kernel_size * kernel_size)
-                    //    kernel_loc_list[i, j].Add(loc);
-
                 }
             }
 
             return sum;
-        }
-
-
-        private static Matrix DerOfConv(List<Tuple<Location, Location>>[,] loc_list, Matrix curr_layer, Matrix next_layer_d_E,
-            int kernel_size)
-        {
-            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
-
-            for (int i = 0; i < kernel_size; i++)
-            {
-                for (int j = 0; j < kernel_size; j++)
-                {
-                    foreach (Tuple<Location, Location> loc in loc_list[i, j])
-                    {
-                        kernel_d_E[i, j] += curr_layer[loc.Item1.r, loc.Item1.c] * next_layer_d_E[loc.Item2.r, loc.Item2.c];
-                    }
-                }
-            }
-
-            return kernel_d_E;
         }
 
         private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride)
@@ -412,8 +369,6 @@ namespace ConvNeuralNetwork
             return (x > 0) ? 1.0 : 0.0;
         }
 
-        #endregion
-
-       
+        #endregion   
     }
 }

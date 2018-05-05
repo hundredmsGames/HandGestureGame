@@ -6,7 +6,6 @@ using MatrixLib;
 
 namespace CNN_Test_Console
 {
-
     class DriverProgram
     {
         static int cursorTop = 0;
@@ -102,7 +101,7 @@ namespace CNN_Test_Console
                     correct_count++;
                 
 
-                int val = (int)((i  - 0) / (double)(testing_count - 0) * (100 - 0) + 0);
+                int val = (int)((i  - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val);
             }
 
@@ -111,7 +110,7 @@ namespace CNN_Test_Console
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
         }
 
-        public static void FCNN_Test()
+        static void FCNN_Test()
         {
             FCNN fcnn = new FCNN(3, 10, 3, 0.2, FCNN.Sigmoid, FCNN.DerSigmoid);
 
@@ -149,6 +148,5 @@ namespace CNN_Test_Console
             Console.CursorVisible = true;
         }
     }
-
 }
 
