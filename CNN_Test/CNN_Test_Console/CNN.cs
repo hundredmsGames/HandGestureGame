@@ -27,6 +27,9 @@ namespace ConvNeuralNetwork
         private int l2_kernel_size;
         private int l2_stride;
 
+        private int l3_kernel_size;
+        private int l3_stride;
+
         private int fcnn_hidden_neurons;
         private int fcnn_output_neurons;
 
@@ -45,15 +48,21 @@ namespace ConvNeuralNetwork
         // Kernel (filter) of layer1
         private Matrix l1_kernel;
 
+        // Kernel (filter) of layer2
+        private Matrix l2_kernel;
+
         // Feature Map of layer1
         private Matrix l1_fmap;
 
+        // Feature Map of layer2
+        private Matrix l2_fmap;
+
         // Max Pooling Map of layer2
-        private Matrix l2_mpool;
+        private Matrix l3_mpool;
 
-        private List<Location> l2_mpool_list;
+        private List<Location> l3_mpool_list;
 
-        private Matrix l3_relu;
+        private Matrix l4_relu;
 
         private Matrix cnn_out;
 
@@ -66,13 +75,16 @@ namespace ConvNeuralNetwork
         public CNN()
         {
             // We are deserializing config file at the top of the constructor
-            Deserialize(true);
+            Deserialize();
 
             // Randomize kernel
             l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
             l1_kernel.Randomize();
 
-            l2_mpool_list = new List<Location>();
+            l2_kernel = new Matrix(l2_kernel_size, l2_kernel_size);
+            l2_kernel.Randomize();
+
+            l3_mpool_list = new List<Location>();
         }
 
         #endregion
@@ -162,9 +174,19 @@ namespace ConvNeuralNetwork
             p = 0;
             s = l2_stride;
 
-            l2_mpool = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+            l2_fmap = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
 
-            Convolve(l1_fmap, l2_mpool, null, l2_mpool_list, MaxPooling, l2_kernel_size, l2_stride);
+            Convolve(l1_fmap, l2_fmap, l2_kernel, null, DotProduct, l2_kernel_size, l2_stride);
+
+            r_w = l2_fmap.rows;
+            c_w = l2_fmap.cols;
+            f = l3_kernel_size;
+            p = 0;
+            s = l3_stride;
+
+            l3_mpool = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
+
+            Convolve(l2_fmap, l3_mpool, null, l3_mpool_list, MaxPooling, l3_kernel_size, l3_stride);
 
             //Console.WriteLine("\nMax Pooling1\n");
             //Console.WriteLine(m_pool1.ToString());
@@ -173,44 +195,49 @@ namespace ConvNeuralNetwork
             //foreach (Location l in m_pool1_list)
             //    Console.WriteLine(l.r + ", " + l.c);
 
-            l3_relu = new Matrix(l2_mpool.rows, l2_mpool.cols);
-            l3_relu = Matrix.Map(l2_mpool, activation);
+            l4_relu = new Matrix(l3_mpool.rows, l3_mpool.cols);
+            l4_relu = Matrix.Map(l3_mpool, activation);
 
             //Console.WriteLine("\nReLu1\n");
             //Console.WriteLine(relu1.ToString());
 
-            return l3_relu;
+            return l4_relu;
         }
 
         private void BackPropagation(Matrix cnno_d_E)
         {
-            Matrix l2_mpool_d_cnno = Matrix.Map(l2_mpool, derOfActivation);
+            Matrix l2_mpool_d_cnno = Matrix.Map(l3_mpool, derOfActivation);
 
-            Console.WriteLine("\nl2_mpool_d_cnno\n");
-            Console.WriteLine(l2_mpool_d_cnno.ToString());
-
-
-            Matrix l2_mpool_d_E = Matrix.Multiply(cnno_d_E, l2_mpool_d_cnno);
-
-            Console.WriteLine("\nl2_mpool_d_E\n");
-            Console.WriteLine(l2_mpool_d_E.ToString());
+            //Console.WriteLine("\nl2_mpool_d_cnno\n");
+            //Console.WriteLine(l2_mpool_d_cnno.ToString());
 
 
-            Matrix l1_fmap_d_E = DerOfMaxPooling(l2_mpool_list, l2_mpool_d_E, l1_fmap.rows, l1_fmap.cols);
+            Matrix l3_mpool_d_E = Matrix.Multiply(cnno_d_E, l2_mpool_d_cnno);
 
-            Console.WriteLine("\nl1_fmap_d_E\n");
-            Console.WriteLine(l1_fmap_d_E.ToString());
+            //Console.WriteLine("\nl2_mpool_d_E\n");
+            //Console.WriteLine(l3_mpool_d_E.ToString());
 
+
+            Matrix l2_fmap_d_E = DerOfMaxPooling(l3_mpool_list, l3_mpool_d_E, l2_fmap.rows, l2_fmap.cols);
+
+            //Console.WriteLine("\nl2_fmap_d_E\n");
+            //Console.WriteLine(l2_fmap_d_E.ToString());
+
+            Matrix l1_fmap_d_E = new Matrix(l1_fmap.rows, l1_fmap.cols);
+            Matrix l2_kernel_d_E = DerOfConv(l1_fmap, l2_fmap_d_E, l2_kernel_size, l2_stride, l2_kernel, l1_fmap_d_E);
+
+            l2_kernel = l2_kernel - (learning_rate * l2_kernel_d_E);
 
             Matrix l1_kernel_d_E = DerOfConv(input, l1_fmap_d_E, l1_kernel_size, l1_stride);
 
-            Console.WriteLine("\nl1_kernel_d_E\n");
-            Console.WriteLine(l1_kernel_d_E.ToString());
-
+            //Console.WriteLine("\nl1_kernel_d_E\n");
+            //Console.WriteLine(l1_kernel_d_E.ToString());
+            //Console.WriteLine("\ninput_d_E\n");
+            //Console.WriteLine(input_d_E.ToString());
 
             l1_kernel = l1_kernel - (learning_rate * l1_kernel_d_E);
-            Console.WriteLine("\nl1_kernel\n");
-            Console.WriteLine(l1_kernel.ToString());
+            //Console.WriteLine("\nl1_kernel\n");
+            //Console.WriteLine(l1_kernel.ToString());
         }
 
         #endregion
@@ -299,7 +326,7 @@ namespace ConvNeuralNetwork
             return sum;
         }
 
-        private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride)
+        private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride, Matrix kernel = null, Matrix input_d_E = null)
         {
             Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
 
@@ -314,6 +341,9 @@ namespace ConvNeuralNetwork
                         for(int q = 0; q < kernel_size; q++)
                         {
                             kernel_d_E[p, q] += output_d_E[r, c] * input[i + p, j + q];
+
+                            if (input_d_E != null)
+                                input_d_E[i + p, j + q] += kernel[p, q] * output_d_E[r, c];
                         }
                     }
                 }

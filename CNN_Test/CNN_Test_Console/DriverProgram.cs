@@ -83,7 +83,7 @@ namespace CNN_Test_Console
 
                 //Y = (X-A)/(B-A) * (D-C) + C
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
-                //ProgressBar(val,i,training_count, stopwatch.ElapsedMilliseconds / 1000.0);
+                ProgressBar(val,i,training_count, stopwatch.ElapsedMilliseconds / 1000.0);
             }
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
             int correct_count = 0;
@@ -107,7 +107,7 @@ namespace CNN_Test_Console
                 
 
                 int val = (int)((i  - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
-                //ProgressBar(val,i,testing_count, stopwatch.ElapsedMilliseconds / 1000.0);
+                ProgressBar(val,i,testing_count, stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));

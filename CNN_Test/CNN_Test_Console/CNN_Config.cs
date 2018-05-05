@@ -5,7 +5,7 @@ namespace ConvNeuralNetwork
 {
     partial class CNN
     {
-        string main_cfg_path = Path.Combine("..", "..", "config_files", "config.cfg");
+        string main_cfg_path = Path.Combine("..", "..", "config_files", "more_layer.cfg");
         string test_cfg_path = Path.Combine("..", "..", "config_files", "test.cfg");
 
         #region Deserialization
@@ -33,18 +33,25 @@ namespace ConvNeuralNetwork
                         fcnn_output_neurons = int.Parse(parameter[1].Trim());
                         break;
 
-                    case "size":
+                    case "conv1_size":
                         l1_kernel_size= int.Parse(parameter[1].Trim());
                         break;
-                    case "stride":
+                    case "conv1_stride":
                         l1_stride= int.Parse(parameter[1].Trim());
                         break;
 
+                    case "conv2_size":
+                        l2_kernel_size = int.Parse(parameter[1].Trim());
+                        break;
+                    case "conv2_stride":
+                        l2_stride = int.Parse(parameter[1].Trim());
+                        break;
+
                     case "mp_size":
-                        l2_kernel_size= int.Parse(parameter[1].Trim());
+                        l3_kernel_size= int.Parse(parameter[1].Trim());
                         break;
                     case "mp_stride":
-                        l2_stride= int.Parse(parameter[1].Trim());
+                        l3_stride= int.Parse(parameter[1].Trim());
                         break;
                     case "activation":
                         if(parameter[1].Trim() == "relu")
