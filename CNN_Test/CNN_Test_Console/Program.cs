@@ -21,7 +21,7 @@ namespace CNN_Test_Console
 
         static void CNN_OverfittingTest()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
 
             CNN cnn = new CNN();
 
@@ -49,7 +49,7 @@ namespace CNN_Test_Console
 
         static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(50000);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training);
 
             CNN cnn = new CNN();
             Matrix input = new Matrix(28, 28);
@@ -64,7 +64,7 @@ namespace CNN_Test_Console
                 }
             }
 
-            int training_count = (int)(digitImages.Length * 0.8);
+            int training_count = digitImages.Length;
             cursorTop = Console.CursorTop;
 
             Stopwatch stopwatch = new Stopwatch();
@@ -84,12 +84,12 @@ namespace CNN_Test_Console
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val);
             }
-
+            digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
             int correct_count = 0;
-            int testing_count = digitImages.Length - training_count;
+            int testing_count = digitImages.Length;
             cursorTop = Console.CursorTop;
 
-            for (int i = training_count; i < digitImages.Length; i++)
+            for (int i = 0; i < testing_count; i++)
             {
                 for (int j = 0; j < 28; j++)
                     for (int k = 0; k < 28; k++)
@@ -102,7 +102,7 @@ namespace CNN_Test_Console
                     correct_count++;
                 
 
-                int val = (int)((i - training_count - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
+                int val = (int)((i  - 0) / (double)(testing_count - 0) * (100 - 0) + 0);
                 ProgressBar(val);
             }
 

@@ -7,9 +7,11 @@ using System.IO;
 
 namespace CNN_Test_Console
 {
+    enum DataSet { Training, Testing }
     class MNIST_Parser
     {
-        const int MaxImageCount = 10000;
+        const int MaxTrainingImageCount = 50000;
+        const int MaxTestingImageCount = 10000;
         private static string path_training_images = Path.Combine("..", "..", "..", "..", "MNIST", "train-images.idx3-ubyte");
         private static string path_training_labels = Path.Combine("..", "..", "..", "..", "MNIST", "train-labels.idx1-ubyte");
         private static string path_test_images = Path.Combine("..", "..", "..", "..", "MNIST", "t10k-images.idx3-ubyte");
@@ -18,20 +20,34 @@ namespace CNN_Test_Console
 
         public static int ImageCount
         {
-            get { return imageCount <= MaxImageCount ? imageCount : MaxImageCount; }
+            get { return imageCount; }
             set
             {
-                if (value <= MaxImageCount)
-                    imageCount = value;
-                else
-                    imageCount = MaxImageCount;
+                imageCount = value;
             }
         }
 
-        public static DigitImage[] ReadFromFile(int count)
+        public static DigitImage[] ReadFromFile(DataSet dataSet, int count = -1)
         {
-            ImageCount = count;
-            DigitImage[] digitImages = new DigitImage[ImageCount];
+            DigitImage[] digitImages;
+            string pathImages = "";
+            string pathLabels = "";
+            if (count != -1)
+                ImageCount = count;
+            if (dataSet == DataSet.Training)
+            {
+                digitImages = new DigitImage[MaxTrainingImageCount];
+                pathImages = path_training_images;
+                pathLabels = path_training_labels;
+                ImageCount = MaxTrainingImageCount;
+            }
+            else
+            {
+                digitImages = new DigitImage[MaxTestingImageCount];
+                pathImages = path_test_images;
+                pathLabels = path_test_labels;
+                ImageCount = MaxTestingImageCount;
+            }
             FileStream ifsLabels;
             FileStream ifsImages;
             try
@@ -39,11 +55,11 @@ namespace CNN_Test_Console
                 //Console.WriteLine("\nBegin\n");
 
                 ifsLabels =
-                new FileStream(path_training_labels,
+                new FileStream(pathLabels,
                 FileMode.Open); // test labels
 
                 ifsImages =
-                 new FileStream(path_training_images,
+                 new FileStream(pathImages,
                  FileMode.Open); // test images
 
                 BinaryReader brLabels =
@@ -100,7 +116,7 @@ namespace CNN_Test_Console
             {
                 Console.WriteLine(ex.Message);
                 //Console.ReadLine();
-                
+
             }
             return null;
         }

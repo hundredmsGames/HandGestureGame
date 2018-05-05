@@ -18,34 +18,34 @@ namespace ConvNeuralNetwork
                 string line = streamReader.ReadLine();
 
                 string[] parameter = line.Split('=');
-                switch (parameter[0])
+                switch (parameter[0].Trim())
                 {
                     case "learning_rate":
-                        learning_rate = double.Parse(parameter[1].Replace('.', ','));
+                        learning_rate = double.Parse(parameter[1].Trim().Replace('.', ','));
                         break;
 
                     case "fcnn_hiddens":
-                        fcnn_hidden_neurons = int.Parse(parameter[1]);
+                        fcnn_hidden_neurons = int.Parse(parameter[1].Trim());
                         break;
                     case "fcnn_outputs":
-                        fcnn_output_neurons = int.Parse(parameter[1]);
+                        fcnn_output_neurons = int.Parse(parameter[1].Trim());
                         break;
 
                     case "size":
-                        l1_kernel_size= int.Parse(parameter[1]);
+                        l1_kernel_size= int.Parse(parameter[1].Trim());
                         break;
                     case "stride":
-                        l1_stride= int.Parse(parameter[1]);
+                        l1_stride= int.Parse(parameter[1].Trim());
                         break;
 
                     case "mp_size":
-                        l2_kernel_size= int.Parse(parameter[1]);
+                        l2_kernel_size= int.Parse(parameter[1].Trim());
                         break;
                     case "mp_stride":
-                        l2_stride= int.Parse(parameter[1]);
+                        l2_stride= int.Parse(parameter[1].Trim());
                         break;
                     case "activation":
-                        if(parameter[1] == "relu")
+                        if(parameter[1].Trim() == "relu")
                         {
                             activation = ReLu;
                             derOfActivation = DerOfReLu;
