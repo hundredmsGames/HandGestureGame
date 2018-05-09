@@ -60,6 +60,9 @@ namespace CNN_Test
 
         private void CaptureImage()
         {
+            if (Directory.Exists(Path.Combine(handImagesPath, "Gesture")) == false)
+                Directory.CreateDirectory(Path.Combine(handImagesPath, "Gesture"));
+
             int counter = 0;
             while (captureState == true)
             {
