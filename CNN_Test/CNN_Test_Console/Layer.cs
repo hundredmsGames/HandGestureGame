@@ -16,14 +16,21 @@ namespace CNN_Test_Console
             protected set { kernel = value; }
         }
 
-        private Matrix fmap;
+        private Matrix output;
 
-        public Matrix Fmap
+        public Matrix Output
         {
-            get { return fmap; }
-            protected set { fmap = value; }
+            get { return output; }
+            protected set { output = value; }
         }
 
+        private Matrix input;
+
+        public Matrix Input
+        {
+            get { return input; }
+            protected set { input = value; }
+        }
         private int kernel_size;
 
         public int Kernel_Size
@@ -40,9 +47,12 @@ namespace CNN_Test_Console
            protected set { stride = value; }
         }
 
-        public Layer(int _kernel_size,int _stride)
+        public Layer(int _kernel_size,int _stride,Matrix input)
         {
             //initialize all matrices
+
+            kernel = new Matrix(kernel_size, kernel_size);
+           
         }
 
     }

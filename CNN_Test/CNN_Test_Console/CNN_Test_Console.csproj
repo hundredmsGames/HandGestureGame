@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CNN.cs" />
     <Compile Include="CNN_Config.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="FCNN.cs" />
