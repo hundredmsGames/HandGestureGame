@@ -1,9 +1,9 @@
 ﻿using System;
 using MatrixLib;
 
-namespace FullyConnectedNN
+namespace ConvNeuralNetwork
 {
-	 class FCNN:CNN_Test_Console.Layer
+	 class FullyConLayer : Layer
 	{
         #region Variables
 
@@ -29,7 +29,7 @@ namespace FullyConnectedNN
 
         #region Constructors
 
-        public FCNN(int inputNodes, int hiddenNodes, int outputNodes, double learningRate,
+        public FullyConLayer(int inputNodes, int hiddenNodes, int outputNodes, double learningRate,
             Func<double, double> activationFunc, Func<double, double> derOfActivationFunc)
 		{
 			this.inputNodes  = inputNodes;
@@ -53,7 +53,7 @@ namespace FullyConnectedNN
 		}
 
         // Copy Constructor
-		public FCNN(FCNN nn)
+		public FullyConLayer(FullyConLayer nn)
 		{
 			this.inputNodes  = nn.inputNodes;
 			this.hiddenNodes = nn.hiddenNodes;

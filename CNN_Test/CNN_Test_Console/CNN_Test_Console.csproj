@@ -49,7 +49,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="FCNN.cs" />
+    <Compile Include="FullyConLayer.cs" />
     <Compile Include="MaxPoolingLayer.cs" />
     <Compile Include="MNIST_Parser.cs" />
     <Compile Include="DriverProgram.cs" />

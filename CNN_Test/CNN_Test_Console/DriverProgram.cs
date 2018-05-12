@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using ConvNeuralNetwork;
-using FullyConnectedNN;
 using MatrixLib;
 
 namespace CNN_Test_Console
@@ -117,7 +116,7 @@ namespace CNN_Test_Console
 
         static void FCNN_Test()
         {
-            FCNN fcnn = new FCNN(3, 10, 3, 0.2, FCNN.Sigmoid, FCNN.DerSigmoid);
+            FullyConLayer fcnn = new FullyConLayer(3, 10, 3, 0.2, FullyConLayer.Sigmoid, FullyConLayer.DerSigmoid);
 
             Matrix input = new Matrix(new double[] { 1, 2, 3 });
             Matrix output = new Matrix(new double[] { 2, 3, 4 });

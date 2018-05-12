@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MatrixLib;
-using FullyConnectedNN;
 
 namespace ConvNeuralNetwork
 {
@@ -15,12 +14,6 @@ namespace ConvNeuralNetwork
             r = _r;
             c = _c;
         }
-    }
-
-    struct Layer
-    {
-        public Matrix kernel;
-        public Matrix fmap;
     }
 
     partial class CNN
@@ -78,7 +71,7 @@ namespace ConvNeuralNetwork
 
         private Matrix cnn_out;
 
-        FCNN fcnn;
+        FullyConLayer fcnn;
 
         #endregion
 
@@ -114,13 +107,13 @@ namespace ConvNeuralNetwork
 
             if (fcnn == null)
             {
-                fcnn = new FCNN(
+                fcnn = new FullyConLayer(
                     inputDataforFCNN.rows * inputDataforFCNN.cols,
                     fcnn_hidden_neurons,
                     fcnn_output_neurons,
                     learning_rate,
-                    FCNN.Sigmoid,
-                    FCNN.DerSigmoid
+                    FullyConLayer.Sigmoid,
+                    FullyConLayer.DerSigmoid
                 );
             }
 
@@ -145,13 +138,13 @@ namespace ConvNeuralNetwork
 
             if (fcnn == null)
             {
-                fcnn = new FCNN(
+                fcnn = new FullyConLayer(
                     inputDataforFCNN.rows * inputDataforFCNN.cols,
                     fcnn_hidden_neurons,
                     fcnn_output_neurons,
                     learning_rate,
-                    FCNN.Sigmoid,
-                    FCNN.DerSigmoid
+                    FullyConLayer.Sigmoid,
+                    FullyConLayer.DerSigmoid
                 );
             }
 
