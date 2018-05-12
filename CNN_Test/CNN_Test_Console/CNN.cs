@@ -17,6 +17,12 @@ namespace ConvNeuralNetwork
         }
     }
 
+    struct Layer
+    {
+        public Matrix kernel;
+        public Matrix fmap;
+    }
+
     partial class CNN
     {
         #region Configuration Variables
@@ -29,6 +35,12 @@ namespace ConvNeuralNetwork
 
         private int l3_kernel_size;
         private int l3_stride;
+
+        private int l4_kernel_size;
+        private int l4_stride;
+
+        private int l5_kernel_size;
+        private int l5_stride;
 
         private int fcnn_hidden_neurons;
         private int fcnn_output_neurons;
