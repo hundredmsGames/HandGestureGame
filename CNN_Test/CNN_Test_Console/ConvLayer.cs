@@ -31,7 +31,7 @@ namespace CNN_Test_Console
         public int Filters
         {
             get { return filters; }
-            protected set { filters = value }
+            protected set { filters = value; }
         }
 
         public int Kernel_Size

@@ -3,7 +3,7 @@ using MatrixLib;
 
 namespace FullyConnectedNN
 {
-	public class FCNN
+	 class FCNN:CNN_Test_Console.Layer
 	{
         #region Variables
 
@@ -16,7 +16,7 @@ namespace FullyConnectedNN
         private Matrix bias_h;
         private Matrix bias_o;
 
-        private Matrix input;
+
         private Matrix outs_out;
         private Matrix out_hid;
 
@@ -66,7 +66,7 @@ namespace FullyConnectedNN
 			this.bias_h     = new Matrix(nn.bias_h);
 			this.bias_o     = new Matrix(nn.bias_o);
 
-            this.input    = nn.input;
+            this.Input    = nn.Input;
             this.outs_out = nn.outs_out;
             this.out_hid  = nn.out_hid;
 
@@ -81,8 +81,8 @@ namespace FullyConnectedNN
         public Matrix FeedForward(Matrix input)
 		{
             // Generating the hidden outputs.
-            this.input = input;
-            this.out_hid = this.weights_ih * this.input;
+            this.Input = input;
+            this.out_hid = this.weights_ih * this.Input;
             this.out_hid += this.bias_h;
             this.out_hid.Map(activationFunc);
 
@@ -114,7 +114,7 @@ namespace FullyConnectedNN
 
 			Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
 
-			Matrix wh_d_neth = Matrix.Map(input, DerNetFunc);
+			Matrix wh_d_neth = Matrix.Map(Input, DerNetFunc);
 
 			Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
 
