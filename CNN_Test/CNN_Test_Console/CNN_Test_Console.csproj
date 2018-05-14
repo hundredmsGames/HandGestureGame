@@ -47,6 +47,7 @@
     <Compile Include="CNN\CNN.cs" />
     <Compile Include="CNN\CNN_Config.cs" />
     <Compile Include="CNN\Layers\ConvLayer.cs" />
+    <Compile Include="CNN\Layers\InputLayer.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="CNN\Layers\Layer.cs" />
     <Compile Include="Matrix.cs" />

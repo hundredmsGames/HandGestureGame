@@ -4,6 +4,8 @@ namespace ConvNeuralNetwork
 {
     class Layer
     {
+        #region Variables
+
         private Matrix input;
         private Matrix output;
 
@@ -13,27 +15,32 @@ namespace ConvNeuralNetwork
         private LayerType layerType;
         private int layerIndex;
         public CNN network;
+        
+        #endregion
 
-        #region Constructor
+        #region Constructors
 
         public Layer(LayerType layerType)
         {
             this.layerType = layerType;
         }
-      
-       
+
         #endregion
 
         #region Methods
+
         virtual public void FeedForward()
         {
-
+    
         }
+
         virtual public void Backpropagation()
         {
 
         }
+        
         #endregion
+
         #region Properties
 
         public Matrix Input
@@ -48,6 +55,11 @@ namespace ConvNeuralNetwork
             set { output = value; }
         }
 
+        public Layer InputLayer
+        {
+            get { return inputLayer; }
+            set { inputLayer = value; }
+        }
 
         public Layer OutputLayer
         {
@@ -55,19 +67,11 @@ namespace ConvNeuralNetwork
             set { outputLayer = value; }
         }
 
+        public CNN Network { get => network; set => network = value; }
 
+        public LayerType LayerType { get => layerType; set => layerType = value; }
 
-        public Layer InputLayer
-        {
-            get { return inputLayer; }
-            set { inputLayer = value; }
-        }
-
-        internal CNN Network { get => network; set => network = value; }
-        internal LayerType LayerType { get => layerType; set => layerType = value; }
         public int LayerIndex { get => layerIndex; set => layerIndex = value; }
-
-
 
         #endregion
     }

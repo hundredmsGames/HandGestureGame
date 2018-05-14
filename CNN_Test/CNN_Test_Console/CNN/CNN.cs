@@ -4,6 +4,7 @@ using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
+    // TODO: Maybe they should be in another file. CNN_Structs ? I don't know.
     struct Location
     {
         public int r;
@@ -40,6 +41,7 @@ namespace ConvNeuralNetwork
         public LayerType layerType;
 
     }
+
     partial class CNN
     {
         #region Configuration Variables
@@ -123,11 +125,13 @@ namespace ConvNeuralNetwork
 
         public void NewLayer(LayerDescription description)
         {
-            Layer newLayer=null;
+            Layer newLayer = null;
+
             switch (description.layerType)
             {
                 case LayerType.INPUT:
-
+                    // FIXME: We have a problem here. Probably we need to hold input array in description
+                    newLayer = new InputLayer(null, description.width, description.height, description.channels);
                     break;
                 case LayerType.CONVOLUTIONAL:
                     newLayer = new ConvLayer(description.channels, description.kernel_size, description.stride, description.padding);
@@ -141,8 +145,10 @@ namespace ConvNeuralNetwork
                 default:
                     break;
             }
+
             //every layer knows the CNN ref
             newLayer.network = this;
+            
             //if this is the first layer and this is not an input layer so we have a problem
             if(nextLayerIndex == 0 && newLayer.LayerType != LayerType.INPUT)
             {
@@ -160,8 +166,6 @@ namespace ConvNeuralNetwork
             this.layers[this.nextLayerIndex] = newLayer;
             this.nextLayerIndex++;
         }
-
-
 
         #region Training
 

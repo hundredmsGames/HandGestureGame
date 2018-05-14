@@ -4,22 +4,24 @@ namespace ConvNeuralNetwork
 {
     class MaxPoolingLayer : Layer
     {
+        #region Variables
+
         private int kernel_size;
         private int stride;
 
-        public MaxPoolingLayer(Matrix input, int kernel_size, int stride) : base(LayerType.MAXPOOLING)
-        {
-            this.Input       = input;
-            this.Kernel_Size = kernel_size;
-            this.Stride      = stride;
-        }
+        #endregion
+
+        #region Constructors
+
         public MaxPoolingLayer(int kernel_size, int stride) : base(LayerType.MAXPOOLING)
         {
-           
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
         }
-        #region Get-Set
+
+        #endregion
+
+        #region Properties
 
         public int Kernel_Size
         {
