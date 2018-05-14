@@ -78,10 +78,9 @@ namespace ConvNeuralNetwork
 
         #region Training Methods
 
-        public Matrix FeedForward(Matrix input)
-		{
-            // Generating the hidden outputs.
-            this.Input = input;
+        public override void FeedForward()
+        {
+            base.FeedForward();
             this.out_hid = this.weights_ih * this.Input;
             this.out_hid += this.bias_h;
             this.out_hid.Map(activationFunc);
@@ -91,9 +90,13 @@ namespace ConvNeuralNetwork
             this.outs_out += this.bias_o;
             this.outs_out.Map(activationFunc);
 
-			return this.outs_out;
-		}
+            this.NextLayer.Input = this.outs_out;
+        }
+        public override void Backpropagation()
+        {
+            base.Backpropagation();
 
+        }
         private Matrix Backpropagation(Matrix target)
         {
             // Backpropagation Process
@@ -126,15 +129,13 @@ namespace ConvNeuralNetwork
 
             return in_d_E;
         }
-
-        // If you want to get output, you need an extra parameter
-		public Matrix Train(Matrix input, Matrix target)
-		{
-            FeedForward(input);
-
-            return Backpropagation(target);
-        }
-
+        
+        /// <summary>
+        /// this one for debugging
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="output"></param>
+        /// <returns></returns>
 		public double GetError(Matrix target, Matrix output)
 		{
 			// Calculate the error 

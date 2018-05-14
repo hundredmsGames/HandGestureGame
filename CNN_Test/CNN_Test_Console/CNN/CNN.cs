@@ -15,7 +15,21 @@ namespace ConvNeuralNetwork
             c = _c;
         }
     }
+    struct LayerDescription
+    {
+        //input desc
+        public int width;
+        public int height;
+        public int channels;
 
+        //conv & pool desc
+        public int kernel_size;
+        public int stride;
+        public int padding;
+
+        public LayerType layerType;
+
+    }
     partial class CNN
     {
         #region Configuration Variables
@@ -93,6 +107,29 @@ namespace ConvNeuralNetwork
         }
 
         #endregion
+
+        public void newLayer(LayerDescription layerDescription)
+        {
+            switch (layerDescription.layerType)
+            {
+                case LayerType.INPUT:
+
+                    break;
+                case LayerType.CONVOLUTIONAL:
+
+                    break;
+                case LayerType.MAXPOOLING:
+
+                    break;
+                case LayerType.FULLY_CONNECTED:
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
 
         #region Training
 
@@ -341,9 +378,9 @@ namespace ConvNeuralNetwork
             {
                 for (int j = 0, c = 0; c < output_d_E.cols && j < input.cols; j += stride, c++)
                 {
-                    for(int p = 0; p < kernel_size; p++)
+                    for (int p = 0; p < kernel_size; p++)
                     {
-                        for(int q = 0; q < kernel_size; q++)
+                        for (int q = 0; q < kernel_size; q++)
                         {
                             kernel_d_E[p, q] += output_d_E[r, c] * input[i + p, j + q];
 
@@ -360,19 +397,19 @@ namespace ConvNeuralNetwork
         #endregion
 
         #region Activation Function (ReLu)
-        
+
         private static double ReLu(double x)
         {
-            
+
             return Math.Max(x, 0);
         }
 
         private static double DerOfReLu(double x)
         {
-           
+
             return (x > 0) ? 1.0 : 0.0;
         }
 
-        #endregion   
+        #endregion
     }
 }

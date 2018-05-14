@@ -43,20 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CNN.cs" />
-    <Compile Include="CNN_Config.cs" />
-    <Compile Include="ConvLayer.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Layer.cs" />
+    <Compile Include="CNN\CNN.cs" />
+    <Compile Include="CNN\CNN_Config.cs" />
+    <Compile Include="CNN\Layers\ConvLayer.cs" />
+    <Compile Include="Enums\Enums.cs" />
+    <Compile Include="CNN\Layers\Layer.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="FullyConLayer.cs" />
-    <Compile Include="MaxPoolingLayer.cs" />
-    <Compile Include="MNIST_Parser.cs" />
+    <Compile Include="CNN\Layers\FullyConLayer.cs" />
+    <Compile Include="CNN\Layers\MaxPoolingLayer.cs" />
+    <Compile Include="Parser\MNIST_Parser.cs" />
     <Compile Include="DriverProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
