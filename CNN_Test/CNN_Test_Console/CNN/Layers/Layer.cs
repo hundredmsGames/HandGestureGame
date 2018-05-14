@@ -45,8 +45,8 @@ namespace ConvNeuralNetwork
 
         public Matrix Input
         {
-            get { return input; }
-            set { input = value; }
+            get { return this.InputLayer.Input; }
+            
         }
 
         public Matrix Output

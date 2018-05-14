@@ -39,6 +39,41 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
+
+            int r_w = this.Input.rows;
+            int c_w = this.Input.cols;
+            int f = kernel_size;
+            int p = 0;
+            int s = stride;
+            
+            double sum = 0;
+            int fmapX = 0, fmapY = 0;
+            double[,] f_map = new double[(r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1];
+
+            for (int kernel_ID = 0; kernel_ID < kernels.Length; kernel_ID++)
+            {
+                for (int x = 0; x < Input.rows; x += stride)
+                {
+                    for (int y = 0; y < Input.cols; y += stride)
+                    {
+                        sum = 0;
+                        for (int i = 0; i < kernel_size; i++)
+                        {
+                            for (int j = 0; j < kernel_size; j++)
+                            {
+                                sum += Input[x, y] * kernels[kernel_ID][i, j];
+                            }
+                        }
+                    }
+                    f_map[fmapX, fmapY] = sum;
+                    //now we are moving next cell in current row
+                    fmapX++;
+                }
+                fmapX = 0;
+                //move to next row
+                fmapY++;
+
+            }
         }
 
         public override void Backpropagation()
