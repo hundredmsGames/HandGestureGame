@@ -7,15 +7,19 @@ namespace ConvNeuralNetwork
         private Matrix input;
         private Matrix output;
 
-        private Layer prevLayer;
-        private Layer nextLayer;
+        private Layer inputLayer;
+        private Layer outputLayer;
 
-        private Layer network;
-
-
+        private LayerType layerType;
+        private int layerIndex;
+        public CNN network;
 
         #region Constructor
 
+        public Layer(LayerType layerType)
+        {
+            this.layerType = layerType;
+        }
       
        
         #endregion
@@ -45,21 +49,23 @@ namespace ConvNeuralNetwork
         }
 
 
-        public Layer NextLayer
+        public Layer OutputLayer
         {
-            get { return nextLayer; }
-            set { nextLayer = value; }
+            get { return outputLayer; }
+            set { outputLayer = value; }
         }
 
 
 
-        public Layer PrevLayer
+        public Layer InputLayer
         {
-            get { return prevLayer; }
-            set { prevLayer = value; }
+            get { return inputLayer; }
+            set { inputLayer = value; }
         }
 
-        internal Layer Network { get => network; set => network = value; }
+        internal CNN Network { get => network; set => network = value; }
+        internal LayerType LayerType { get => layerType; set => layerType = value; }
+        public int LayerIndex { get => layerIndex; set => layerIndex = value; }
 
 
 

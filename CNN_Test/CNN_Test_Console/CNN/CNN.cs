@@ -27,6 +27,16 @@ namespace ConvNeuralNetwork
         public int stride;
         public int padding;
 
+        //fcnn
+        public int hiddenNeuronsCount;
+        public int inputNeuronsCount;
+        public int outputNeuronsCount;
+        public float learningRate;
+
+        public Func<double, double> activationFunc;
+        public Func<double, double> derofActivationFunc;
+
+
         public LayerType layerType;
 
     }
@@ -60,6 +70,9 @@ namespace ConvNeuralNetwork
         #endregion
 
         #region Variables
+
+        Layer[] layers;
+        int nextLayerIndex=0;
 
         // Input Matrix
         private Matrix input;
@@ -108,25 +121,44 @@ namespace ConvNeuralNetwork
 
         #endregion
 
-        public void newLayer(LayerDescription layerDescription)
+        public void NewLayer(LayerDescription description)
         {
-            switch (layerDescription.layerType)
+            Layer newLayer=null;
+            switch (description.layerType)
             {
                 case LayerType.INPUT:
 
                     break;
                 case LayerType.CONVOLUTIONAL:
-
+                    newLayer = new ConvLayer(description.channels, description.kernel_size, description.stride, description.padding);
                     break;
                 case LayerType.MAXPOOLING:
-
+                    newLayer = new MaxPoolingLayer(description.kernel_size, description.stride);
                     break;
                 case LayerType.FULLY_CONNECTED:
-
+                    newLayer = new FullyConLayer(description.inputNeuronsCount, description.hiddenNeuronsCount, description.outputNeuronsCount, description.learningRate, description.activationFunc, description.derofActivationFunc);
                     break;
                 default:
                     break;
             }
+            //every layer knows the CNN ref
+            newLayer.network = this;
+            //if this is the first layer and this is not an input layer so we have a problem
+            if(nextLayerIndex == 0 && newLayer.LayerType != LayerType.INPUT)
+            {
+                throw new WrongLayerException("You have to start with Input Layer");
+            }
+            else
+            {
+                //add layer to the array of layers
+                Layer prevLayer = layers[this.nextLayerIndex - 1];
+                prevLayer.OutputLayer = newLayer;
+                newLayer.InputLayer = prevLayer;
+            }
+         
+            newLayer.LayerIndex = this.nextLayerIndex;
+            this.layers[this.nextLayerIndex] = newLayer;
+            this.nextLayerIndex++;
         }
 
 

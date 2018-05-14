@@ -30,8 +30,8 @@ namespace ConvNeuralNetwork
         #region Constructors
 
         public FullyConLayer(int inputNodes, int hiddenNodes, int outputNodes, double learningRate,
-            Func<double, double> activationFunc, Func<double, double> derOfActivationFunc)
-		{
+            Func<double, double> activationFunc, Func<double, double> derOfActivationFunc) : base(LayerType.FULLY_CONNECTED)
+        {
 			this.inputNodes  = inputNodes;
 			this.hiddenNodes = hiddenNodes;
 			this.outputNodes = outputNodes;
@@ -53,8 +53,8 @@ namespace ConvNeuralNetwork
 		}
 
         // Copy Constructor
-		public FullyConLayer(FullyConLayer nn)
-		{
+		public FullyConLayer(FullyConLayer nn) : base(LayerType.FULLY_CONNECTED)
+        {
 			this.inputNodes  = nn.inputNodes;
 			this.hiddenNodes = nn.hiddenNodes;
 			this.outputNodes = nn.outputNodes;
@@ -90,7 +90,7 @@ namespace ConvNeuralNetwork
             this.outs_out += this.bias_o;
             this.outs_out.Map(activationFunc);
 
-            this.NextLayer.Input = this.outs_out;
+            this.OutputLayer.Input = this.outs_out;
         }
         public override void Backpropagation()
         {

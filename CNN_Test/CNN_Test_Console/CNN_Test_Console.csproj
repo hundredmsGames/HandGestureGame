@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CNN\CNNExceptions.cs" />
     <Compile Include="CNN\CNN.cs" />
     <Compile Include="CNN\CNN_Config.cs" />
     <Compile Include="CNN\Layers\ConvLayer.cs" />
