@@ -81,7 +81,7 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
-            this.out_hid = this.weights_ih * this.Input;
+            this.out_hid = this.weights_ih * this.Input[0];
             this.out_hid += this.bias_h;
             this.out_hid.Map(activationFunc);
 
@@ -90,7 +90,7 @@ namespace ConvNeuralNetwork
             this.outs_out += this.bias_o;
             this.outs_out.Map(activationFunc);
 
-            this.OutputLayer.Input = this.outs_out;
+            this.OutputLayer.Input[0] = this.outs_out;
         }
         public override void Backpropagation()
         {
@@ -117,7 +117,7 @@ namespace ConvNeuralNetwork
 
 			Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
 
-			Matrix wh_d_neth = Matrix.Map(Input, DerNetFunc);
+			Matrix wh_d_neth = Matrix.Map(Input[0], DerNetFunc);
 
 			Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
 

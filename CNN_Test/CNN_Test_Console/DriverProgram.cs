@@ -11,8 +11,7 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            //CNN_OverfittingTest();
-            CNN_Test();
+
     
             Console.ReadLine();
         }
@@ -112,23 +111,6 @@ namespace CNN_Test_Console
             Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
             Console.WriteLine("\nAccuracy: %{0:F2}\n", (correct_count * 1f / testing_count) * 100.0);
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
-        }
-
-        static void FCNN_Test()
-        {
-            FullyConLayer fcnn = new FullyConLayer(3, 10, 3, 0.2, FullyConLayer.Sigmoid, FullyConLayer.DerSigmoid);
-
-            Matrix input = new Matrix(new double[] { 1, 2, 3 });
-            Matrix output = new Matrix(new double[] { 2, 3, 4 });
-
-            Matrix o = fcnn.FeedForward(input);
-            fcnn.Train(input, output);
-
-            Console.WriteLine(o.ToString());
-
-            o = fcnn.FeedForward(input);
-            
-            Console.WriteLine(o.ToString());
         }
       
         static void ProgressBar(int currentValue,int currentCount,int maxCount,double timePassed=0)

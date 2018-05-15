@@ -191,13 +191,13 @@ namespace ConvNeuralNetwork
                 );
             }
 
-            Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
-            cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_out.rows, cnn_out.cols);
+            //Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
+            //cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_out.rows, cnn_out.cols);
 
             //Console.WriteLine("\ncnno_d_E\n");
             //Console.WriteLine(cnno_d_E.ToString());
 
-            BackPropagation(cnno_d_E);
+           // BackPropagation(cnno_d_E);
         }
 
         public Matrix Predict(Matrix _input)
@@ -222,7 +222,7 @@ namespace ConvNeuralNetwork
                 );
             }
 
-            return fcnn.FeedForward(inputDataforFCNN);
+            return null;// fcnn.FeedForward(inputDataforFCNN);
         }
 
         private Matrix FeedForward(Matrix _input)
