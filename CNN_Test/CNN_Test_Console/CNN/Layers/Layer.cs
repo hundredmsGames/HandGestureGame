@@ -33,7 +33,14 @@ namespace ConvNeuralNetwork
         {
     
         }
+        virtual public void FeedForward(Matrix input)
+        {
 
+        }
+        virtual public void FeedForward(Matrix[] input)
+        {
+
+        }
         virtual public void Backpropagation()
         {
 

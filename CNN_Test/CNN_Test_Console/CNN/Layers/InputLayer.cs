@@ -19,7 +19,7 @@ namespace ConvNeuralNetwork
 
         #region Constructors
 
-        public InputLayer(Matrix[] inputs, int width, int height, int channels) : base(LayerType.INPUT)
+        public InputLayer(int width, int height, int channels) : base(LayerType.INPUT)
         {
             this.width    = width;
             this.height   = height;
@@ -28,6 +28,15 @@ namespace ConvNeuralNetwork
 
         #endregion
 
+        #region Methods
+        public override void FeedForward(Matrix[] input)
+        {
+            base.FeedForward(input);
+            //DO WHAT YOU NEED TO DO
+            OutputLayer.Input = input;
+        }
+
+        #endregion
         #region Properties
 
         public int Width { get => width; set => width = value; }
