@@ -6,8 +6,8 @@ namespace ConvNeuralNetwork
     {
         #region Variables
 
-        private Matrix input;
-        private Matrix output;
+        private Matrix[] input;
+        private Matrix[] output;
 
         private Layer inputLayer;
         private Layer outputLayer;
@@ -43,13 +43,13 @@ namespace ConvNeuralNetwork
 
         #region Properties
 
-        public Matrix Input
+        public Matrix[] Input
         {
-            get { return this.InputLayer.Input; }
-            
+            get { return input; }
+            set { input = value; }
         }
 
-        public Matrix Output
+        public Matrix[] Output
         {
             get { return output; }
             set { output = value; }

@@ -143,6 +143,7 @@ namespace ConvNeuralNetwork
                     newLayer = new FullyConLayer(description.inputNeuronsCount, description.hiddenNeuronsCount, description.outputNeuronsCount, description.learningRate, description.activationFunc, description.derofActivationFunc);
                     break;
                 default:
+                    // TODO: Undefined Layer Exception
                     break;
             }
 
