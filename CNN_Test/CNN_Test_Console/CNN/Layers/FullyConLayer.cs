@@ -94,13 +94,14 @@ namespace ConvNeuralNetwork
         }
         public override void Backpropagation()
         {
+           
             base.Backpropagation();
 
-        }
-        private Matrix Backpropagation(Matrix target)
-        {
+            //hardcoded for rightnow figure  it out how to get this
+            Matrix target = Network.Target;
+
             // Backpropagation Process
-			Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
+            Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
 
             Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
@@ -108,18 +109,18 @@ namespace ConvNeuralNetwork
 
             Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
-			weights_ho = weights_ho - (learningRate * wo_d_E);
+            weights_ho = weights_ho - (learningRate * wo_d_E);
 
 
-			Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
+            Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
 
-			Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);
+            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);
 
-			Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
+            Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
 
-			Matrix wh_d_neth = Matrix.Map(Input[0], DerNetFunc);
+            Matrix wh_d_neth = Matrix.Map(Input[0], DerNetFunc);
 
-			Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
+            Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
 
             Matrix in_d_neth = Matrix.Map(weights_ih, DerNetFunc);
 
@@ -127,8 +128,9 @@ namespace ConvNeuralNetwork
 
             weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
 
-            return in_d_E;
+            //
         }
+       
         
         /// <summary>
         /// this one for debugging

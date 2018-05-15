@@ -14,7 +14,7 @@ namespace ConvNeuralNetwork
 
         private LayerType layerType;
         private int layerIndex;
-        public CNN network;
+        private CNN network;
         
         #endregion
 

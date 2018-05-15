@@ -24,7 +24,7 @@ namespace ConvNeuralNetwork
         #endregion
 
 
-        #region MaxPoolingMethod
+        #region Methods
 
         public override void FeedForward()
         {
@@ -65,7 +65,11 @@ namespace ConvNeuralNetwork
             }
 
         }
+        public override void Backpropagation()
+        {
+            base.Backpropagation();
 
+        }
 
         #endregion
         #region Properties

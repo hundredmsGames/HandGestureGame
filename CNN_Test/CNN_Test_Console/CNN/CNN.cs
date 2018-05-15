@@ -102,6 +102,15 @@ namespace ConvNeuralNetwork
 
         FullyConLayer fcnn;
 
+        private Matrix targetMatrix;
+
+        public Matrix Target
+        {
+            get { return targetMatrix; }
+            set { targetMatrix = value; }
+        }
+
+
         #endregion
 
         #region Constructors
@@ -131,7 +140,7 @@ namespace ConvNeuralNetwork
             {
                 case LayerType.INPUT:
                     // FIXME: We have a problem here. Probably we need to hold input array in description
-                    newLayer = new InputLayer(null, description.width, description.height, description.channels);
+                    newLayer = new InputLayer(description.width, description.height, description.channels);
                     break;
                 case LayerType.CONVOLUTIONAL:
                     newLayer = new ConvLayer(description.channels, description.kernel_size, description.stride, description.padding);
@@ -148,7 +157,7 @@ namespace ConvNeuralNetwork
             }
 
             //every layer knows the CNN ref
-            newLayer.network = this;
+            newLayer.Network = this;
             
             //if this is the first layer and this is not an input layer so we have a problem
             if(nextLayerIndex == 0 && newLayer.LayerType != LayerType.INPUT)
