@@ -9,7 +9,7 @@ namespace ConvNeuralNetwork
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        private static double ReLu(double x)
+        public static float ReLu(float x)
         {
             return Math.Max(x, 0);
         }
@@ -19,9 +19,45 @@ namespace ConvNeuralNetwork
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>
-        private static double DerOfReLu(double x)
+        public static float DerOfReLu(float x)
         {
-            return (x > 0) ? 1.0 : 0.0;
+            return (x > 0) ? 1f : 0f;
+        }
+
+        public static float Sigmoid(float x)
+        {
+
+            return 0f;
+        }
+
+        public static float DerOfSigmoid(float x)
+        {
+
+            return 0f;
+        }
+
+        public static float Tanh(float x)
+        {
+
+            return 0f;
+        }
+
+        public static float DerOfTanh(float x)
+        {
+
+            return 0f;
+        }
+
+        public static float Softmax(float x)
+        {
+
+            return 0f;
+        }
+
+        public static float DerOfSoftmax(float x)
+        {
+
+            return 0f;
         }
     }
 }

@@ -63,7 +63,7 @@ namespace ConvNeuralNetwork
                 {
                     for (int c = 0; c < Input[0].cols && out_col_idx < Output[0].cols; c += stride, out_col_idx++)
                     {
-                        double max = double.MinValue;
+                        float max = float.MinValue;
 
                         for (int i = 0; i < this.Kernel_Size; i++)
                         {

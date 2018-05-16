@@ -18,27 +18,51 @@ namespace ConvNeuralNetwork
         }
     }
 
-    struct LayerDescription
+    struct Description
     {
+        // Network Description
+        public float learningRate;
+
         // input desc
         public int width;
         public int height;
         public int channels;
 
         // conv & pool desc
-        public int kernel_size;
+        public int filters;
+        public int kernelSize;
         public int stride;
         public int padding;
+        public ActivationType activation;
 
         // fc layer
-        public int hiddenNeuronsCount;
-        public int inputNeuronsCount;
-        public int outputNeuronsCount;
-        public float learningRate;
-
-        public Func<double, double> activationFunc;
-        public Func<double, double> derofActivationFunc;
+        public int hiddens;
+        public int outputs;
 
         public LayerType layerType;
+
+        public override string ToString()
+        {
+            string ret = "";
+            ret += string.Format(
+                "layerType = {0}\n" + 
+                "Learning Rate = {1}\n" +
+                "width = {2}\n" +
+                "height = {3}\n" +
+                "channels = {4}\n" +
+                "filters = {5}\n" +
+                "kernelSize = {6}\n" +
+                "stride = {7}\n" +
+                "padding = {8}\n" +
+                "activation = {9}\n" +
+                "hiddens = {10}\n" +
+                "outputs = {11}\n" +
+                "\n",
+                layerType, learningRate, width, height, channels, filters,
+                kernelSize, stride, padding, activation, hiddens, outputs
+            );
+
+            return ret;
+        }
     }
 }

@@ -16,27 +16,22 @@ namespace ConvNeuralNetwork
         private Matrix bias_h;
         private Matrix bias_o;
 
-
         private Matrix outs_out;
         private Matrix out_hid;
 
-        private double learningRate;
-
-        private Func<double, double> activationFunc;
-        private Func<double, double> derOfActFunc;
+        private Func<float, float> activation;
+        private Func<float, float> derOfActivation;
 
         #endregion
 
         #region Constructors
 
-        public FullyConLayer(int inputNodes, int hiddenNodes, int outputNodes, double learningRate,
-            Func<double, double> activationFunc, Func<double, double> derOfActivationFunc) : base(LayerType.FULLY_CONNECTED)
+        public FullyConLayer(int inputNodes, int hiddenNodes, int outputNodes,
+            ActivationType activation) : base(LayerType.FULLY_CONNECTED)
         {
 			this.inputNodes  = inputNodes;
 			this.hiddenNodes = hiddenNodes;
 			this.outputNodes = outputNodes;
-
-			this.learningRate = learningRate;
 		
 			weights_ih = new Matrix(hiddenNodes, inputNodes);
 			weights_ho = new Matrix(outputNodes, hiddenNodes);
@@ -48,8 +43,31 @@ namespace ConvNeuralNetwork
 			bias_h.Randomize();
 			bias_o.Randomize();
 
-            this.activationFunc      = activationFunc;
-            this.derOfActFunc = derOfActivationFunc;
+            switch(activation)
+            {
+                case ActivationType.RELU:
+                    this.activation = ActivationFunctions.ReLu;
+                    this.derOfActivation = ActivationFunctions.DerOfReLu;
+                    break;
+
+                case ActivationType.SIGMOID:
+                    this.activation = ActivationFunctions.Sigmoid;
+                    this.derOfActivation = ActivationFunctions.DerOfSigmoid;
+                    break;
+
+                case ActivationType.TANH:
+                    this.activation = ActivationFunctions.Tanh;
+                    this.derOfActivation = ActivationFunctions.DerOfTanh;
+                    break;
+
+                case ActivationType.SOFTMAX:
+                    break;
+
+                default:
+                    // Undefined activation func exception
+                    break;
+                
+            }
 		}
 
         // Copy Constructor
@@ -58,8 +76,6 @@ namespace ConvNeuralNetwork
 			this.inputNodes  = nn.inputNodes;
 			this.hiddenNodes = nn.hiddenNodes;
 			this.outputNodes = nn.outputNodes;
-
-			this.learningRate = nn.learningRate;
 
 			this.weights_ih = new Matrix(nn.weights_ih);
 			this.weights_ho = new Matrix(nn.weights_ho);
@@ -70,8 +86,8 @@ namespace ConvNeuralNetwork
             this.outs_out = nn.outs_out;
             this.out_hid  = nn.out_hid;
 
-            this.activationFunc      = nn.activationFunc;
-            this.derOfActFunc = nn.derOfActFunc;
+            this.activation      = nn.activation;
+            this.derOfActivation = nn.derOfActivation;
 		}
 
         #endregion
@@ -83,12 +99,12 @@ namespace ConvNeuralNetwork
             base.FeedForward();
             this.out_hid = this.weights_ih * this.Input[0];
             this.out_hid += this.bias_h;
-            this.out_hid.Map(activationFunc);
+            this.out_hid.Map(activation);
 
             // Generating the output's output.
             this.outs_out = this.weights_ho * this.out_hid;
             this.outs_out += this.bias_o;
-            this.outs_out.Map(activationFunc);
+            this.outs_out.Map(activation);
 
             this.OutputLayer.Input[0] = this.outs_out;
         }
@@ -101,7 +117,7 @@ namespace ConvNeuralNetwork
             Matrix target = Network.Target;
 
             // Backpropagation Process
-            Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
+            Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, derOfActivation));
 
             Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
@@ -109,12 +125,12 @@ namespace ConvNeuralNetwork
 
             Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
-            weights_ho = weights_ho - (learningRate * wo_d_E);
+            weights_ho = weights_ho - (this.Network.LearningRate * wo_d_E);
 
 
             Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
 
-            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);
+            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActivation);
 
             Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
 
@@ -126,7 +142,7 @@ namespace ConvNeuralNetwork
 
             Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
 
-            weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
+            weights_ih = weights_ih - (this.Network.LearningRate * Matrix.Transpose(wh_d_E));
 
             //
         }
@@ -144,7 +160,7 @@ namespace ConvNeuralNetwork
 			// ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
 
 			Matrix outputError = target - output;
-			outputError = Matrix.Multiply(outputError, outputError) / 2.0;
+			outputError = Matrix.Multiply(outputError, outputError) / 2f;
 
 			double error = 0.0;
 			for(int i = 0; i < outputError.data.GetLength(0); i++)
@@ -174,12 +190,12 @@ namespace ConvNeuralNetwork
 			return 1.0 / (1.0 + Math.Exp(-x));
 		}
 
-		public static double DerSigmoid(double x)
+		public static float DerSigmoid(float x)
 		{
-			return x * (1.0 - x);
+			return x * (1f - x);
 		}
 
-		public static double DerNetFunc(double x)
+		public static float DerNetFunc(float x)
 		{
 			return x;
 		}

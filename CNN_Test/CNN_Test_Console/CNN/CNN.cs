@@ -20,14 +20,15 @@ namespace ConvNeuralNetwork
 
         #region Constructors
 
-        public CNN(int layers, float learningRate)
+        public CNN()
         {
             // We are deserializing config file at the top of the constructor
-            LayerDescription[] descriptions = DeserializeConfig();
+            Description[] descriptions = DeserializeConfig();
 
             for(int i = 0; i < descriptions.Length; i++)
             {
-                NewLayer(descriptions[i]);
+                // NewLayer(descriptions[i]);
+                Console.WriteLine(descriptions[i].ToString());
             }
 
             // First layer index is 0.
@@ -38,9 +39,16 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        public void NewLayer(LayerDescription description)
+        public void NewLayer(Description description)
         {
             Layer newLayer = null;
+            Layer prevLayer;
+
+            //if this is the first layer and this is not an input layer so we have a problem
+            if (nextLayerIndex == 0 && description.layerType != LayerType.INPUT)
+                throw new WrongLayerException("You have to start with Input Layer");
+            else
+                prevLayer = layers[this.nextLayerIndex - 1];
 
             switch (description.layerType)
             {
@@ -49,13 +57,14 @@ namespace ConvNeuralNetwork
                     newLayer = new InputLayer(description.width, description.height, description.channels);
                     break;
                 case LayerType.CONVOLUTIONAL:
-                    newLayer = new ConvLayer(description.channels, description.kernel_size, description.stride, description.padding);
+                    newLayer = new ConvLayer(description.channels, description.kernelSize, description.stride, description.padding);
                     break;
                 case LayerType.MAXPOOLING:
-                    newLayer = new MaxPoolingLayer(description.kernel_size, description.stride);
+                    newLayer = new MaxPoolingLayer(description.kernelSize, description.stride);
                     break;
                 case LayerType.FULLY_CONNECTED:
-                    newLayer = new FullyConLayer(description.inputNeuronsCount, description.hiddenNeuronsCount, description.outputNeuronsCount, description.learningRate, description.activationFunc, description.derofActivationFunc);
+                    int inputNeurons = prevLayer.Output.GetLength(0) * prevLayer.Output.GetLength(1) * prevLayer.Output.GetLength(2);
+                    newLayer = new FullyConLayer(inputNeurons, description.hiddens, description.outputs, description.activation);
                     break;
                 default:
                     // TODO: Undefined Layer Exception
@@ -64,21 +73,11 @@ namespace ConvNeuralNetwork
 
             //every layer knows the CNN ref
             newLayer.Network = this;
-            
-            //if this is the first layer and this is not an input layer so we have a problem
-            if(nextLayerIndex == 0 && newLayer.LayerType != LayerType.INPUT)
-            {
-                throw new WrongLayerException("You have to start with Input Layer");
-            }
-            else
-            {
-                //add layer to the array of layers
-                Layer prevLayer = layers[this.nextLayerIndex - 1];
-                prevLayer.OutputLayer = newLayer;
-                newLayer.InputLayer = prevLayer;
-            }
-         
+
+            prevLayer.OutputLayer = newLayer;
+            newLayer.InputLayer = prevLayer;
             newLayer.LayerIndex = this.nextLayerIndex;
+
             this.layers[this.nextLayerIndex] = newLayer;
             this.nextLayerIndex++;
         }
@@ -116,7 +115,7 @@ namespace ConvNeuralNetwork
         #region OLD METHODS (WILL BE DELETED)
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
-            Func<int, int, Matrix, Matrix, List<Location>, int, int, int, double> func, int kernel_size,
+            Func<int, int, Matrix, Matrix, List<Location>, int, int, int, float> func, int kernel_size,
                                      int stride)
         {
             for (int i = 0, r = 0; r < output.rows && i < input.rows; i += stride, r++)

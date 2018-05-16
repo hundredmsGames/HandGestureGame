@@ -11,7 +11,9 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
+            CNN cnn = new CNN();
 
+            Console.ReadLine();
         }
 
         /* OLD TEST METHODS
