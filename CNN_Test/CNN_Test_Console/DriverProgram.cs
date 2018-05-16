@@ -11,9 +11,32 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
+            Location[,,] max_locations = new Location[3, 2, 2];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int x = 0; x < 2; x++)
+                    {
+                        max_locations[i, j, x].c = 3;
+                        max_locations[i, j, x].r = 3;
+                    }
+                }
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    for (int x = 0; x < 2; x++)
+                    {
+                        Console.Write(max_locations[i, j, x].r  + " : " + max_locations[i, j, x].c +"\t");
+                    }
+                    Console.WriteLine();
+                }
+                Console.WriteLine("\n\n");
+            }
 
-    
-            Console.ReadLine();
+                        Console.ReadLine();
         }
 
         static void CNN_OverfittingTest()

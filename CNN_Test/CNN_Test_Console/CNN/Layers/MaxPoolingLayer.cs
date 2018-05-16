@@ -10,7 +10,7 @@ namespace ConvNeuralNetwork
         private int stride;
 
         // Location of maximum values in output for each channel
-        private Location[][,] max_locations;
+        private Location[,,] max_locations;
 
         #endregion
 
@@ -32,7 +32,9 @@ namespace ConvNeuralNetwork
 
             this.Output = new Matrix[this.Input.Length];
             this.Output_d_E = new Matrix[this.Input.Length];
-            this.max_locations = new Location[this.Input.Length][,];
+
+            // Initialize max_locations
+            this.max_locations = new Location[this.Input.Length, out_size_r, out_size_c];
             
             for (int i = 0; i < this.Input.Length; i++)
             {
@@ -41,9 +43,7 @@ namespace ConvNeuralNetwork
 
                 // Initialize output_d_E
                 this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
-
-                // Initialize max_locations
-                max_locations[i] = new Location[out_size_r, out_size_c];
+                
             }
         }
 
@@ -79,7 +79,7 @@ namespace ConvNeuralNetwork
                             }
                         }
 
-                        max_locations[ch][out_row_idx, out_col_idx] = new Location(r, c);
+                        max_locations[ch,out_row_idx, out_col_idx] = new Location(r, c);
                         Output[ch][out_row_idx, out_col_idx] = max;
                     }             
                 }
@@ -96,7 +96,7 @@ namespace ConvNeuralNetwork
                 {
                     for (int j = 0; j < Output[ch].cols; j++)
                     {
-                        Location max = max_locations[ch][i, j];
+                        Location max = max_locations[ch,i, j];
                         InputLayer.Output_d_E[ch][max.r, max.c] = Output[ch][i, j];
                     }
                 }
