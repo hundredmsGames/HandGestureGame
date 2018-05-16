@@ -19,6 +19,27 @@ namespace ConvNeuralNetwork
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
 
+            // Initialize output
+            int in_r = this.Input[0].rows;
+            int in_c = this.Input[0].cols;
+            int f = Kernel_Size;
+            int p = 0;
+            int s = Stride;
+
+            int out_size_r = (in_r - f + 2 * p) / s + 1;
+            int out_size_c = (in_c - f + 2 * p) / s + 1;
+            this.Output = new Matrix[this.Input.Length];
+            for (int i = 0; i < this.Input.Length; i++)
+            {
+                this.Output[i] = new Matrix(out_size_r, out_size_c);
+            }
+
+            // Initialize output_d_E
+            this.Output_d_E = new Matrix[this.Input.Length];
+            for (int i = 0; i < this.Input.Length; i++)
+            {
+                this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
+            }
         }
 
         #endregion
@@ -36,6 +57,7 @@ namespace ConvNeuralNetwork
             {
                 loc_list[i] = new List<Location>();
             }
+
             for (int index = 0; index < Input.Length; index++)
             {
                 int out_row_idx = 0, out_col_idx = 0;
@@ -59,43 +81,37 @@ namespace ConvNeuralNetwork
                         }
                         loc_list[index].Add(new Location(r, c));
                         Output[index][out_row_idx, out_col_idx] = max;
-                    }
-                   
+                    }             
                 }
             }
-
         }
+
         public override void Backpropagation()
         {
             base.Backpropagation();
-            Matrix[] prev_layer_d_E = new Matrix[this.Input.Length];
-            for (int i = 0; i < this.Input.Length; i++)
-            {
-                prev_layer_d_E[i] = new Matrix(((Input[0].rows - kernel_size)/stride + 1),(Input[0].cols - kernel_size) / stride + 1);
-            }
-            for (int index = 0; index < this.Input.Length; index++)
-            {
 
+            for (int ch = 0; ch < this.Input.Length; ch++)
+            {
                 //in the list of locations
                 int k = 0;
+                Location location = loc_list[ch][k];
 
-                Location location = loc_list[index][k];
-                for (int i = 0; i < Output[index].rows; i++)
+                for (int i = 0; i < Output[ch].rows; i++)
                 {
-                    for (int j = 0; j < Output[index].cols; j++)
+                    for (int j = 0; j < Output[ch].cols; j++)
                     {
-                        prev_layer_d_E[index][location.r, location.c] = Output[index][i, j];
+                        InputLayer.Output_d_E[ch][location.r, location.c] = Output[ch][i, j];
                         k++;
-                        if (k < loc_list[index].Count)
-                            location = loc_list[index][k];
+
+                        if (k < loc_list[ch].Count)
+                            location = loc_list[ch][k];
                     }
                 }
-
-            }
-           
+            }           
         }
 
         #endregion
+
         #region Properties
 
         public int Kernel_Size

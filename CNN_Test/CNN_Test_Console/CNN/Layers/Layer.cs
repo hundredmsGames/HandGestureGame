@@ -9,6 +9,9 @@ namespace ConvNeuralNetwork
         private Matrix[] input;
         private Matrix[] output;
 
+        // Derivative of error with respect to output
+        private Matrix[] output_d_E;
+
         private Layer inputLayer;
         private Layer outputLayer;
 
@@ -60,6 +63,12 @@ namespace ConvNeuralNetwork
         {
             get { return output; }
             set { output = value; }
+        }
+
+        public Matrix[] Output_d_E
+        {
+            get { return output_d_E; }
+            set { output_d_E = value; }
         }
 
         public Layer InputLayer
