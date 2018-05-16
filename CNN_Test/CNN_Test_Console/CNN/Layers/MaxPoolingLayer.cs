@@ -1,5 +1,4 @@
 ﻿using MatrixLib;
-using System.Collections.Generic;
 
 namespace ConvNeuralNetwork
 {
@@ -9,7 +8,10 @@ namespace ConvNeuralNetwork
 
         private int kernel_size;
         private int stride;
-        List<Location>[] loc_list;
+
+        // Location of maximum values in output for each channel
+        private Location[][,] max_locations;
+
         #endregion
 
         #region Constructors
@@ -19,7 +21,6 @@ namespace ConvNeuralNetwork
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
 
-            // Initialize output
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;
             int f = Kernel_Size;
@@ -28,17 +29,21 @@ namespace ConvNeuralNetwork
 
             int out_size_r = (in_r - f + 2 * p) / s + 1;
             int out_size_c = (in_c - f + 2 * p) / s + 1;
-            this.Output = new Matrix[this.Input.Length];
-            for (int i = 0; i < this.Input.Length; i++)
-            {
-                this.Output[i] = new Matrix(out_size_r, out_size_c);
-            }
 
-            // Initialize output_d_E
+            this.Output = new Matrix[this.Input.Length];
             this.Output_d_E = new Matrix[this.Input.Length];
+            this.max_locations = new Location[this.Input.Length][,];
+            
             for (int i = 0; i < this.Input.Length; i++)
             {
+                // Initialize output
+                this.Output[i] = new Matrix(out_size_r, out_size_c);
+
+                // Initialize output_d_E
                 this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
+
+                // Initialize max_locations
+                max_locations[i] = new Location[out_size_r, out_size_c];
             }
         }
 
@@ -51,14 +56,7 @@ namespace ConvNeuralNetwork
         {
             base.FeedForward();
 
-            //recreating everytime because we dont want to add more than we need
-            loc_list = new List<Location>[Input.Length];
-            for (int i = 0; i < loc_list.Length; i++)
-            {
-                loc_list[i] = new List<Location>();
-            }
-
-            for (int index = 0; index < Input.Length; index++)
+            for (int ch = 0; ch < Input.Length; ch++)
             {
                 int out_row_idx = 0, out_col_idx = 0;
 
@@ -67,20 +65,22 @@ namespace ConvNeuralNetwork
                     for (int c = 0; c < Input[0].cols && out_col_idx < Output[0].cols; c += stride, out_col_idx++)
                     {
                         double max = double.MinValue;
+
                         for (int i = 0; i < this.Kernel_Size; i++)
                         {
                             for (int j = 0; j < this.Kernel_Size; j++)
                             {
-                                if (Input[index][i + r, j + c] > max)
+                                if (Input[ch][i + r, j + c] > max)
                                 {
-                                    max = Input[index][i + r, j + c];
+                                    max = Input[ch][i + r, j + c];
                                     r = i + r;
                                     c = j + c;
                                 }
                             }
                         }
-                        loc_list[index].Add(new Location(r, c));
-                        Output[index][out_row_idx, out_col_idx] = max;
+
+                        max_locations[ch][out_row_idx, out_col_idx] = new Location(r, c);
+                        Output[ch][out_row_idx, out_col_idx] = max;
                     }             
                 }
             }
@@ -92,19 +92,12 @@ namespace ConvNeuralNetwork
 
             for (int ch = 0; ch < this.Input.Length; ch++)
             {
-                //in the list of locations
-                int k = 0;
-                Location location = loc_list[ch][k];
-
                 for (int i = 0; i < Output[ch].rows; i++)
                 {
                     for (int j = 0; j < Output[ch].cols; j++)
                     {
-                        InputLayer.Output_d_E[ch][location.r, location.c] = Output[ch][i, j];
-                        k++;
-
-                        if (k < loc_list[ch].Count)
-                            location = loc_list[ch][k];
+                        Location max = max_locations[ch][i, j];
+                        InputLayer.Output_d_E[ch][max.r, max.c] = Output[ch][i, j];
                     }
                 }
             }           

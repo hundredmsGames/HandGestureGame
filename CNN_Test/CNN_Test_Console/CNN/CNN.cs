@@ -355,6 +355,7 @@ namespace ConvNeuralNetwork
                 {
                     prev_layer_d_E[location.r, location.c] = m_pool[i, j];
                     k++;
+                    
                     if (k < loc_list.Count)
                         location = loc_list[k];
                 }
