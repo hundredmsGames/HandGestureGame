@@ -36,9 +36,9 @@ namespace ConvNeuralNetwork
                     case "[net]":
                         if (descriptions.Count == 0)
                             currDesc.layerType = LayerType.INPUT;
-
+                        else
                         // otherwise throw exception
-
+                        throw new WrongLayerException("There can be only one input layer!!!!");
                         continue;
 
                     case "[convolutional]":
@@ -111,7 +111,8 @@ namespace ConvNeuralNetwork
 
                     default:
                         // Config parser exception
-                        break;
+                        throw new ConfigParserException("token is not recognizeable...TOKEN : " + param);
+                        
                 }
             }
 
