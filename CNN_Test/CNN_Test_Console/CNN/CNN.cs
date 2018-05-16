@@ -4,98 +4,39 @@ using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
-    // TODO: Maybe they should be in another file. CNN_Structs ? I don't know.
-   
-
     partial class CNN
     {
-        #region Configuration Variables
-
-        private int l1_kernel_size;
-        private int l1_stride;
-
-        private int l2_kernel_size;
-        private int l2_stride;
-
-        private int l3_kernel_size;
-        private int l3_stride;
-
-        private int l4_kernel_size;
-        private int l4_stride;
-
-        private int l5_kernel_size;
-        private int l5_stride;
-
-        private int fcnn_hidden_neurons;
-        private int fcnn_output_neurons;
-
-        private double learning_rate;
-
-        Func<double, double> activation;
-        Func<double, double> derOfActivation;
-
-        #endregion
-
         #region Variables
 
-        Layer[] layers;
-        int nextLayerIndex=0;
+        private Layer[] layers;
 
-        // Input Matrix
-        private Matrix input;
+        private int nextLayerIndex;
 
-        // Kernel (filter) of layer1
-        private Matrix l1_kernel;
+        private float learningRate;
 
-        // Kernel (filter) of layer2
-        private Matrix l2_kernel;
-
-        // Feature Map of layer1
-        private Matrix l1_fmap;
-
-        // Feature Map of layer2
-        private Matrix l2_fmap;
-
-        // Max Pooling Map of layer2
-        private Matrix l3_mpool;
-
-        private List<Location> l3_mpool_list;
-
-        private Matrix l4_relu;
-
-        private Matrix cnn_out;
-
-        FullyConLayer fcnn;
-
-        private Matrix targetMatrix;
-
-        public Matrix Target
-        {
-            get { return targetMatrix; }
-            set { targetMatrix = value; }
-        }
-
+        private Matrix target; 
 
         #endregion
 
         #region Constructors
 
-        public CNN()
+        public CNN(int layers, float learningRate)
         {
             // We are deserializing config file at the top of the constructor
-            Deserialize();
+            LayerDescription[] descriptions = DeserializeConfig();
 
-            // Randomize kernel
-            l1_kernel = new Matrix(l1_kernel_size, l1_kernel_size);
-            l1_kernel.Randomize();
+            for(int i = 0; i < descriptions.Length; i++)
+            {
+                NewLayer(descriptions[i]);
+            }
 
-            l2_kernel = new Matrix(l2_kernel_size, l2_kernel_size);
-            l2_kernel.Randomize();
-
-            l3_mpool_list = new List<Location>();
+            // First layer index is 0.
+            nextLayerIndex = 0;
         }
 
         #endregion
+
+        #region Methods
 
         public void NewLayer(LayerDescription description)
         {
@@ -142,160 +83,37 @@ namespace ConvNeuralNetwork
             this.nextLayerIndex++;
         }
 
-        #region Training
+        #endregion
 
-        public void Train(Matrix _input, Matrix _target)
+        #region Properties
+
+        public Layer[] Layers
         {
-            cnn_out = FeedForward(_input);
-
-            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_out);
-
-            //Console.WriteLine("\nFCNN Input\n");
-            //Console.WriteLine(inputDataforFCNN.ToString());
-
-            if (fcnn == null)
-            {
-                fcnn = new FullyConLayer(
-                    inputDataforFCNN.rows * inputDataforFCNN.cols,
-                    fcnn_hidden_neurons,
-                    fcnn_output_neurons,
-                    learning_rate,
-                    FullyConLayer.Sigmoid,
-                    FullyConLayer.DerSigmoid
-                );
-            }
-
-            //Matrix cnno_d_E = fcnn.Train(inputDataforFCNN, _target);
-            //cnno_d_E = Matrix.IncreaseToTwoDimension(cnno_d_E, cnn_out.rows, cnn_out.cols);
-
-            //Console.WriteLine("\ncnno_d_E\n");
-            //Console.WriteLine(cnno_d_E.ToString());
-
-           // BackPropagation(cnno_d_E);
+            get { return layers; }
+            set { layers = value; }
         }
 
-        public Matrix Predict(Matrix _input)
+        public int NextLayerIndex
         {
-            cnn_out = FeedForward(_input);
-
-            Matrix inputDataforFCNN = Matrix.DecreaseToOneDimension(cnn_out);
-
-            // writing input data to console
-            //Console.WriteLine("\nFCNN Input\n");
-            //Console.WriteLine(inputDataforFCNN.ToString());
-
-            if (fcnn == null)
-            {
-                fcnn = new FullyConLayer(
-                    inputDataforFCNN.rows * inputDataforFCNN.cols,
-                    fcnn_hidden_neurons,
-                    fcnn_output_neurons,
-                    learning_rate,
-                    FullyConLayer.Sigmoid,
-                    FullyConLayer.DerSigmoid
-                );
-            }
-
-            return null;// fcnn.FeedForward(inputDataforFCNN);
+            get { return nextLayerIndex; }
+            set { nextLayerIndex = value; }
         }
 
-        private Matrix FeedForward(Matrix _input)
+        public float LearningRate
         {
-            this.input = _input;
-
-            // (W−F+2P)/S+1
-            int r_w = this.input.rows;
-            int c_w = this.input.cols;
-            int f = l1_kernel_size;
-            int p = 0;
-            int s = l1_stride;
-
-            l1_fmap = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
-
-            Convolve(this.input, l1_fmap, l1_kernel, null, DotProduct, l1_kernel_size, l1_stride);
-
-            //Console.WriteLine("Input\n");
-            //Console.WriteLine(this.input.ToString());
-            //Console.WriteLine("Kernel1\n");
-            //Console.WriteLine(l1_kernel.ToString());
-            //Console.WriteLine("FeatureMap1\n");
-            //Console.WriteLine(f_map1.ToString());
-
-            r_w = l1_fmap.rows;
-            c_w = l1_fmap.cols;
-            f = l2_kernel_size;
-            p = 0;
-            s = l2_stride;
-
-            l2_fmap = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
-
-            Convolve(l1_fmap, l2_fmap, l2_kernel, null, DotProduct, l2_kernel_size, l2_stride);
-
-            r_w = l2_fmap.rows;
-            c_w = l2_fmap.cols;
-            f = l3_kernel_size;
-            p = 0;
-            s = l3_stride;
-
-            l3_mpool = new Matrix((r_w - f + 2 * p) / s + 1, (c_w - f + 2 * p) / s + 1);
-
-            Convolve(l2_fmap, l3_mpool, null, l3_mpool_list, MaxPooling, l3_kernel_size, l3_stride);
-
-            //Console.WriteLine("\nMax Pooling1\n");
-            //Console.WriteLine(m_pool1.ToString());
-
-            //Console.WriteLine("\nMax Pooling1 List\n");
-            //foreach (Location l in m_pool1_list)
-            //    Console.WriteLine(l.r + ", " + l.c);
-
-            l4_relu = new Matrix(l3_mpool.rows, l3_mpool.cols);
-            l4_relu = Matrix.Map(l3_mpool, activation);
-
-            //Console.WriteLine("\nReLu1\n");
-            //Console.WriteLine(relu1.ToString());
-
-            return l4_relu;
+            get { return learningRate; }
+            set { learningRate = value; }
         }
 
-        private void BackPropagation(Matrix cnno_d_E)
+        public Matrix Target
         {
-            Matrix l2_mpool_d_cnno = Matrix.Map(l3_mpool, derOfActivation);
-
-            //Console.WriteLine("\nl2_mpool_d_cnno\n");
-            //Console.WriteLine(l2_mpool_d_cnno.ToString());
-
-
-            Matrix l3_mpool_d_E = Matrix.Multiply(cnno_d_E, l2_mpool_d_cnno);
-
-            //Console.WriteLine("\nl2_mpool_d_E\n");
-            //Console.WriteLine(l3_mpool_d_E.ToString());
-
-
-            Matrix l2_fmap_d_E = DerOfMaxPooling(l3_mpool_list, l3_mpool_d_E, l2_fmap.rows, l2_fmap.cols);
-
-            //Console.WriteLine("\nl2_fmap_d_E\n");
-            //Console.WriteLine(l2_fmap_d_E.ToString());
-
-            Matrix l1_fmap_d_E = new Matrix(l1_fmap.rows, l1_fmap.cols);
-            Matrix l2_kernel_d_E = DerOfConv(l1_fmap, l2_fmap_d_E, l2_kernel_size, l2_stride, l2_kernel, l1_fmap_d_E);
-
-            l2_kernel = l2_kernel - (learning_rate * l2_kernel_d_E);
-
-            Matrix l1_kernel_d_E = DerOfConv(input, l1_fmap_d_E, l1_kernel_size, l1_stride);
-
-            //Console.WriteLine("\nl1_kernel_d_E\n");
-            //Console.WriteLine(l1_kernel_d_E.ToString());
-            //Console.WriteLine("\ninput_d_E\n");
-            //Console.WriteLine(input_d_E.ToString());
-
-            l1_kernel = l1_kernel - (learning_rate * l1_kernel_d_E);
-            //Console.WriteLine("\nl1_kernel\n");
-            //Console.WriteLine(l1_kernel.ToString());
+            get { return target; }
+            set { target = value; }
         }
 
         #endregion
 
-        #region Helper Methods
+        #region OLD METHODS (WILL BE DELETED)
 
         private static void Convolve(Matrix input, Matrix output, Matrix kernel, List<Location> loc_list,
             Func<int, int, Matrix, Matrix, List<Location>, int, int, int, double> func, int kernel_size,
@@ -404,22 +222,6 @@ namespace ConvNeuralNetwork
             }
 
             return kernel_d_E;
-        }
-
-        #endregion
-
-        #region Activation Function (ReLu)
-
-        private static double ReLu(double x)
-        {
-
-            return Math.Max(x, 0);
-        }
-
-        private static double DerOfReLu(double x)
-        {
-
-            return (x > 0) ? 1.0 : 0.0;
         }
 
         #endregion

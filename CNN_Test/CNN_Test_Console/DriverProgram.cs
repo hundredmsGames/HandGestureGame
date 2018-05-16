@@ -11,33 +11,10 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            Location[,,] max_locations = new Location[3, 2, 2];
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    for (int x = 0; x < 2; x++)
-                    {
-                        max_locations[i, j, x].c = 3;
-                        max_locations[i, j, x].r = 3;
-                    }
-                }
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    for (int x = 0; x < 2; x++)
-                    {
-                        Console.Write(max_locations[i, j, x].r  + " : " + max_locations[i, j, x].c +"\t");
-                    }
-                    Console.WriteLine();
-                }
-                Console.WriteLine("\n\n");
-            }
 
-                        Console.ReadLine();
         }
+
+        /* OLD TEST METHODS
 
         static void CNN_OverfittingTest()
         {
@@ -136,6 +113,8 @@ namespace CNN_Test_Console
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
         }
       
+        */
+
         static void ProgressBar(int currentValue,int currentCount,int maxCount,double timePassed=0)
         {
             Console.CursorVisible = false;

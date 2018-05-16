@@ -17,19 +17,20 @@ namespace ConvNeuralNetwork
             c = _c;
         }
     }
+
     struct LayerDescription
     {
-        //input desc
+        // input desc
         public int width;
         public int height;
         public int channels;
 
-        //conv & pool desc
+        // conv & pool desc
         public int kernel_size;
         public int stride;
         public int padding;
 
-        //fcnn
+        // fc layer
         public int hiddenNeuronsCount;
         public int inputNeuronsCount;
         public int outputNeuronsCount;
@@ -38,8 +39,6 @@ namespace ConvNeuralNetwork
         public Func<double, double> activationFunc;
         public Func<double, double> derofActivationFunc;
 
-
         public LayerType layerType;
-
     }
 }

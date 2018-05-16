@@ -49,7 +49,6 @@ namespace ConvNeuralNetwork
 
         #endregion
 
-
         #region Methods
 
         public override void FeedForward()
