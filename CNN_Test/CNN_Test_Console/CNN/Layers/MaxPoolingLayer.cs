@@ -68,7 +68,31 @@ namespace ConvNeuralNetwork
         public override void Backpropagation()
         {
             base.Backpropagation();
+            Matrix[] prev_layer_d_E = new Matrix[this.Input.Length];
+            for (int i = 0; i < this.Input.Length; i++)
+            {
+                prev_layer_d_E[i] = new Matrix(((Input[0].rows - kernel_size)/stride + 1),(Input[0].cols - kernel_size) / stride + 1);
+            }
+            for (int index = 0; index < this.Input.Length; index++)
+            {
 
+                //in the list of locations
+                int k = 0;
+
+                Location location = loc_list[index][k];
+                for (int i = 0; i < Output[index].rows; i++)
+                {
+                    for (int j = 0; j < Output[index].cols; j++)
+                    {
+                        prev_layer_d_E[index][location.r, location.c] = Output[index][i, j];
+                        k++;
+                        if (k < loc_list[index].Count)
+                            location = loc_list[index][k];
+                    }
+                }
+
+            }
+           
         }
 
         #endregion
