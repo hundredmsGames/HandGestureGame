@@ -38,6 +38,7 @@ namespace ConvNeuralNetwork
         // fc layer
         public int hiddens;
         public int outputs;
+        public ActivationType activationHidden;
 
         public LayerType layerType;
 

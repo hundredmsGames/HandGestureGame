@@ -47,6 +47,7 @@
     <Compile Include="CNN\CNN_Exceptions.cs" />
     <Compile Include="CNN\CNN.cs" />
     <Compile Include="CNN\CNN_ConfigParser.cs" />
+    <Compile Include="CNN\FCNN.cs" />
     <Compile Include="CNN\Layers\ConvLayer.cs" />
     <Compile Include="CNN\Layers\InputLayer.cs" />
     <Compile Include="CNN\Structures.cs" />

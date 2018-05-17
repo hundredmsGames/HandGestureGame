@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using ConvNeuralNetwork;
 using MatrixLib;
+using FullyConnectedNN;
 
 namespace CNN_Test_Console
 {
@@ -11,6 +12,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
+            //FCNN fcnn = new FCNN(2, 3, 2, 0.01f, FCNN.Sigmoid, FCNN.DerSigmoid);
+            //fcnn.FeedForward(new Matrix(new float[] { 2, 3 }));
             CNN cnn = new CNN();
 
             Console.ReadLine();

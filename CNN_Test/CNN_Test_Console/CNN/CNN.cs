@@ -23,16 +23,23 @@ namespace ConvNeuralNetwork
         public CNN()
         {
             // We are deserializing config file at the top of the constructor
-            Description[] descriptions = DeserializeConfig();
+            //Description[] descriptions = DeserializeConfig();
 
-            for(int i = 0; i < descriptions.Length; i++)
-            {
-                // NewLayer(descriptions[i]);
-                Console.WriteLine(descriptions[i].ToString());
-            }
+            //for(int i = 0; i < descriptions.Length; i++)
+            //{
+            //    // NewLayer(descriptions[i]);
+            //    Console.WriteLine(descriptions[i].ToString());
+            //}
 
-            // First layer index is 0.
-            nextLayerIndex = 0;
+            //// First layer index is 0.
+            //nextLayerIndex = 0;
+            FullyConLayer fullyConLayer = new FullyConLayer(new int[] { 2, 3, 2 }, ActivationType.SIGMOID, ActivationType.SIGMOID);
+            fullyConLayer.Network = this;
+            this.learningRate = 0.01f;
+            fullyConLayer.Input = new Matrix[1];
+
+            fullyConLayer.Input[0] = new Matrix(new float[] { 2, 3 });
+            fullyConLayer.FeedForward();
         }
 
         #endregion
@@ -64,7 +71,7 @@ namespace ConvNeuralNetwork
                     break;
                 case LayerType.FULLY_CONNECTED:
                     int inputNeurons = prevLayer.Output.GetLength(0) * prevLayer.Output.GetLength(1) * prevLayer.Output.GetLength(2);
-                    newLayer = new FullyConLayer(inputNeurons, description.hiddens, description.outputs, description.activation);
+                   // newLayer = new FullyConLayer(inputNeurons, description.hiddens, description.outputs, description.activation);
                     break;
                 default:
                     // TODO: Undefined Layer Exception

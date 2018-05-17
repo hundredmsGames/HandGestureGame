@@ -3,93 +3,70 @@ using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
-	 class FullyConLayer : Layer
-	{
+    class FullyConLayer : Layer
+    {
         #region Variables
 
         private int inputNodes;
-		private int hiddenNodes;
-		private int outputNodes;
+        private int[] hidLayers;
+        private int outputNodes;
 
-        private Matrix weights_ih;
-        private Matrix weights_ho;
-        private Matrix bias_h;
-        private Matrix bias_o;
+        private Matrix[] weights;
+        private Matrix[] biases;
 
-        private Matrix outs_out;
-        private Matrix out_hid;
+        private Matrix[] layerOutputs;
 
-        private Func<float, float> activation;
-        private Func<float, float> derOfActivation;
+        private Func<float, float> activationHidden;
+        private Func<float, float> derOfActivationHidden;
 
+        private Func<float, float> activationOutput;
+        private Func<float, float> derOfActivationOutput;
         #endregion
 
         #region Constructors
 
-        public FullyConLayer(int inputNodes, int hiddenNodes, int outputNodes,
-            ActivationType activation) : base(LayerType.FULLY_CONNECTED)
+        public FullyConLayer(int[] layerTop, ActivationType activationHidden, ActivationType activationOutput) : base(LayerType.FULLY_CONNECTED)
         {
-			this.inputNodes  = inputNodes;
-			this.hiddenNodes = hiddenNodes;
-			this.outputNodes = outputNodes;
-		
-			weights_ih = new Matrix(hiddenNodes, inputNodes);
-			weights_ho = new Matrix(outputNodes, hiddenNodes);
-			weights_ih.Randomize();
-			weights_ho.Randomize();
+            hidLayers = new int[layerTop.Length - 2];
+            weights = new Matrix[layerTop.Length - 1];
+            biases = new Matrix[layerTop.Length - 1];
+            layerOutputs = new Matrix[layerTop.Length - 1];
 
-			bias_h = new Matrix(this.hiddenNodes, 1);
-			bias_o = new Matrix(this.outputNodes, 1);
-			bias_h.Randomize();
-			bias_o.Randomize();
-
-            switch(activation)
+            this.inputNodes = layerTop[0];
+            this.outputNodes = layerTop[layerTop.Length - 1];
+            for (int i = 0; i < layerTop.Length - 2; i++)
             {
-                case ActivationType.RELU:
-                    this.activation = ActivationFunctions.ReLu;
-                    this.derOfActivation = ActivationFunctions.DerOfReLu;
-                    break;
-
-                case ActivationType.SIGMOID:
-                    this.activation = ActivationFunctions.Sigmoid;
-                    this.derOfActivation = ActivationFunctions.DerOfSigmoid;
-                    break;
-
-                case ActivationType.TANH:
-                    this.activation = ActivationFunctions.Tanh;
-                    this.derOfActivation = ActivationFunctions.DerOfTanh;
-                    break;
-
-                case ActivationType.SOFTMAX:
-                    break;
-
-                default:
-                    // Undefined activation func exception
-                    break;
-                
+                this.hidLayers[i] = layerTop[i + 1];
             }
-		}
+            
+            weights[0] = new Matrix(hidLayers[0], inputNodes);
+            biases[0] = new Matrix(hidLayers[0], 1);
+            weights[weights.Length - 1] = new Matrix(outputNodes, hidLayers[hidLayers.Length - 1]);
+            biases[biases.Length - 1] = new Matrix(outputNodes, 1);
 
-        // Copy Constructor
-		public FullyConLayer(FullyConLayer nn) : base(LayerType.FULLY_CONNECTED)
-        {
-			this.inputNodes  = nn.inputNodes;
-			this.hiddenNodes = nn.hiddenNodes;
-			this.outputNodes = nn.outputNodes;
+            for (int i = 1; i <= weights.Length - 2; i++)
+            {
+                weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
+                biases[i] = new Matrix(hidLayers[i], 1);
+            }
+            
+            for (int i = 0; i < weights.Length; i++)
+            {
+                weights[i].Randomize();
+                biases[i].Randomize();
+            }
+            
+            Tuple<Func<float, float>, Func<float, float>> hiddenFuncs, outputFuncs;
+            hiddenFuncs= ActivationFunctions.GetActivationFuncs(activationHidden);
+            outputFuncs = ActivationFunctions.GetActivationFuncs(activationOutput);
 
-			this.weights_ih = new Matrix(nn.weights_ih);
-			this.weights_ho = new Matrix(nn.weights_ho);
-			this.bias_h     = new Matrix(nn.bias_h);
-			this.bias_o     = new Matrix(nn.bias_o);
-
-            this.Input    = nn.Input;
-            this.outs_out = nn.outs_out;
-            this.out_hid  = nn.out_hid;
-
-            this.activation      = nn.activation;
-            this.derOfActivation = nn.derOfActivation;
-		}
-
+            //set activation funcs
+            this.activationHidden = hiddenFuncs.Item1;
+            this.derOfActivationHidden = hiddenFuncs.Item2;
+            this.activationOutput = outputFuncs.Item1;
+            this.derOfActivationOutput = outputFuncs.Item2;
+        }
+        
         #endregion
 
         #region Training Methods
@@ -97,108 +74,84 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
-            this.out_hid = this.weights_ih * this.Input[0];
-            this.out_hid += this.bias_h;
-            this.out_hid.Map(activation);
+            for (int i = 0; i < layerOutputs.Length; i++)
+            {
+                if (i == 0)
+                    layerOutputs[i] = weights[i] * Input[0];
+                else
+                    layerOutputs[i] = weights[i] * layerOutputs[i - 1];
 
-            // Generating the output's output.
-            this.outs_out = this.weights_ho * this.out_hid;
-            this.outs_out += this.bias_o;
-            this.outs_out.Map(activation);
+                layerOutputs[i] += biases[i];
 
-            this.OutputLayer.Input[0] = this.outs_out;
+                if (i == layerOutputs.Length - 1)
+                    layerOutputs[i].Map(activationOutput);
+                else
+                    layerOutputs[i].Map(activationHidden);
+
+            }
+
+            Console.WriteLine(layerOutputs[layerOutputs.Length - 1].ToString());
+            if(OutputLayer != null)
+                this.OutputLayer.Input[0] = layerOutputs[layerOutputs.Length - 1];
+            
         }
         public override void Backpropagation()
         {
-           
             base.Backpropagation();
 
-            //hardcoded for rightnow figure  it out how to get this
-            Matrix target = Network.Target;
+            Matrix net_d_E = null;
+            Matrix w_d_net = null;
+            Matrix w_d_E = null;
+            Matrix out_d_net = null;
+            Matrix out_d_E = null;
 
-            // Backpropagation Process
-            Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, derOfActivation));
+            for(int i = weights.Length - 1; i >= 0; i--)
+            {
+                if (i == weights.Length - 1)
+                    net_d_E = Matrix.Multiply(layerOutputs[i] - Network.Target, Matrix.Map(layerOutputs[i], derOfActivationOutput));
+                else
+                    net_d_E = Matrix.Multiply(out_d_E, Matrix.Map(layerOutputs[i - 1], derOfActivationHidden));
 
-            Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
+                w_d_net = Matrix.Map(layerOutputs[i - 1], DerNetFunc);
 
-            Matrix wo_d_E = neto_d_E * Matrix.Transpose(wo_d_neto);
+                w_d_E = net_d_E * Matrix.Transpose(w_d_net);
 
-            Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
+                out_d_net = Matrix.Map(weights[i], DerNetFunc);
 
-            weights_ho = weights_ho - (this.Network.LearningRate * wo_d_E);
+                weights[i] = weights[i] - (this.Network.LearningRate * w_d_E);
 
+                out_d_E = Matrix.Transpose(out_d_net) * net_d_E;
+            }
 
-            Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
-
-            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActivation);
-
-            Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
-
-            Matrix wh_d_neth = Matrix.Map(Input[0], DerNetFunc);
-
-            Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
-
-            Matrix in_d_neth = Matrix.Map(weights_ih, DerNetFunc);
-
-            Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
-
-            weights_ih = weights_ih - (this.Network.LearningRate * Matrix.Transpose(wh_d_E));
-
-            //
+            this.InputLayer.Output_d_E[0] = out_d_E;
         }
-       
-        
+
+
         /// <summary>
         /// this one for debugging
         /// </summary>
         /// <param name="target"></param>
         /// <param name="output"></param>
         /// <returns></returns>
-		public double GetError(Matrix target, Matrix output)
-		{
-			// Calculate the error 
-			// ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
-
-			Matrix outputError = target - output;
-			outputError = Matrix.Multiply(outputError, outputError) / 2f;
-
-			double error = 0.0;
-			for(int i = 0; i < outputError.data.GetLength(0); i++)
-				error += outputError.data[i, 0];
-
-			return error;
-		}
-
-        #endregion
-
-        #region Activation Funcs and Derivatives
-
-        public static double Tanh(double x)
+        public double GetError(Matrix target, Matrix output)
         {
-            return 2f / (1f + Math.Exp(-2f * x)) - 1f;
+            // Calculate the error 
+            // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
+
+            Matrix outputError = target - output;
+            outputError = Matrix.Multiply(outputError, outputError) / 2f;
+
+            double error = 0.0;
+            for (int i = 0; i < outputError.data.GetLength(0); i++)
+                error += outputError.data[i, 0];
+
+            return error;
         }
 
-        public static double DerTanh(double x)
+        public static float DerNetFunc(float x)
         {
-            double tanh = Tanh(x);
-
-            return 1f - tanh * tanh;
+            return x;
         }
-
-        public static double Sigmoid(double x)
-		{
-			return 1.0 / (1.0 + Math.Exp(-x));
-		}
-
-		public static float DerSigmoid(float x)
-		{
-			return x * (1f - x);
-		}
-
-		public static float DerNetFunc(float x)
-		{
-			return x;
-		}
 
         #endregion
     }
