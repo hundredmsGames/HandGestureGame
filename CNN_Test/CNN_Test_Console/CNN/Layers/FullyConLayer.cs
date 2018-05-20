@@ -52,10 +52,12 @@ namespace ConvNeuralNetwork
             
             for (int i = 0; i < weights.Length; i++)
             {
-                weights[i].Randomize();
+                weights[i].Randomize(); 
+            }
+            for (int i = 0; i < weights.Length; i++)
+            {
                 biases[i].Randomize();
             }
-            
             Tuple<Func<float, float>, Func<float, float>> hiddenFuncs, outputFuncs;
             hiddenFuncs= ActivationFunctions.GetActivationFuncs(activationHidden);
             outputFuncs = ActivationFunctions.GetActivationFuncs(activationOutput);
@@ -90,7 +92,7 @@ namespace ConvNeuralNetwork
 
             }
 
-            Console.WriteLine(layerOutputs[layerOutputs.Length - 1].ToString());
+           Console.WriteLine(layerOutputs[layerOutputs.Length - 1].ToString());
             if(OutputLayer != null)
                 this.OutputLayer.Input[0] = layerOutputs[layerOutputs.Length - 1];
             
@@ -105,25 +107,34 @@ namespace ConvNeuralNetwork
             Matrix out_d_net = null;
             Matrix out_d_E = null;
 
-            for(int i = weights.Length - 1; i >= 0; i--)
+            for(int i = layerOutputs.Length - 1; i >= 0; i--)
             {
-                if (i == weights.Length - 1)
+                //multiply der of lost function respect to activation and derofactivation respect to input
+                if (i == layerOutputs.Length - 1)
                     net_d_E = Matrix.Multiply(layerOutputs[i] - Network.Target, Matrix.Map(layerOutputs[i], derOfActivationOutput));
                 else
-                    net_d_E = Matrix.Multiply(out_d_E, Matrix.Map(layerOutputs[i - 1], derOfActivationHidden));
+                    net_d_E = Matrix.Multiply(out_d_E, Matrix.Map(layerOutputs[i], derOfActivationHidden));
 
-                w_d_net = Matrix.Map(layerOutputs[i - 1], DerNetFunc);
+                //der of input to current layer respect to weight
+                if (i != 0)
+                    w_d_net = Matrix.Map(layerOutputs[i - 1], DerNetFunc);
+                else
+                    w_d_net = Matrix.Map(Input[0], DerNetFunc);
 
-                w_d_E = net_d_E * Matrix.Transpose(w_d_net);
+                    w_d_E = net_d_E  * Matrix.Transpose(w_d_net);
+              
 
                 out_d_net = Matrix.Map(weights[i], DerNetFunc);
 
                 weights[i] = weights[i] - (this.Network.LearningRate * w_d_E);
 
                 out_d_E = Matrix.Transpose(out_d_net) * net_d_E;
+                
             }
-
-            this.InputLayer.Output_d_E[0] = out_d_E;
+           
+            
+            Console.WriteLine(out_d_E.ToString());
+            //this.InputLayer.Output_d_E[0] = out_d_E;
         }
 
 

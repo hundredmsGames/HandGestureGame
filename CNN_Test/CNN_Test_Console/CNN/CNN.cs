@@ -25,7 +25,7 @@ namespace ConvNeuralNetwork
             // We are deserializing config file at the top of the constructor
             //Description[] descriptions = DeserializeConfig();
 
-            //for(int i = 0; i < descriptions.Length; i++)
+            //for (int i = 0; i < descriptions.Length; i++)
             //{
             //    // NewLayer(descriptions[i]);
             //    Console.WriteLine(descriptions[i].ToString());
@@ -34,12 +34,13 @@ namespace ConvNeuralNetwork
             //// First layer index is 0.
             //nextLayerIndex = 0;
             FullyConLayer fullyConLayer = new FullyConLayer(new int[] { 2, 3, 2 }, ActivationType.SIGMOID, ActivationType.SIGMOID);
-            fullyConLayer.Network = this;
-            this.learningRate = 0.01f;
             fullyConLayer.Input = new Matrix[1];
-
             fullyConLayer.Input[0] = new Matrix(new float[] { 2, 3 });
+            Target = new Matrix(new float[] { 0, 1 });
+            fullyConLayer.Network = this;
             fullyConLayer.FeedForward();
+            fullyConLayer.Backpropagation();
+
         }
 
         #endregion

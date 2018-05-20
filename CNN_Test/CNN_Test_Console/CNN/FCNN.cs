@@ -73,11 +73,11 @@ namespace FullyConnectedNN
             return this.outs_out;
         }
 
-        private Matrix Backpropagation(Matrix target)
+        public Matrix Backpropagation(Matrix target)
         {
             // Backpropagation Process
             Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
-
+           
             Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
             Matrix wo_d_E = neto_d_E * Matrix.Transpose(wo_d_neto);
@@ -85,12 +85,12 @@ namespace FullyConnectedNN
             Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
             weights_ho = weights_ho - (learningRate * wo_d_E);
-
+           
 
             Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
 
             Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);
-
+            
             Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
 
             Matrix wh_d_neth = Matrix.Map(input, DerNetFunc);
@@ -102,6 +102,7 @@ namespace FullyConnectedNN
             Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
 
             weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
+          
             Console.WriteLine(in_d_E.ToString());
             return in_d_E;
         }

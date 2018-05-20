@@ -85,8 +85,56 @@ namespace ConvNeuralNetwork
         public override void Backpropagation()
         {
             base.Backpropagation();
-        }
+            //for every filter we need to do this
+            Matrix output_d_E = this.Output_d_E[0];
 
+            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+            for (int ch = 0; ch < Filters; ch++)
+            {
+                for (int i = 0, r = 0; r < output_d_E.rows && i < Input[ch].rows; i += stride, r++)
+                {
+                    for (int j = 0, c = 0; c < output_d_E.cols && j < Input[ch].cols; j += stride, c++)
+                    {
+                        for (int p = 0; p < kernel_size; p++)
+                        {
+                            for (int q = 0; q < kernel_size; q++)
+                            {
+                                kernel_d_E[p, q] += output_d_E[r, c] * Input[ch][i + p, j + q];
+
+                                //if (LayerIndex == 0)
+                                //    input_d_E[i + p, j + q] += kernels[ch][p, q] * output_d_E[r, c];
+                            }
+                        }
+                    }
+                } 
+            }
+
+        }
+        private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride, Matrix kernel = null, Matrix input_d_E = null)
+        {
+            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+
+            // i and j are inputs' indexes
+            // r and c are output_d_Es' indexes
+            for (int i = 0, r = 0; r < output_d_E.rows && i < input.rows; i += stride, r++)
+            {
+                for (int j = 0, c = 0; c < output_d_E.cols && j < input.cols; j += stride, c++)
+                {
+                    for (int p = 0; p < kernel_size; p++)
+                    {
+                        for (int q = 0; q < kernel_size; q++)
+                        {
+                            kernel_d_E[p, q] += output_d_E[r, c] * input[i + p, j + q];
+
+                            if (input_d_E != null)
+                                input_d_E[i + p, j + q] += kernel[p, q] * output_d_E[r, c];
+                        }
+                    }
+                }
+            }
+
+            return kernel_d_E;
+        }
         #endregion
 
         #region Properties
