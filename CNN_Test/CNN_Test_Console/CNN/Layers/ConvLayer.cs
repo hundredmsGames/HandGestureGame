@@ -22,7 +22,7 @@ namespace ConvNeuralNetwork
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
             this.Padding = padding;
-
+            
             // Initialize kernel
             kernels = new Matrix[filters];
             for (int i = 0; i < filters; i++)
@@ -36,8 +36,19 @@ namespace ConvNeuralNetwork
             {
                 // padding = default value
             }
+            
+            
+        }
 
+        #endregion
+
+        #region Methods
+        public override void Initialize()
+        {
+            base.Initialize();
             // Initialize output
+            this.Input = InputLayer.Output;
+
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;
             int f = Kernel_Size;
@@ -53,13 +64,10 @@ namespace ConvNeuralNetwork
             }
         }
 
-        #endregion
-
-        #region Methods
-
         public override void FeedForward()
         {
             base.FeedForward();
+           
 
             int out_idx_r = 0;
             int out_idx_c = 0;
@@ -101,13 +109,15 @@ namespace ConvNeuralNetwork
                             {
                                 kernel_d_E[p, q] += output_d_E[r, c] * Input[ch][i + p, j + q];
 
-                                //if (LayerIndex == 0)
-                                //    input_d_E[i + p, j + q] += kernels[ch][p, q] * output_d_E[r, c];
+                                if (LayerIndex != 0)
+                                    this.InputLayer.Output_d_E[ch][i + p, j + q] += kernels[ch][p, q] * output_d_E[r, c];
                             }
                         }
                     }
-                } 
+                }
+                this.kernels[ch] = this.kernels[ch] - (Network.LearningRate * kernel_d_E);
             }
+            
 
         }
         private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride, Matrix kernel = null, Matrix input_d_E = null)

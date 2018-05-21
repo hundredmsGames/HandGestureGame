@@ -14,7 +14,7 @@ namespace ConvNeuralNetwork
 
         private float learningRate;
 
-        private Matrix target; 
+        private Matrix target;
 
         #endregion
 
@@ -23,23 +23,18 @@ namespace ConvNeuralNetwork
         public CNN()
         {
             // We are deserializing config file at the top of the constructor
-            //Description[] descriptions = DeserializeConfig();
+            Description[] descriptions = DeserializeConfig();
+            layers = new Layer[descriptions.Length];
 
-            //for (int i = 0; i < descriptions.Length; i++)
-            //{
-            //    // NewLayer(descriptions[i]);
-            //    Console.WriteLine(descriptions[i].ToString());
-            //}
+            for (int i = 0; i < descriptions.Length; i++)
+            {
+                NewLayer(descriptions[i]);
+                Console.WriteLine(descriptions[i].ToString());
+            }
 
-            //// First layer index is 0.
-            //nextLayerIndex = 0;
-            FullyConLayer fullyConLayer = new FullyConLayer(new int[] { 2, 3, 2 }, ActivationType.SIGMOID, ActivationType.SIGMOID);
-            fullyConLayer.Input = new Matrix[1];
-            fullyConLayer.Input[0] = new Matrix(new float[] { 2, 3 });
-            Target = new Matrix(new float[] { 0, 1 });
-            fullyConLayer.Network = this;
-            fullyConLayer.FeedForward();
-            fullyConLayer.Backpropagation();
+            // First layer index is 0.
+            nextLayerIndex = 0;
+
 
         }
 
@@ -50,13 +45,6 @@ namespace ConvNeuralNetwork
         public void NewLayer(Description description)
         {
             Layer newLayer = null;
-            Layer prevLayer;
-
-            //if this is the first layer and this is not an input layer so we have a problem
-            if (nextLayerIndex == 0 && description.layerType != LayerType.INPUT)
-                throw new WrongLayerException("You have to start with Input Layer");
-            else
-                prevLayer = layers[this.nextLayerIndex - 1];
 
             switch (description.layerType)
             {
@@ -64,28 +52,46 @@ namespace ConvNeuralNetwork
                     // FIXME: We have a problem here. Probably we need to hold input array in description
                     newLayer = new InputLayer(description.width, description.height, description.channels);
                     break;
+
                 case LayerType.CONVOLUTIONAL:
-                    newLayer = new ConvLayer(description.channels, description.kernelSize, description.stride, description.padding);
+                    newLayer = new ConvLayer(description.filters, description.kernelSize, description.stride, description.padding);
                     break;
+
                 case LayerType.MAXPOOLING:
                     newLayer = new MaxPoolingLayer(description.kernelSize, description.stride);
                     break;
-                case LayerType.FULLY_CONNECTED:
-                    int inputNeurons = prevLayer.Output.GetLength(0) * prevLayer.Output.GetLength(1) * prevLayer.Output.GetLength(2);
-                   // newLayer = new FullyConLayer(inputNeurons, description.hiddens, description.outputs, description.activation);
-                    break;
-                default:
-                    // TODO: Undefined Layer Exception
-                    break;
-            }
 
+                case LayerType.FULLY_CONNECTED:
+                    //lenght-2 because lenght-1 is FCNN layer so we are getting null ref exception
+                    Layer previousLayer = layers[layers.Length - 2];
+                    int inputNeurons = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
+                    //FIXME:think about topology and find a better way to handle it
+                    newLayer = new FullyConLayer(new int[] { inputNeurons, description.hiddens, description.outputs }, description.activationHidden, description.activation);
+                    break;
+
+                default:
+                    throw new UndefinedLayerException("This is not a recognizeable LayerType " + description.layerType.ToString() + " You might be writing it wrong to config file");
+            }
             //every layer knows the CNN ref
             newLayer.Network = this;
 
-            prevLayer.OutputLayer = newLayer;
-            newLayer.InputLayer = prevLayer;
-            newLayer.LayerIndex = this.nextLayerIndex;
+            if (nextLayerIndex == 0)
+            {
+                //if this is the first layer and this is not an input layer so we have a problem
+                if (description.layerType != LayerType.INPUT)
+                    throw new WrongLayerException("You have to start with Input Layer");
+            }
+            else
+            {
+                Layer prevLayer = layers[this.nextLayerIndex - 1];
+                prevLayer.OutputLayer = newLayer;
+                newLayer.InputLayer = prevLayer;
 
+            }
+
+            newLayer.Initialize();
+
+            newLayer.LayerIndex = this.nextLayerIndex;
             this.layers[this.nextLayerIndex] = newLayer;
             this.nextLayerIndex++;
         }
@@ -180,7 +186,7 @@ namespace ConvNeuralNetwork
                 {
                     prev_layer_d_E[location.r, location.c] = m_pool[i, j];
                     k++;
-                    
+
                     if (k < loc_list.Count)
                         location = loc_list[k];
                 }

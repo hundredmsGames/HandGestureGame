@@ -20,6 +20,12 @@ namespace ConvNeuralNetwork
         {
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
+            
+            
+        }
+        public override void Initialize()
+        {
+            base.Initialize();
 
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;
@@ -35,7 +41,7 @@ namespace ConvNeuralNetwork
 
             // Initialize max_locations
             this.max_locations = new Location[this.Input.Length, out_size_r, out_size_c];
-            
+
             for (int i = 0; i < this.Input.Length; i++)
             {
                 // Initialize output
@@ -43,10 +49,9 @@ namespace ConvNeuralNetwork
 
                 // Initialize output_d_E
                 this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
-                
             }
+       
         }
-
         #endregion
 
         #region Methods
@@ -54,7 +59,7 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
-
+            
             for (int ch = 0; ch < Input.Length; ch++)
             {
                 int out_row_idx = 0, out_col_idx = 0;

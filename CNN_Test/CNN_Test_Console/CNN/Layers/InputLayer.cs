@@ -24,12 +24,18 @@ namespace ConvNeuralNetwork
             this.width    = width;
             this.height   = height;
             this.channels = channels;
+          
         }
 
         #endregion
 
         #region Methods
-
+        public override void Initialize()
+        {
+            base.Initialize();
+            this.Output = new Matrix[channels];
+            this.Output[0] = new Matrix(height, width);
+        }
         public override void FeedForward(Matrix[] input)
         {
             base.FeedForward(input);

@@ -48,6 +48,11 @@ namespace ConvNeuralNetwork
         {
 
         }
+        virtual public void Initialize()
+        {
+            if(InputLayer != null)
+                this.Input = InputLayer.Output;
+        }
         
         #endregion
 
