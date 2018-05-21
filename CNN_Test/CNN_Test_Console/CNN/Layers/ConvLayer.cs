@@ -47,7 +47,7 @@ namespace ConvNeuralNetwork
         {
             base.Initialize();
             // Initialize output
-            this.Input = InputLayer.Output;
+           // this.Input = InputLayer.Output;
 
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;

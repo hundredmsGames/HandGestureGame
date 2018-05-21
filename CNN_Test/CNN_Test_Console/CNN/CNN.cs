@@ -7,7 +7,7 @@ namespace ConvNeuralNetwork
     partial class CNN
     {
         #region Variables
-
+      
         private Layer[] layers;
 
         private int nextLayerIndex;
@@ -41,6 +41,28 @@ namespace ConvNeuralNetwork
         #endregion
 
         #region Methods
+        public void Train(Matrix _input,Matrix _target)
+        {
+            target = _target;
+            layers[0].FeedForward(_input);
+            for (int i = 1; i < layers.Length; i++)
+            {
+                layers[i].FeedForward();
+            }
+            for (int i = layers.Length-1; i >= 0; i--)
+            {
+                layers[i].Backpropagation();
+            }
+        }
+        public Matrix Predict(Matrix _input)
+        {
+            layers[0].FeedForward(_input);
+            for (int i = 1; i < layers.Length; i++)
+            {
+                layers[i].FeedForward();
+            }
+            return layers[layers.Length - 1].Output[0];
+        }
 
         public void NewLayer(Description description)
         {
@@ -123,6 +145,8 @@ namespace ConvNeuralNetwork
             get { return target; }
             set { target = value; }
         }
+
+       
 
         #endregion
 

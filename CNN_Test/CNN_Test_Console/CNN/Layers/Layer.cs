@@ -50,8 +50,25 @@ namespace ConvNeuralNetwork
         }
         virtual public void Initialize()
         {
-            if(InputLayer != null)
-                this.Input = InputLayer.Output;
+            //if(InputLayer != null)
+            //    this.Input = InputLayer.Output;
+            switch (this.layerType)
+            {
+                case LayerType.INPUT:
+                    Output_d_E = new Matrix[1];
+                    break;
+                case LayerType.CONVOLUTIONAL:
+                    Output_d_E = new Matrix[(this as ConvLayer).Filters];
+                    break;
+                case LayerType.MAXPOOLING:
+                    Output_d_E = new Matrix[1];
+                    break;
+                case LayerType.FULLY_CONNECTED:
+                    Output_d_E = new Matrix[1];
+                    break;
+                default:
+                    break;
+            }
         }
         
         #endregion
@@ -79,7 +96,30 @@ namespace ConvNeuralNetwork
         public Layer InputLayer
         {
             get { return inputLayer; }
-            set { inputLayer = value; }
+            //inputlayers output is the input of ours
+            set { inputLayer = value;
+              
+                if (LayerType!=LayerType.FULLY_CONNECTED)
+                    Input = value.Output;
+            else
+                {
+                    Input = new Matrix[1];
+                    
+                    Input[0] = new Matrix(value.Output.Length * value.Output[0].rows * value.Output[0].cols, 1);
+                    int currIndex = 0;
+                    for (int i = 0; i < value.Output.Length; i++)
+                    {
+                        for (int r = 0; r < value.Output[0].rows; r++)
+                        {
+                            for (int c = 0; c < value.Output[0].cols; c++)
+                            {
+                                Input[0][currIndex,0] = value.Output[i][r, c];
+                            }
+                        }
+                    }
+                }
+
+            }
         }
 
         public Layer OutputLayer

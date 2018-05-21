@@ -49,7 +49,11 @@ namespace ConvNeuralNetwork
                 weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
                 biases[i] = new Matrix(hidLayers[i], 1);
             }
-            
+            for (int i = 0; i < layerOutputs.Length; i++)
+            {
+                layerOutputs[i] = new Matrix(layerTop[i],1);
+            }
+
             for (int i = 0; i < weights.Length; i++)
             {
                 weights[i].Randomize(); 
@@ -68,11 +72,15 @@ namespace ConvNeuralNetwork
             this.activationOutput = outputFuncs.Item1;
             this.derOfActivationOutput = outputFuncs.Item2;
         }
-        
+
         #endregion
 
         #region Training Methods
-
+        public override void Initialize()
+        {
+            base.Initialize();
+           
+        }
         public override void FeedForward()
         {
             base.FeedForward();
@@ -134,7 +142,9 @@ namespace ConvNeuralNetwork
            
             
             Console.WriteLine(out_d_E.ToString());
-            //this.InputLayer.Output_d_E[0] = out_d_E;
+
+            //we need a preprocessing here
+            this.InputLayer.Output_d_E[0] = out_d_E;
         }
 
 
