@@ -38,6 +38,9 @@ namespace ConvNeuralNetwork
             {
                 this.hidLayers[i] = layerTop[i + 1];
             }
+
+            this.Input = new Matrix[1];
+            this.Input[0] = new Matrix(inputNodes, 1);
             
             weights[0] = new Matrix(hidLayers[0], inputNodes);
             biases[0] = new Matrix(hidLayers[0], 1);
@@ -49,6 +52,7 @@ namespace ConvNeuralNetwork
                 weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
                 biases[i] = new Matrix(hidLayers[i], 1);
             }
+
             for (int i = 0; i < layerOutputs.Length; i++)
             {
                 layerOutputs[i] = new Matrix(layerTop[i],1);
@@ -58,10 +62,12 @@ namespace ConvNeuralNetwork
             {
                 weights[i].Randomize(); 
             }
+
             for (int i = 0; i < weights.Length; i++)
             {
                 biases[i].Randomize();
             }
+
             Tuple<Func<float, float>, Func<float, float>> hiddenFuncs, outputFuncs;
             hiddenFuncs= ActivationFunctions.GetActivationFuncs(activationHidden);
             outputFuncs = ActivationFunctions.GetActivationFuncs(activationOutput);
@@ -76,14 +82,20 @@ namespace ConvNeuralNetwork
         #endregion
 
         #region Training Methods
+
         public override void Initialize()
         {
             base.Initialize();
            
         }
+
         public override void FeedForward()
         {
             base.FeedForward();
+
+            // Decrease dimension to 1
+            DecreaseDimension(this.Input[0], InputLayer.Output);
+
             for (int i = 0; i < layerOutputs.Length; i++)
             {
                 if (i == 0)
@@ -97,14 +109,12 @@ namespace ConvNeuralNetwork
                     layerOutputs[i].Map(activationOutput);
                 else
                     layerOutputs[i].Map(activationHidden);
-
             }
 
-           Console.WriteLine(layerOutputs[layerOutputs.Length - 1].ToString());
             if(OutputLayer != null)
-                this.OutputLayer.Input[0] = layerOutputs[layerOutputs.Length - 1];
-            
+                this.OutputLayer.Input[0] = layerOutputs[layerOutputs.Length - 1];            
         }
+
         public override void Backpropagation()
         {
             base.Backpropagation();
@@ -117,34 +127,64 @@ namespace ConvNeuralNetwork
 
             for(int i = layerOutputs.Length - 1; i >= 0; i--)
             {
-                //multiply der of lost function respect to activation and derofactivation respect to input
+                // Multiply, derivative of lost function w.r.t output and
+                // derivative of output (activation) w.r.t net
                 if (i == layerOutputs.Length - 1)
                     net_d_E = Matrix.Multiply(layerOutputs[i] - Network.Target, Matrix.Map(layerOutputs[i], derOfActivationOutput));
                 else
                     net_d_E = Matrix.Multiply(out_d_E, Matrix.Map(layerOutputs[i], derOfActivationHidden));
 
-                //der of input to current layer respect to weight
+
+                //der of input to current layer w.r.t weight
                 if (i != 0)
                     w_d_net = Matrix.Map(layerOutputs[i - 1], DerNetFunc);
                 else
                     w_d_net = Matrix.Map(Input[0], DerNetFunc);
 
-                    w_d_E = net_d_E  * Matrix.Transpose(w_d_net);
-              
 
+                w_d_E = net_d_E * Matrix.Transpose(w_d_net);
+              
                 out_d_net = Matrix.Map(weights[i], DerNetFunc);
 
                 weights[i] = weights[i] - (this.Network.LearningRate * w_d_E);
 
                 out_d_E = Matrix.Transpose(out_d_net) * net_d_E;
-                
             }
-           
-            
-            Console.WriteLine(out_d_E.ToString());
 
-            //we need a preprocessing here
-            this.InputLayer.Output_d_E[0] = out_d_E;
+            // Increase dimension back
+            IncreaseDimension(InputLayer.Output_d_E, out_d_E);
+        }
+
+        private void IncreaseDimension(Matrix[] increasedMatrix, Matrix oldMatrix)
+        {
+            int currIndex = 0;
+
+            for (int ch = 0; ch < increasedMatrix.Length; ch++)
+            {
+                for (int r = 0; r < increasedMatrix[0].rows; r++)
+                {
+                    for (int c = 0; c < increasedMatrix[0].cols; c++)
+                    {
+                        increasedMatrix[ch][r, c] = oldMatrix[currIndex++, 0];
+                    }
+                }
+            }
+        }
+
+        private void DecreaseDimension(Matrix decreasedMatrix, Matrix[] oldMatrix)
+        {
+            int currIndex = 0;
+
+            for (int ch = 0; ch < oldMatrix.Length; ch++)
+            {
+                for (int r = 0; r < oldMatrix[0].rows; r++)
+                {
+                    for (int c = 0; c < oldMatrix[0].cols; c++)
+                    {
+                        decreasedMatrix[currIndex++, 0] = oldMatrix[ch][r, c];
+                    }
+                }
+            }
         }
 
 

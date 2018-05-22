@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using ConvNeuralNetwork;
 using MatrixLib;
-using FullyConnectedNN;
 
 namespace CNN_Test_Console
 {
@@ -11,6 +10,14 @@ namespace CNN_Test_Console
         static int cursorTop = 0;
 
         static void Main(string[] args)
+        {
+            //CNN cnn = new CNN();
+            CNN_Test();
+
+            Console.ReadLine();
+        }
+
+        public static void CNN_Test()
         {
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
             CNN cnn = new CNN();

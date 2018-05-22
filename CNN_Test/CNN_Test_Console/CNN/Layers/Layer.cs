@@ -96,30 +96,7 @@ namespace ConvNeuralNetwork
         public Layer InputLayer
         {
             get { return inputLayer; }
-            //inputlayers output is the input of ours
-            set { inputLayer = value;
-              
-                if (LayerType!=LayerType.FULLY_CONNECTED)
-                    Input = value.Output;
-            else
-                {
-                    Input = new Matrix[1];
-                    
-                    Input[0] = new Matrix(value.Output.Length * value.Output[0].rows * value.Output[0].cols, 1);
-                    int currIndex = 0;
-                    for (int i = 0; i < value.Output.Length; i++)
-                    {
-                        for (int r = 0; r < value.Output[0].rows; r++)
-                        {
-                            for (int c = 0; c < value.Output[0].cols; c++)
-                            {
-                                Input[0][currIndex,0] = value.Output[i][r, c];
-                            }
-                        }
-                    }
-                }
-
-            }
+            set { inputLayer = value; }
         }
 
         public Layer OutputLayer

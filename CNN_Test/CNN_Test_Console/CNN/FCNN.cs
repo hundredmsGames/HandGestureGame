@@ -58,6 +58,9 @@ namespace FullyConnectedNN
 
         public Matrix FeedForward(Matrix input)
         {
+            //Console.WriteLine(weights_ih.ToString());
+            //Console.WriteLine(weights_ho.ToString());
+
             // Generating the hidden outputs.
             this.input = input;
             this.out_hid = this.weights_ih * this.input;
@@ -69,7 +72,8 @@ namespace FullyConnectedNN
             this.outs_out += this.bias_o;
             this.outs_out.Map(activationFunc);
 
-            Console.WriteLine(outs_out.ToString());
+            //Console.WriteLine("outs_out");
+            //Console.WriteLine(outs_out.ToString());
             return this.outs_out;
         }
 
@@ -77,7 +81,7 @@ namespace FullyConnectedNN
         {
             // Backpropagation Process
             Matrix neto_d_E = Matrix.Multiply(outs_out - target, Matrix.Map(outs_out, DerSigmoid));
-           
+
             Matrix wo_d_neto = Matrix.Map(out_hid, DerNetFunc);
 
             Matrix wo_d_E = neto_d_E * Matrix.Transpose(wo_d_neto);
@@ -85,25 +89,27 @@ namespace FullyConnectedNN
             Matrix outh_d_neto = Matrix.Map(weights_ho, DerNetFunc);
 
             weights_ho = weights_ho - (learningRate * wo_d_E);
-           
 
-            Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;
+            Console.WriteLine(weights_ho.ToString());
 
-            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);
+
+            Matrix outh_d_E = Matrix.Transpose(outh_d_neto) * neto_d_E;//2x1
+
+            Matrix neth_d_outh = Matrix.Map(out_hid, derOfActFunc);//2x1
             
-            Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);
+            Matrix neth_d_E = Matrix.Multiply(outh_d_E, neth_d_outh);//2x1
 
-            Matrix wh_d_neth = Matrix.Map(input, DerNetFunc);
+            Matrix wh_d_neth = Matrix.Map(input, DerNetFunc);//3x1
 
-            Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);
+            Matrix wh_d_E = wh_d_neth * Matrix.Transpose(neth_d_E);//3x2, expected, 2x3
 
-            Matrix in_d_neth = Matrix.Map(weights_ih, DerNetFunc);
+            Matrix in_d_neth = Matrix.Map(weights_ih, DerNetFunc);//2x3
 
             Matrix in_d_E = Matrix.Transpose(in_d_neth) * neth_d_E;
 
             weights_ih = weights_ih - (learningRate * Matrix.Transpose(wh_d_E));
           
-            Console.WriteLine(in_d_E.ToString());
+            //Console.WriteLine(in_d_E.ToString());
             return in_d_E;
         }
 

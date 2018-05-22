@@ -34,8 +34,6 @@ namespace ConvNeuralNetwork
 
             // First layer index is 0.
             nextLayerIndex = 0;
-
-
         }
 
         #endregion
