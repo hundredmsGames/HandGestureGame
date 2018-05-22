@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MatrixLib;
+﻿using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
@@ -24,23 +19,31 @@ namespace ConvNeuralNetwork
             this.width    = width;
             this.height   = height;
             this.channels = channels;
-          
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            Input = new Matrix[channels];
+            Output = new Matrix[channels];
+            for (int i = 0; i < channels; i++)
+            {
+                Input[i] = new Matrix(width, height);
+                Output[i] = new Matrix(width, height);
+            }
         }
 
         #endregion
 
         #region Methods
-        public override void Initialize()
-        {
-            base.Initialize();
-            this.Output = new Matrix[channels];
-            this.Output[0] = new Matrix(height, width);
-        }
+
         public override void FeedForward(Matrix[] input)
         {
             base.FeedForward(input);
 
-            //DO WHAT YOU NEED TO DO
+            Input = input;
+            Output = input;
             OutputLayer.Input = input;
         }
 

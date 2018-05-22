@@ -11,8 +11,10 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            //CNN cnn = new CNN();
-            CNN_Test();
+            CNN cnn = new CNN();                // OK
+            cnn.Predict(new Matrix(28, 28));    // Error
+
+            //CNN_Test();
 
             Console.ReadLine();
         }

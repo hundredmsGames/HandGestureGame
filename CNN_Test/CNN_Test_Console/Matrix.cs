@@ -16,7 +16,7 @@ namespace MatrixLib
 
         #region Constructors
 
-        public Matrix (int rows, int cols)
+        public Matrix(int rows, int cols)
 		{
 			this.rows = rows;
 			this.cols = cols;
@@ -248,6 +248,13 @@ namespace MatrixLib
             }
 
             return neg;
+        }
+
+        public void FillZero()
+        {
+            for (int i = 0; i < this.rows; i++)
+                for (int j = 0; j < this.cols; j++)
+                    this[i, j] = 0f;
         }
 
         #endregion

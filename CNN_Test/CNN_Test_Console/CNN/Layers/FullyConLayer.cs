@@ -21,6 +21,7 @@ namespace ConvNeuralNetwork
 
         private Func<float, float> activationOutput;
         private Func<float, float> derOfActivationOutput;
+
         #endregion
 
         #region Constructors
@@ -39,34 +40,23 @@ namespace ConvNeuralNetwork
                 this.hidLayers[i] = layerTop[i + 1];
             }
 
+            for (int i = 0; i < layerOutputs.Length; i++)
+            {
+                layerOutputs[i] = new Matrix(layerTop[i], 1);
+            }
+
             this.Input = new Matrix[1];
             this.Input[0] = new Matrix(inputNodes, 1);
-            
+            this.Output = new Matrix[1];
+            this.Output[0] = new Matrix(outputNodes, 1);
+            this.Output_d_E = new Matrix[1];
+            this.Output_d_E[0] = new Matrix(outputNodes, 1);
+
             weights[0] = new Matrix(hidLayers[0], inputNodes);
             biases[0] = new Matrix(hidLayers[0], 1);
             weights[weights.Length - 1] = new Matrix(outputNodes, hidLayers[hidLayers.Length - 1]);
             biases[biases.Length - 1] = new Matrix(outputNodes, 1);
 
-            for (int i = 1; i <= weights.Length - 2; i++)
-            {
-                weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
-                biases[i] = new Matrix(hidLayers[i], 1);
-            }
-
-            for (int i = 0; i < layerOutputs.Length; i++)
-            {
-                layerOutputs[i] = new Matrix(layerTop[i],1);
-            }
-
-            for (int i = 0; i < weights.Length; i++)
-            {
-                weights[i].Randomize(); 
-            }
-
-            for (int i = 0; i < weights.Length; i++)
-            {
-                biases[i].Randomize();
-            }
 
             Tuple<Func<float, float>, Func<float, float>> hiddenFuncs, outputFuncs;
             hiddenFuncs= ActivationFunctions.GetActivationFuncs(activationHidden);
@@ -79,15 +69,30 @@ namespace ConvNeuralNetwork
             this.derOfActivationOutput = outputFuncs.Item2;
         }
 
-        #endregion
-
-        #region Training Methods
-
         public override void Initialize()
         {
             base.Initialize();
-           
+
+            for (int i = 1; i <= weights.Length - 2; i++)
+            {
+                weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
+                biases[i] = new Matrix(hidLayers[i], 1);
+            }
+
+            for (int i = 0; i < weights.Length; i++)
+            {
+                weights[i].Randomize();
+            }
+
+            for (int i = 0; i < weights.Length; i++)
+            {
+                biases[i].Randomize();
+            }
         }
+
+        #endregion
+
+        #region Training Methods
 
         public override void FeedForward()
         {
@@ -111,8 +116,11 @@ namespace ConvNeuralNetwork
                     layerOutputs[i].Map(activationHidden);
             }
 
-            if(OutputLayer != null)
-                this.OutputLayer.Input[0] = layerOutputs[layerOutputs.Length - 1];            
+            if (OutputLayer != null)
+            {
+                Output[0] = layerOutputs[layerOutputs.Length - 1];
+                OutputLayer.Input[0] = Output[0];
+            }
         }
 
         public override void Backpropagation()
@@ -186,7 +194,6 @@ namespace ConvNeuralNetwork
                 }
             }
         }
-
 
         /// <summary>
         /// this one for debugging

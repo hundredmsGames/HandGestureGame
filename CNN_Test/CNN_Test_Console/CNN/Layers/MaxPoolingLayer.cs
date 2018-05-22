@@ -20,12 +20,15 @@ namespace ConvNeuralNetwork
         {
             this.Kernel_Size = kernel_size;
             this.Stride = stride;
-            
-            
         }
+
         public override void Initialize()
         {
             base.Initialize();
+
+            Input = InputLayer.Output;
+            Output = new Matrix[Input.Length];
+            Output_d_E = new Matrix[Input.Length];
 
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;
@@ -36,8 +39,6 @@ namespace ConvNeuralNetwork
             int out_size_r = (in_r - f + 2 * p) / s + 1;
             int out_size_c = (in_c - f + 2 * p) / s + 1;
 
-            this.Output = new Matrix[this.Input.Length];
-            this.Output_d_E = new Matrix[this.Input.Length];
 
             // Initialize max_locations
             this.max_locations = new Location[this.Input.Length, out_size_r, out_size_c];
@@ -49,9 +50,9 @@ namespace ConvNeuralNetwork
 
                 // Initialize output_d_E
                 this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
-            }
-       
+            } 
         }
+        
         #endregion
 
         #region Methods
@@ -59,7 +60,7 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
-            
+
             for (int ch = 0; ch < Input.Length; ch++)
             {
                 int out_row_idx = 0, out_col_idx = 0;
@@ -88,11 +89,16 @@ namespace ConvNeuralNetwork
                     }             
                 }
             }
+
+            this.OutputLayer.Input = Output;
         }
 
         public override void Backpropagation()
         {
             base.Backpropagation();
+
+            for (int i = 0; i < InputLayer.Output_d_E.Length; i++)
+                InputLayer.Output_d_E[i].FillZero();
 
             for (int ch = 0; ch < this.Input.Length; ch++)
             {
@@ -100,8 +106,9 @@ namespace ConvNeuralNetwork
                 {
                     for (int j = 0; j < Output[ch].cols; j++)
                     {
-                        Location max = max_locations[ch,i, j];
-                        InputLayer.Output_d_E[ch][max.r, max.c] = Output[ch][i, j];
+                        Location max = max_locations[ch, i, j];
+                        if (i == max.r && j == max.c)
+                            InputLayer.Output_d_E[ch][i, j] = Output_d_E[ch][i, j];
                     }
                 }
             }           

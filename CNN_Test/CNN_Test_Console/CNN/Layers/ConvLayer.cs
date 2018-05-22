@@ -34,20 +34,19 @@ namespace ConvNeuralNetwork
             // Padding
             if(padding == -1)
             {
-                // padding = default value
+                // Padding is 0 by default.
+                padding = 0;
             }
-            
-            
         }
 
-        #endregion
-
-        #region Methods
         public override void Initialize()
         {
             base.Initialize();
+
             // Initialize output
-           // this.Input = InputLayer.Output;
+            this.Input = InputLayer.Output;
+            this.Output = new Matrix[filters];
+            this.Output_d_E = new Matrix[filters];
 
             int in_r = this.Input[0].rows;
             int in_c = this.Input[0].cols;
@@ -57,17 +56,20 @@ namespace ConvNeuralNetwork
 
             int out_size_r = (in_r - f + 2 * p) / s + 1;
             int out_size_c = (in_c - f + 2 * p) / s + 1;
-            this.Output = new Matrix[filters];
             for (int i = 0; i < filters; i++)
             {
                 this.Output[i] = new Matrix(out_size_r, out_size_c);
+                this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
             }
         }
 
+        #endregion
+
+        #region Methods
+
         public override void FeedForward()
         {
-            base.FeedForward();
-           
+            base.FeedForward();           
 
             int out_idx_r = 0;
             int out_idx_c = 0;
@@ -88,63 +90,41 @@ namespace ConvNeuralNetwork
                     }
                 }
             }
+
+            this.OutputLayer.Input = Output;
         }
 
         public override void Backpropagation()
         {
             base.Backpropagation();
-            //for every filter we need to do this
-            Matrix output_d_E = this.Output_d_E[0];
 
-            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+            Matrix kernel_d_E;         
+
             for (int ch = 0; ch < Filters; ch++)
             {
-                for (int i = 0, r = 0; r < output_d_E.rows && i < Input[ch].rows; i += stride, r++)
+                kernel_d_E = new Matrix(kernel_size, kernel_size);
+
+                for (int i = 0, r = 0; r < Output_d_E[ch].rows && i < Input[ch].rows; i += stride, r++)
                 {
-                    for (int j = 0, c = 0; c < output_d_E.cols && j < Input[ch].cols; j += stride, c++)
+                    for (int j = 0, c = 0; c < Output_d_E[ch].cols && j < Input[ch].cols; j += stride, c++)
                     {
                         for (int p = 0; p < kernel_size; p++)
                         {
                             for (int q = 0; q < kernel_size; q++)
                             {
-                                kernel_d_E[p, q] += output_d_E[r, c] * Input[ch][i + p, j + q];
+                                kernel_d_E[p, q] += Output_d_E[ch][r, c] * Input[ch][i + p, j + q];
 
                                 if (LayerIndex != 0)
-                                    this.InputLayer.Output_d_E[ch][i + p, j + q] += kernels[ch][p, q] * output_d_E[r, c];
+                                    this.InputLayer.Output_d_E[ch][i + p, j + q] += kernels[ch][p, q] * Output_d_E[ch][r, c];
                             }
                         }
                     }
                 }
+
                 this.kernels[ch] = this.kernels[ch] - (Network.LearningRate * kernel_d_E);
             }
-            
-
         }
-        private static Matrix DerOfConv(Matrix input, Matrix output_d_E, int kernel_size, int stride, Matrix kernel = null, Matrix input_d_E = null)
-        {
-            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
 
-            // i and j are inputs' indexes
-            // r and c are output_d_Es' indexes
-            for (int i = 0, r = 0; r < output_d_E.rows && i < input.rows; i += stride, r++)
-            {
-                for (int j = 0, c = 0; c < output_d_E.cols && j < input.cols; j += stride, c++)
-                {
-                    for (int p = 0; p < kernel_size; p++)
-                    {
-                        for (int q = 0; q < kernel_size; q++)
-                        {
-                            kernel_d_E[p, q] += output_d_E[r, c] * input[i + p, j + q];
-
-                            if (input_d_E != null)
-                                input_d_E[i + p, j + q] += kernel[p, q] * output_d_E[r, c];
-                        }
-                    }
-                }
-            }
-
-            return kernel_d_E;
-        }
         #endregion
 
         #region Properties

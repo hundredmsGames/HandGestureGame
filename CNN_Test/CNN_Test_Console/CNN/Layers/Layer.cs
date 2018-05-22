@@ -34,41 +34,22 @@ namespace ConvNeuralNetwork
 
         virtual public void FeedForward()
         {
-    
         }
+
         virtual public void FeedForward(Matrix input)
         {
-
         }
+
         virtual public void FeedForward(Matrix[] input)
         {
-
         }
+
         virtual public void Backpropagation()
         {
-
         }
+
         virtual public void Initialize()
         {
-            //if(InputLayer != null)
-            //    this.Input = InputLayer.Output;
-            switch (this.layerType)
-            {
-                case LayerType.INPUT:
-                    Output_d_E = new Matrix[1];
-                    break;
-                case LayerType.CONVOLUTIONAL:
-                    Output_d_E = new Matrix[(this as ConvLayer).Filters];
-                    break;
-                case LayerType.MAXPOOLING:
-                    Output_d_E = new Matrix[1];
-                    break;
-                case LayerType.FULLY_CONNECTED:
-                    Output_d_E = new Matrix[1];
-                    break;
-                default:
-                    break;
-            }
         }
         
         #endregion
