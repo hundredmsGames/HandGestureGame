@@ -80,15 +80,20 @@ namespace ConvNeuralNetwork
 
         public override void FeedForward()
         {
-            base.FeedForward();           
+            base.FeedForward();
 
-            int out_idx_r = 0;
-            int out_idx_c = 0;
+            Console.WriteLine(Input[0].ToString());
+            Console.WriteLine(kernels[0, 0].ToString());
+            Console.WriteLine(kernels[1, 0].ToString());
 
-            for (int filter_idx = 0; filter_idx < Filters; filter_idx++)
+            int out_idx_r, out_idx_c;
+
+            for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
             {
+                out_idx_r = 0;
                 for (int r = 0; r < Input[0].rows && out_idx_r < Output[0].rows; r += stride, out_idx_r++)
                 {
+                    out_idx_c = 0;
                     for (int c = 0; c < Input[0].cols && out_idx_c < Output[0].cols; c += stride, out_idx_c++)
                     {
                         for (int ch = 0; ch < Input.Length; ch++)
@@ -97,14 +102,16 @@ namespace ConvNeuralNetwork
                             {
                                 for (int j = 0; j < kernel_size; j++)
                                 {
-                                    Output[filter_idx][out_idx_r, out_idx_c] += Input[ch][r, c] * kernels[filter_idx, ch][i, j];
+                                    Output[fil_idx][out_idx_r, out_idx_c] += Input[ch][r + i, c + j] * kernels[fil_idx, ch][i, j];
                                 }
                             }
                         }
 
-                        Output[filter_idx][out_idx_r, out_idx_c] = activation(Output[filter_idx][out_idx_r, out_idx_c]);
+                        Output[fil_idx][out_idx_r, out_idx_c] = activation(Output[fil_idx][out_idx_r, out_idx_c]);
                     }
                 }
+
+                Console.WriteLine(Output[fil_idx].ToString());
             }
 
             this.OutputLayer.Input = Output;

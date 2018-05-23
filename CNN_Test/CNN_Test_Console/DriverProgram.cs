@@ -12,7 +12,18 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
             //CNN_Test();
-            CNN_OverfittingTest();
+            //CNN_OverfittingTest();
+            
+            CNN cnn = new CNN();
+
+            Matrix[] input = new Matrix[1];
+            input[0] = new Matrix(8, 8);
+            input[0].Randomize();
+
+            Matrix target = new Matrix(3, 1);
+            target.Randomize();
+
+            cnn.Train(input, target);
 
             Console.WriteLine("DONE");
             Console.ReadLine();
@@ -88,14 +99,13 @@ namespace CNN_Test_Console
             Console.ReadLine();
         }
 
-
         public static void CNN_OverfittingTest()
         {
             CNN cnn = new CNN();
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, 100);
 
-            int test_image_idx = 2;
+            int test_image_idx = 0;
             Matrix[] input = new Matrix[1];
             input[0] = new Matrix(digitImages[test_image_idx].pixels);
             Matrix target = new Matrix(10, 1);
@@ -105,7 +115,7 @@ namespace CNN_Test_Console
             for(int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
-
+               
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val,0,0);
             }
@@ -117,8 +127,6 @@ namespace CNN_Test_Console
 
             Console.WriteLine(digitImages[test_image_idx].ToString());
         }
-
-        
 
         static void ProgressBar(int currentValue,int currentCount,int maxCount,double timePassed=0)
         {
