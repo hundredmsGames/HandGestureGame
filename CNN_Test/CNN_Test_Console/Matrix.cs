@@ -10,7 +10,7 @@ namespace MatrixLib
 		public int cols;
 		public float[,] data;
 
-		static Random randomize = new Random(54565);
+		static Random randomize = new Random();
 
         #endregion
 

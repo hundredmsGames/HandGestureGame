@@ -11,6 +11,7 @@ namespace ConvNeuralNetwork
         private int[] hidLayers;
         private int outputNodes;
 
+        private Matrix fixedInput;
         private Matrix[] weights;
         private Matrix[] biases;
 
@@ -45,8 +46,6 @@ namespace ConvNeuralNetwork
                 layerOutputs[i] = new Matrix(layerTop[i], 1);
             }
 
-            this.Input = new Matrix[1];
-            this.Input[0] = new Matrix(inputNodes, 1);
             this.Output = new Matrix[1];
             this.Output[0] = new Matrix(outputNodes, 1);
             this.Output_d_E = new Matrix[1];
@@ -99,12 +98,12 @@ namespace ConvNeuralNetwork
             base.FeedForward();
 
             // Decrease dimension to 1
-            DecreaseDimension(this.Input[0], InputLayer.Output);
+            fixedInput = DecreaseDimension(Input);
 
             for (int i = 0; i < layerOutputs.Length; i++)
             {
                 if (i == 0)
-                    layerOutputs[i] = weights[i] * Input[0];
+                    layerOutputs[i] = weights[i] * fixedInput;
                 else
                     layerOutputs[i] = weights[i] * layerOutputs[i - 1];
 
@@ -119,6 +118,8 @@ namespace ConvNeuralNetwork
             if (OutputLayer != null)
             {
                 Output[0] = layerOutputs[layerOutputs.Length - 1];
+
+                OutputLayer.Input = new Matrix[1];
                 OutputLayer.Input[0] = Output[0];
             }
         }
@@ -147,7 +148,7 @@ namespace ConvNeuralNetwork
                 if (i != 0)
                     w_d_net = Matrix.Map(layerOutputs[i - 1], DerNetFunc);
                 else
-                    w_d_net = Matrix.Map(Input[0], DerNetFunc);
+                    w_d_net = Matrix.Map(fixedInput, DerNetFunc);
 
 
                 w_d_E = net_d_E * Matrix.Transpose(w_d_net);
@@ -160,15 +161,17 @@ namespace ConvNeuralNetwork
             }
 
             // Increase dimension back
-            IncreaseDimension(InputLayer.Output_d_E, out_d_E);
+            InputLayer.Output_d_E = IncreaseDimension(out_d_E);
         }
 
-        private void IncreaseDimension(Matrix[] increasedMatrix, Matrix oldMatrix)
+        private Matrix[] IncreaseDimension(Matrix oldMatrix)
         {
+            Matrix[] increasedMatrix = new Matrix[Input.Length];
             int currIndex = 0;
 
             for (int ch = 0; ch < increasedMatrix.Length; ch++)
             {
+                increasedMatrix[ch] = new Matrix(Input[0].rows, Input[0].cols);
                 for (int r = 0; r < increasedMatrix[0].rows; r++)
                 {
                     for (int c = 0; c < increasedMatrix[0].cols; c++)
@@ -177,12 +180,16 @@ namespace ConvNeuralNetwork
                     }
                 }
             }
+
+            return increasedMatrix;
         }
 
-        private void DecreaseDimension(Matrix decreasedMatrix, Matrix[] oldMatrix)
+        private Matrix DecreaseDimension(Matrix[] oldMatrix)
         {
-            int currIndex = 0;
+            int len = oldMatrix.Length * oldMatrix[0].rows * oldMatrix[0].cols;
+            Matrix decreasedMatrix = new Matrix(len, 1);
 
+            int currIndex = 0;
             for (int ch = 0; ch < oldMatrix.Length; ch++)
             {
                 for (int r = 0; r < oldMatrix[0].rows; r++)
@@ -193,6 +200,8 @@ namespace ConvNeuralNetwork
                     }
                 }
             }
+
+            return decreasedMatrix;
         }
 
         /// <summary>

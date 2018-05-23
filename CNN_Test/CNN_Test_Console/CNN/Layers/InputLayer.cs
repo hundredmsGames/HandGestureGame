@@ -25,12 +25,15 @@ namespace ConvNeuralNetwork
         {
             base.Initialize();
 
-            Input = new Matrix[channels];
-            Output = new Matrix[channels];
+            Input      = new Matrix[channels];
+            Output     = new Matrix[channels];
+            Output_d_E = new Matrix[channels];
+
             for (int i = 0; i < channels; i++)
             {
-                Input[i] = new Matrix(width, height);
-                Output[i] = new Matrix(width, height);
+                Input[i]      = new Matrix(width, height);
+                Output[i]     = new Matrix(width, height);
+                Output_d_E[i] = new Matrix(width, height);
             }
         }
 

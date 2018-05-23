@@ -11,17 +11,17 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN cnn = new CNN();                // OK
-            cnn.Predict(new Matrix(28, 28));    // Error
+            CNN_Test();
 
-            //CNN_Test();
-
+            Console.WriteLine("DONE");
             Console.ReadLine();
         }
 
         public static void CNN_Test()
         {
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
+            int training_count = digitImages.Length;
+
             CNN cnn = new CNN();
             Matrix input = new Matrix(28, 28);
             Matrix[] targets = new Matrix[10];
@@ -34,8 +34,6 @@ namespace CNN_Test_Console
                     targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
                 }
             }
-            int training_count = digitImages.Length;
-
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -48,7 +46,6 @@ namespace CNN_Test_Console
                     for (int k = 0; k < 28; k++)
                         input[j, k] = digitImages[i].pixels[j][k];
 
-
                 input.Normalize(0.0f, 255.0f, 0.0f, 1.0f);
                 cnn.Train(input, targets[digitImages[i].label]);
 
@@ -56,9 +53,10 @@ namespace CNN_Test_Console
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val, i, training_count, stopwatch.ElapsedMilliseconds / 1000.0);
             }
+
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
-            int correct_count = 0;
             int testing_count = digitImages.Length;
+            int correct_count = 0;
 
             Console.WriteLine("\nSystem has been trained.");
             Console.WriteLine("System is getting tested. You will see the results when it is done...\n");

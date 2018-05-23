@@ -98,11 +98,11 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Matrix kernel_d_E;         
+            Matrix kernel_d_E;
 
             for (int ch = 0; ch < Filters; ch++)
             {
-                kernel_d_E = new Matrix(kernel_size, kernel_size);
+                kernel_d_E = new Matrix(kernel_size, kernel_size);   
 
                 for (int i = 0, r = 0; r < Output_d_E[ch].rows && i < Input[ch].rows; i += stride, r++)
                 {
