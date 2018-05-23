@@ -8,7 +8,7 @@ D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Tes
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.exe.config
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.exe
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.pdb
-C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csprojResolveAssemblyReference.cache
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csproj.CoreCompileInputs.cache
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.exe
 C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.pdb
+C:\Users\sml_o\Documents\GitHub\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csprojAssemblyReference.cache

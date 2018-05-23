@@ -102,8 +102,9 @@ namespace ConvNeuralNetwork
 
             for (int ch = 0; ch < Filters; ch++)
             {
-                kernel_d_E = new Matrix(kernel_size, kernel_size);   
+                kernel_d_E = new Matrix(kernel_size, kernel_size);
 
+                
                 for (int i = 0, r = 0; r < Output_d_E[ch].rows && i < Input[ch].rows; i += stride, r++)
                 {
                     for (int j = 0, c = 0; c < Output_d_E[ch].cols && j < Input[ch].cols; j += stride, c++)

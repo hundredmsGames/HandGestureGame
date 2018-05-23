@@ -40,7 +40,7 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        public void Train(Matrix _input, Matrix _target)
+        public void Train(Matrix[] _input, Matrix _target)
         {
             target = _target;
 
@@ -52,7 +52,7 @@ namespace ConvNeuralNetwork
             }
         }
 
-        public Matrix Predict(Matrix _input)
+        public Matrix Predict(Matrix[] _input)
         {
             layers[0].FeedForward(_input);
             for (int i = 1; i < layers.Length; i++)

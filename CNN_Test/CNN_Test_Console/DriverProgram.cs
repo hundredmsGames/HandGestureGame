@@ -19,11 +19,12 @@ namespace CNN_Test_Console
 
         public static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training);
             int training_count = digitImages.Length;
 
             CNN cnn = new CNN();
-            Matrix input = new Matrix(28, 28);
+            Matrix[] input = new Matrix[1];
+            input[0]= new Matrix(28, 28);
             Matrix[] targets = new Matrix[10];
 
             for (int i = 0; i < 10; i++)
@@ -44,9 +45,9 @@ namespace CNN_Test_Console
             {
                 for (int j = 0; j < 28; j++)
                     for (int k = 0; k < 28; k++)
-                        input[j, k] = digitImages[i].pixels[j][k];
+                        input[0][j, k] = digitImages[i].pixels[j][k];
 
-                input.Normalize(0.0f, 255.0f, 0.0f, 1.0f);
+                input[0].Normalize(0.0f, 255.0f, 0.0f, 1.0f);
                 cnn.Train(input, targets[digitImages[i].label]);
 
                 //Y = (X-A)/(B-A) * (D-C) + C
@@ -66,9 +67,9 @@ namespace CNN_Test_Console
             {
                 for (int j = 0; j < 28; j++)
                     for (int k = 0; k < 28; k++)
-                        input[j, k] = digitImages[i].pixels[j][k];
+                        input[0][j, k] = digitImages[i].pixels[j][k];
 
-                input.Normalize(0.0f, 255.0f, 0.0f, 1.0f);
+                input[0].Normalize(0.0f, 255.0f, 0.0f, 1.0f);
                 Matrix ans = cnn.Predict(input);
 
                 if (ans.GetMaxRowIndex() == digitImages[i].label)
