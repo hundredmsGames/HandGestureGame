@@ -73,7 +73,7 @@ namespace ConvNeuralNetwork
                     break;
 
                 case LayerType.CONVOLUTIONAL:
-                    newLayer = new ConvLayer(description.filters, description.kernelSize, description.stride, description.padding);
+                    newLayer = new ConvLayer(description.filters, description.kernelSize, description.stride, description.activation, description.padding);
                     break;
 
                 case LayerType.MAXPOOLING:

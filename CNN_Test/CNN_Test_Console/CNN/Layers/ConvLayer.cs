@@ -1,4 +1,5 @@
-﻿using MatrixLib;
+﻿using System;
+using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
@@ -12,11 +13,14 @@ namespace ConvNeuralNetwork
         private int padding;
         private Matrix[,] kernels;
 
+        Func<float, float> activation;
+        Func<float, float> derOfActivation;
+
         #endregion
 
         #region Constructors
 
-        public ConvLayer(int filters, int kernel_size, int stride, int padding = -1) : base(LayerType.CONVOLUTIONAL)
+        public ConvLayer(int filters, int kernel_size, int stride, ActivationType activationType, int padding = -1) : base(LayerType.CONVOLUTIONAL)
         {
             this.Filters = filters;
             this.Kernel_Size = kernel_size;
@@ -29,6 +33,10 @@ namespace ConvNeuralNetwork
                 // Padding is 0 by default.
                 padding = 0;
             }
+
+            var activations = ActivationFunctions.GetActivationFuncs(activationType);
+            activation = activations.Item1;
+            derOfActivation = activations.Item2;
         }
 
         public override void Initialize()
@@ -93,6 +101,8 @@ namespace ConvNeuralNetwork
                                 }
                             }
                         }
+
+                        Output[filter_idx][out_idx_r, out_idx_c] = activation(Output[filter_idx][out_idx_r, out_idx_c]);
                     }
                 }
             }
@@ -120,10 +130,15 @@ namespace ConvNeuralNetwork
                             {
                                 for (int q = 0; q < kernel_size; q++)
                                 {
-                                    kernel_d_E[p, q] += Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
+                                    float derOfAct = derOfActivation(Output[fil_idx][r, c]);
+
+                                    kernel_d_E[p, q] += derOfAct * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
 
                                     if (LayerIndex != 0)
-                                        InputLayer.Output_d_E[ch][i + p, j + q] += kernels[fil_idx, ch][p, q] * Output_d_E[fil_idx][r, c];
+                                    {
+                                        InputLayer.Output_d_E[ch][i + p, j + q] +=
+                                            kernels[fil_idx, ch][p, q] * derOfAct * Output_d_E[fil_idx][r, c];
+                                    }
                                 }
                             }
                         }

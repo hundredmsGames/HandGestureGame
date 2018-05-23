@@ -55,12 +55,13 @@ namespace ConvNeuralNetwork
                 "kernelSize = {6}\n" +
                 "stride = {7}\n" +
                 "padding = {8}\n" +
-                "activation = {9}\n" +
-                "hiddens = {10}\n" +
-                "outputs = {11}\n" +
+                "activation_hidden = {9}\n" +
+                "activation = {10}\n" +
+                "hiddens = {11}\n" +
+                "outputs = {12}\n" +
                 "\n",
                 layerType, learningRate, width, height, channels, filters,
-                kernelSize, stride, padding, activation, hiddens, outputs
+                kernelSize, stride, padding, activationHidden, activation, hiddens, outputs
             );
 
             return ret;

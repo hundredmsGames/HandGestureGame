@@ -13,7 +13,7 @@ namespace ConvNeuralNetwork
                     return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.ReLu, ActivationFunctions.DerOfReLu);
                 case ActivationType.SIGMOID:
 
-                    return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.Sigmoid, ActivationFunctions.DerSigmoid);
+                    return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.Sigmoid, ActivationFunctions.DerOfSigmoid);
                 case ActivationType.SOFTMAX:
 
                     return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.Softmax, ActivationFunctions.DerOfSoftmax);
@@ -35,6 +35,7 @@ namespace ConvNeuralNetwork
         {
             return Math.Max(x, 0);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -62,7 +63,7 @@ namespace ConvNeuralNetwork
             return 1.0f / (1.0f + (float)Math.Exp(-x));
         }
 
-        public static float DerSigmoid(float x)
+        public static float DerOfSigmoid(float x)
         {
             return x * (1f - x);
         }

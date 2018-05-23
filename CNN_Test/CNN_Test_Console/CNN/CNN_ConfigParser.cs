@@ -97,6 +97,10 @@ namespace ConvNeuralNetwork
                         currDesc.stride = int.Parse(value);
                         continue;
 
+                    case "activation_hidden":
+                        currDesc.activationHidden = (ActivationType)Enum.Parse(typeof(ActivationType), value, true);
+                        continue;
+
                     case "activation":
                         currDesc.activation = (ActivationType) Enum.Parse(typeof(ActivationType), value, true);
                         continue;
