@@ -82,9 +82,9 @@ namespace ConvNeuralNetwork
         {
             base.FeedForward();
 
-            Console.WriteLine(Input[0].ToString());
-            Console.WriteLine(kernels[0, 0].ToString());
-            Console.WriteLine(kernels[1, 0].ToString());
+            //Console.WriteLine(Input[0].ToString());
+            //Console.WriteLine(kernels[0, 0].ToString());
+            //Console.WriteLine(kernels[1, 0].ToString());
 
             int out_idx_r, out_idx_c;
 
@@ -102,6 +102,7 @@ namespace ConvNeuralNetwork
                             {
                                 for (int j = 0; j < kernel_size; j++)
                                 {
+                                    //Console.WriteLine(Input[ch][r + i, c + j] + " - " + kernels[fil_idx, ch][i, j]);
                                     Output[fil_idx][out_idx_r, out_idx_c] += Input[ch][r + i, c + j] * kernels[fil_idx, ch][i, j];
                                 }
                             }
@@ -111,7 +112,7 @@ namespace ConvNeuralNetwork
                     }
                 }
 
-                Console.WriteLine(Output[fil_idx].ToString());
+                //Console.WriteLine(Output[fil_idx].ToString());
             }
 
             this.OutputLayer.Input = Output;

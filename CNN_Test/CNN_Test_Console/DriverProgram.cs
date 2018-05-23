@@ -13,7 +13,7 @@ namespace CNN_Test_Console
         {
             //CNN_Test();
             //CNN_OverfittingTest();
-            
+
             CNN cnn = new CNN();
 
             Matrix[] input = new Matrix[1];
