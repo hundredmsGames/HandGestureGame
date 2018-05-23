@@ -10,7 +10,7 @@ namespace ConvNeuralNetwork
         private int kernel_size;
         private int stride;
         private int padding;
-        private Matrix[] kernels;
+        private Matrix[,] kernels;
 
         #endregion
 
@@ -24,11 +24,14 @@ namespace ConvNeuralNetwork
             this.Padding = padding;
             
             // Initialize kernel
-            kernels = new Matrix[filters];
+            kernels = new Matrix[filters, Input.Length];
             for (int i = 0; i < filters; i++)
             {
-                kernels[i] = new Matrix(kernel_size, kernel_size);
-                kernels[i].Randomize();
+                for (int j = 0; j < Input.Length; j++)
+                {
+                    kernels[i, j] = new Matrix(kernel_size, kernel_size);
+                    kernels[i, j].Randomize();
+                }
             }
 
             // Padding
@@ -74,17 +77,20 @@ namespace ConvNeuralNetwork
             int out_idx_r = 0;
             int out_idx_c = 0;
 
-            for (int ch_idx = 0; ch_idx < Filters; ch_idx++)
+            for (int filter_idx = 0; filter_idx < Filters; filter_idx++)
             {
                 for (int r = 0; r < Input[0].rows && out_idx_r < Output[0].rows; r += stride, out_idx_r++)
                 {
                     for (int c = 0; c < Input[0].cols && out_idx_c < Output[0].cols; c += stride, out_idx_c++)
                     {
-                        for (int i = 0; i < kernel_size; i++)
+                        for (int ch = 0; ch < Input.Length; ch++)
                         {
-                            for (int j = 0; j < kernel_size; j++)
+                            for (int i = 0; i < kernel_size; i++)
                             {
-                                Output[ch_idx][out_idx_r, out_idx_c] += Input[ch_idx][r, c] * kernels[ch_idx][i, j];
+                                for (int j = 0; j < kernel_size; j++)
+                                {
+                                    Output[filter_idx][out_idx_r, out_idx_c] += Input[ch][r, c] * kernels[filter_idx, ch][i, j];
+                                }
                             }
                         }
                     }
@@ -100,29 +106,31 @@ namespace ConvNeuralNetwork
 
             Matrix kernel_d_E;
 
-            for (int ch = 0; ch < Filters; ch++)
+            for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
             {
-                kernel_d_E = new Matrix(kernel_size, kernel_size);
-
-                
-                for (int i = 0, r = 0; r < Output_d_E[ch].rows && i < Input[ch].rows; i += stride, r++)
+                for (int ch = 0; ch < Input.Length; ch++)
                 {
-                    for (int j = 0, c = 0; c < Output_d_E[ch].cols && j < Input[ch].cols; j += stride, c++)
-                    {
-                        for (int p = 0; p < kernel_size; p++)
-                        {
-                            for (int q = 0; q < kernel_size; q++)
-                            {
-                                kernel_d_E[p, q] += Output_d_E[ch][r, c] * Input[ch][i + p, j + q];
+                    kernel_d_E = new Matrix(kernel_size, kernel_size);
 
-                                if (LayerIndex != 0)
-                                    this.InputLayer.Output_d_E[ch][i + p, j + q] += kernels[ch][p, q] * Output_d_E[ch][r, c];
+                    for (int i = 0, r = 0; r < Output_d_E[fil_idx].rows && i < Input[ch].rows; i += stride, r++)
+                    {
+                        for (int j = 0, c = 0; c < Output_d_E[fil_idx].cols && j < Input[ch].cols; j += stride, c++)
+                        {
+                            for (int p = 0; p < kernel_size; p++)
+                            {
+                                for (int q = 0; q < kernel_size; q++)
+                                {
+                                    kernel_d_E[p, q] += Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
+
+                                    if (LayerIndex != 0)
+                                        InputLayer.Output_d_E[ch][i + p, j + q] += kernels[fil_idx, ch][p, q] * Output_d_E[fil_idx][r, c];
+                                }
                             }
                         }
                     }
-                }
 
-                this.kernels[ch] = this.kernels[ch] - (Network.LearningRate * kernel_d_E);
+                    this.kernels[fil_idx, ch] = this.kernels[fil_idx, ch] - (Network.LearningRate * kernel_d_E);
+                }
             }
         }
 
@@ -148,7 +156,7 @@ namespace ConvNeuralNetwork
             protected set { stride = value; }
         }
 
-        public Matrix[] Kernels
+        public Matrix[,] Kernels
         {
             get { return kernels; }
             protected set { kernels = value; }

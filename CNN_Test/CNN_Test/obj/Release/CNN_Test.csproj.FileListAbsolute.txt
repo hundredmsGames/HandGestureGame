@@ -15,3 +15,4 @@ D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csproj
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csproj.CopyComplete
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.exe
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.pdb
+D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.MainForm.resources
