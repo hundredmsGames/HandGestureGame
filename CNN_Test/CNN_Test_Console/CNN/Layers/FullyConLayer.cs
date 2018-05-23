@@ -115,10 +115,10 @@ namespace ConvNeuralNetwork
                     layerOutputs[i].Map(activationHidden);
             }
 
+            Output[0] = layerOutputs[layerOutputs.Length - 1];
+
             if (OutputLayer != null)
             {
-                Output[0] = layerOutputs[layerOutputs.Length - 1];
-
                 OutputLayer.Input = new Matrix[1];
                 OutputLayer.Input[0] = Output[0];
             }

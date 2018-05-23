@@ -6,8 +6,8 @@ namespace CNN_Test_Console
     enum DataSet { Training, Testing }
     class MNIST_Parser
     {
-        const int MaxTrainingImageCount = 60000;
-        const int MaxTestingImageCount = 10000;
+        const int MaxTrainingImageCount = 1000;
+        const int MaxTestingImageCount = 1000;
         private static string path_training_images = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "train-images.idx3-ubyte");
         private static string path_training_labels = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "train-labels.idx1-ubyte");
         private static string path_test_images = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "t10k-images.idx3-ubyte");
