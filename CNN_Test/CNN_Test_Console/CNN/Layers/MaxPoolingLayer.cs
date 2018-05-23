@@ -70,6 +70,7 @@ namespace ConvNeuralNetwork
                     for (int c = 0; c < Input[0].cols && out_col_idx < Output[0].cols; c += stride, out_col_idx++)
                     {
                         float max = float.MinValue;
+                        int max_r = 0, max_c = 0;
 
                         for (int i = 0; i < this.Kernel_Size; i++)
                         {
@@ -78,13 +79,13 @@ namespace ConvNeuralNetwork
                                 if (Input[ch][i + r, j + c] > max)
                                 {
                                     max = Input[ch][i + r, j + c];
-                                    r = i + r;
-                                    c = j + c;
+                                    max_r = i + r;
+                                    max_c = j + c;
                                 }
                             }
                         }
 
-                        max_locations[ch,out_row_idx, out_col_idx] = new Location(r, c);
+                        max_locations[ch, out_row_idx, out_col_idx] = new Location(max_r, max_c);
                         Output[ch][out_row_idx, out_col_idx] = max;
                     }             
                 }
