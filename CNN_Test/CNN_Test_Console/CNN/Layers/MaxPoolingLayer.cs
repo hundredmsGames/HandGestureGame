@@ -108,7 +108,8 @@ namespace ConvNeuralNetwork
                     for (int j = 0; j < Output[ch].cols; j++)
                     {
                         Location max = max_locations[ch, i, j];
-                        InputLayer.Output_d_E[ch][i, j] = Output_d_E[ch][i, j];
+                        //TODO : prove that this is a correct way to do it.
+                        InputLayer.Output_d_E[ch][max.r, max.c] = Output_d_E[ch][i, j];
                     }
                 }
             }           
