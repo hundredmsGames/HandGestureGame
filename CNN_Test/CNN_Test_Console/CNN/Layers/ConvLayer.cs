@@ -23,17 +23,6 @@ namespace ConvNeuralNetwork
             this.Stride = stride;
             this.Padding = padding;
             
-            // Initialize kernel
-            kernels = new Matrix[filters, Input.Length];
-            for (int i = 0; i < filters; i++)
-            {
-                for (int j = 0; j < Input.Length; j++)
-                {
-                    kernels[i, j] = new Matrix(kernel_size, kernel_size);
-                    kernels[i, j].Randomize();
-                }
-            }
-
             // Padding
             if(padding == -1)
             {
@@ -63,6 +52,17 @@ namespace ConvNeuralNetwork
             {
                 this.Output[i] = new Matrix(out_size_r, out_size_c);
                 this.Output_d_E[i] = new Matrix(out_size_r, out_size_c);
+            }
+
+            // Initialize kernel
+            kernels = new Matrix[filters, Input.Length];
+            for (int i = 0; i < filters; i++)
+            {
+                for (int j = 0; j < Input.Length; j++)
+                {
+                    kernels[i, j] = new Matrix(kernel_size, kernel_size);
+                    kernels[i, j].Randomize();
+                }
             }
         }
 
