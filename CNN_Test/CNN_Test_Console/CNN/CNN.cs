@@ -59,6 +59,8 @@ namespace ConvNeuralNetwork
             {
                 layers[i].FeedForward();
             }
+
+            // Output[0] is a little bit hardcoded. Find better way later.
             return layers[layers.Length - 1].Output[0];
         }
 

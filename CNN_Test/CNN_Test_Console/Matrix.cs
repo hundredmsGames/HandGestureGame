@@ -544,7 +544,7 @@ namespace MatrixLib
 			{
 				for(int j = 0; j < cols; j++)
 				{
-					ret += data[i, j].ToString("F3") + "\t";
+					ret += data[i, j].ToString("F5") + "\t";
 				}
 				ret += "\n";
 			}

@@ -78,13 +78,10 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
+        // Checked
         public override void FeedForward()
         {
             base.FeedForward();
-
-            //Console.WriteLine(Input[0].ToString());
-            //Console.WriteLine(kernels[0, 0].ToString());
-            //Console.WriteLine(kernels[1, 0].ToString());
 
             int out_idx_r, out_idx_c;
 
@@ -102,7 +99,6 @@ namespace ConvNeuralNetwork
                             {
                                 for (int j = 0; j < kernel_size; j++)
                                 {
-                                    //Console.WriteLine(Input[ch][r + i, c + j] + " - " + kernels[fil_idx, ch][i, j]);
                                     Output[fil_idx][out_idx_r, out_idx_c] += Input[ch][r + i, c + j] * kernels[fil_idx, ch][i, j];
                                 }
                             }
@@ -111,8 +107,6 @@ namespace ConvNeuralNetwork
                         Output[fil_idx][out_idx_r, out_idx_c] = activation(Output[fil_idx][out_idx_r, out_idx_c]);
                     }
                 }
-
-                //Console.WriteLine(Output[fil_idx].ToString());
             }
 
             this.OutputLayer.Input = Output;
@@ -121,6 +115,15 @@ namespace ConvNeuralNetwork
         public override void Backpropagation()
         {
             base.Backpropagation();
+
+            Console.WriteLine("input");
+            Console.WriteLine(Input[0].ToString());
+            Console.WriteLine("kernel");
+            Console.WriteLine(kernels[0, 0].ToString());
+            Console.WriteLine("output");
+            Console.WriteLine(Output[0]);
+            Console.WriteLine("output_d_E");
+            Console.WriteLine(Output_d_E[0].ToString());
 
             Matrix kernel_d_E;
 
@@ -134,12 +137,12 @@ namespace ConvNeuralNetwork
                     {
                         for (int j = 0, c = 0; c < Output_d_E[fil_idx].cols && j < Input[ch].cols; j += stride, c++)
                         {
+                            float derOfAct = derOfActivation(Output[fil_idx][r, c]);
+
                             for (int p = 0; p < kernel_size; p++)
                             {
                                 for (int q = 0; q < kernel_size; q++)
                                 {
-                                    float derOfAct = derOfActivation(Output[fil_idx][r, c]);
-
                                     kernel_d_E[p, q] += derOfAct * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
 
                                     if (LayerIndex != 0)
@@ -149,10 +152,13 @@ namespace ConvNeuralNetwork
                                     }
                                 }
                             }
+
+                            if (fil_idx == 0)
+                                Console.WriteLine(kernel_d_E);
                         }
                     }
 
-                    this.kernels[fil_idx, ch] = this.kernels[fil_idx, ch] - (Network.LearningRate * kernel_d_E);
+                    kernels[fil_idx, ch] = kernels[fil_idx, ch] - (Network.LearningRate * kernel_d_E);
                 }
             }
         }

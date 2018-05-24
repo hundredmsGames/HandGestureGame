@@ -1,4 +1,5 @@
-﻿using MatrixLib;
+﻿using System;
+using MatrixLib;
 
 namespace ConvNeuralNetwork
 {
@@ -57,17 +58,20 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
+        // checked
         public override void FeedForward()
         {
             base.FeedForward();
 
+            int out_idx_r, out_idx_c;
+
             for (int ch = 0; ch < Input.Length; ch++)
             {
-                int out_row_idx = 0, out_col_idx = 0;
-
-                for (int r = 0; r < Input[0].rows && out_row_idx < Output[0].rows; r += stride, out_row_idx++)
+                out_idx_r = 0;
+                for (int r = 0; r < Input[0].rows && out_idx_r < Output[0].rows; r += stride, out_idx_r++)
                 {
-                    for (int c = 0; c < Input[0].cols && out_col_idx < Output[0].cols; c += stride, out_col_idx++)
+                    out_idx_c = 0;
+                    for (int c = 0; c < Input[0].cols && out_idx_c < Output[0].cols; c += stride, out_idx_c++)
                     {
                         float max = float.MinValue;
                         int max_r = 0, max_c = 0;
@@ -85,15 +89,16 @@ namespace ConvNeuralNetwork
                             }
                         }
 
-                        max_locations[ch, out_row_idx, out_col_idx] = new Location(max_r, max_c);
-                        Output[ch][out_row_idx, out_col_idx] = max;
+                        max_locations[ch, out_idx_r, out_idx_c] = new Location(max_r, max_c);
+                        Output[ch][out_idx_r, out_idx_c] = max;
                     }             
                 }
             }
-
+            
             this.OutputLayer.Input = Output;
         }
 
+        // checked
         public override void Backpropagation()
         {
             base.Backpropagation();
@@ -108,11 +113,10 @@ namespace ConvNeuralNetwork
                     for (int j = 0; j < Output[ch].cols; j++)
                     {
                         Location max = max_locations[ch, i, j];
-                        //TODO : prove that this is a correct way to do it.
                         InputLayer.Output_d_E[ch][max.r, max.c] = Output_d_E[ch][i, j];
                     }
                 }
-            }           
+            }
         }
 
         #endregion
