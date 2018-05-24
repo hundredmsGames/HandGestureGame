@@ -115,9 +115,14 @@ namespace CNN_Test_Console
             for(int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
+
+                Console.WriteLine((cnn.Layers[cnn.Layers.Length - 1] as FullyConLayer).GetError(
+                    (cnn.Layers[cnn.Layers.Length - 1] as FullyConLayer).Output[0],
+                    target
+                    ));
                
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val,0,0);
+                //ProgressBar(val,0,0);
             }
 
             Matrix output = cnn.Predict(input);
