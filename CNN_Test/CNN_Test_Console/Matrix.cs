@@ -10,7 +10,7 @@ namespace MatrixLib
 		public int cols;
 		public float[,] data;
 
-		static Random randomize = new Random(2666);
+		static Random randomize = new Random();
 
         #endregion
 
@@ -544,7 +544,7 @@ namespace MatrixLib
 			{
 				for(int j = 0; j < cols; j++)
 				{
-					ret += data[i, j].ToString("F5") + "\t";
+					ret += data[i, j].ToString("F6") + "\t";
 				}
 				ret += "\n";
 			}

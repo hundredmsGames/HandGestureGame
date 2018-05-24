@@ -12,20 +12,20 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
             //CNN_Test();
-            //CNN_OverfittingTest();
+            CNN_OverfittingTest();
 
-            CNN cnn = new CNN();
+            //CNN cnn = new CNN();
 
-            Matrix[] input = new Matrix[1];
-            input[0] = new Matrix(8, 8);
-            input[0].Randomize();
+            //Matrix[] input = new Matrix[1];
+            //input[0] = new Matrix(8, 8);
+            //input[0].Randomize();
 
-            Matrix target = new Matrix(3, 1);
-            target.Randomize();
+            //Matrix target = new Matrix(3, 1);
+            //target.Randomize();
 
-            cnn.Train(input, target);
+            //cnn.Train(input, target);
 
-            Console.WriteLine("DONE");
+            //Console.WriteLine("DONE");
             Console.ReadLine();
         }
 
@@ -105,7 +105,7 @@ namespace CNN_Test_Console
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, 100);
 
-            int test_image_idx = 0;
+            int test_image_idx = 5;
             Matrix[] input = new Matrix[1];
             input[0] = new Matrix(digitImages[test_image_idx].pixels);
             Matrix target = new Matrix(10, 1);
