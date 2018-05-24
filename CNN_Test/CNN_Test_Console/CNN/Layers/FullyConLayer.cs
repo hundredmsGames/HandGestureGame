@@ -204,27 +204,6 @@ namespace ConvNeuralNetwork
             return decreasedMatrix;
         }
 
-        /// <summary>
-        /// this one for debugging
-        /// </summary>
-        /// <param name="target"></param>
-        /// <param name="output"></param>
-        /// <returns></returns>
-        public double GetError(Matrix target, Matrix output)
-        {
-            // Calculate the error 
-            // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
-
-            Matrix outputError = target - output;
-            outputError = Matrix.Multiply(outputError, outputError) / 2f;
-
-            double error = 0.0;
-            for (int i = 0; i < outputError.data.GetLength(0); i++)
-                error += outputError.data[i, 0];
-
-            return error;
-        }
-
         public static float DerNetFunc(float x)
         {
             return x;

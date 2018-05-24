@@ -40,30 +40,6 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        public void Train(Matrix[] _input, Matrix _target)
-        {
-            target = _target;
-
-            Predict(_input);
-
-            for (int i = layers.Length - 1; i >= 0; i--)
-            {
-                layers[i].Backpropagation();
-            }
-        }
-
-        public Matrix Predict(Matrix[] _input)
-        {
-            layers[0].FeedForward(_input);
-            for (int i = 1; i < layers.Length; i++)
-            {
-                layers[i].FeedForward();
-            }
-
-            // Output[0] is a little bit hardcoded. Find better way later.
-            return layers[layers.Length - 1].Output[0];
-        }
-
         public void NewLayer(Description description)
         {
             Layer newLayer = null;
@@ -86,7 +62,7 @@ namespace ConvNeuralNetwork
 
                     Layer previousLayer = layers[nextLayerIndex - 1];
                     int inputNeurons = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
-                    
+
                     //FIXME:think about topology and find a better way to handle it
                     newLayer = new FullyConLayer(new int[] { inputNeurons, description.hiddens, description.outputs }, description.activationHidden, description.activation);
                     break;
@@ -116,6 +92,52 @@ namespace ConvNeuralNetwork
             newLayer.LayerIndex = this.nextLayerIndex;
             this.layers[this.nextLayerIndex] = newLayer;
             this.nextLayerIndex++;
+        }
+
+        public Matrix Predict(Matrix[] _input)
+        {
+            layers[0].FeedForward(_input);
+            for (int i = 1; i < layers.Length; i++)
+            {
+                layers[i].FeedForward();
+            }
+
+            // Output[0] is a little bit hardcoded. Find better way later.
+            return layers[layers.Length - 1].Output[0];
+        }
+
+        public void Train(Matrix[] _input, Matrix _target)
+        {
+            target = _target;
+
+            Predict(_input);
+
+            for (int i = layers.Length - 1; i >= 0; i--)
+            {
+                layers[i].Backpropagation();
+            }
+        }
+
+        public float GetError()
+        {
+            // Calculate the error 
+            // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
+            
+            Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
+            outputError = Matrix.Multiply(outputError, outputError) / 2f;
+
+            float error = 0f;
+            for (int i = 0; i < outputError.rows; i++)
+                error += outputError[i, 0];
+
+            if (error is float.NaN)
+            {
+                Console.WriteLine("wtf");
+                Console.WriteLine(outputError);
+                Console.WriteLine(Layers[Layers.Length - 1].Output[0]);
+                Console.WriteLine(target);
+            }
+            return error;
         }
 
         #endregion

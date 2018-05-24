@@ -11,8 +11,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            //CNN_Test();
-            CNN_OverfittingTest();
+            CNN_Test();
+            //CNN_OverfittingTest();
 
             //CNN cnn = new CNN();
 
@@ -59,12 +59,12 @@ namespace CNN_Test_Console
                     for (int k = 0; k < 28; k++)
                         input[0][j, k] = digitImages[i].pixels[j][k];
 
-                input[0].Normalize(0.0f, 255.0f, 0.0f, 1.0f);
+                input[0].Normalize(0f, 255f, 0f, 1f);
                 cnn.Train(input, targets[digitImages[i].label]);
 
                 //Y = (X-A)/(B-A) * (D-C) + C
                 int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val, i, training_count, stopwatch.ElapsedMilliseconds / 1000.0);
+                ProgressBar(val, i, training_count, cnn.GetError(), stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
@@ -81,7 +81,7 @@ namespace CNN_Test_Console
                     for (int k = 0; k < 28; k++)
                         input[0][j, k] = digitImages[i].pixels[j][k];
 
-                input[0].Normalize(0.0f, 255.0f, 0.0f, 1.0f);
+                input[0].Normalize(0f, 255f, 0f, 1f);
                 Matrix ans = cnn.Predict(input);
 
                 if (ans.GetMaxRowIndex() == digitImages[i].label)
@@ -89,7 +89,7 @@ namespace CNN_Test_Console
 
 
                 int val = (int)((i - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val, i, testing_count, stopwatch.ElapsedMilliseconds / 1000.0);
+                ProgressBar(val, i, testing_count, cnn.GetError(), stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
@@ -111,29 +111,25 @@ namespace CNN_Test_Console
             Matrix target = new Matrix(10, 1);
             target[(int) digitImages[test_image_idx].label, 0] = 1f;
 
-            int iteration_count = 1000;
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            int iteration_count = 10000;
             for(int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
-
-                Console.WriteLine((cnn.Layers[cnn.Layers.Length - 1] as FullyConLayer).GetError(
-                    (cnn.Layers[cnn.Layers.Length - 1] as FullyConLayer).Output[0],
-                    target
-                    ));
                
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
-                //ProgressBar(val,0,0);
+                ProgressBar(val, i, iteration_count, cnn.GetError(), stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             Matrix output = cnn.Predict(input);
 
-            Console.WriteLine("Output");
             Console.WriteLine(output.ToString());
-
             Console.WriteLine(digitImages[test_image_idx].ToString());
         }
 
-        static void ProgressBar(int currentValue,int currentCount,int maxCount,double timePassed=0)
+        static void ProgressBar(int currentValue, int currentCount, int maxCount, float error, double timePassed = 0)
         {
             Console.CursorVisible = false;
 
@@ -152,8 +148,11 @@ namespace CNN_Test_Console
             Console.WriteLine(currentValue + "%");
             Console.SetCursorPosition(25, cursorTop);
             Console.WriteLine(currentCount+1 + " / " + maxCount);
-            Console.SetCursorPosition(40, cursorTop);
-            Console.WriteLine("Time Passed:" + timePassed.ToString("F2"));
+            Console.SetCursorPosition(45, cursorTop);
+            Console.WriteLine("Time Passed: " + timePassed.ToString("F1"));
+            Console.SetCursorPosition(70, cursorTop);
+            Console.WriteLine("Error: {0:F6}", error);
+
             Console.CursorVisible = true;
         }
     }

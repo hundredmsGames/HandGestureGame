@@ -20,9 +20,6 @@ namespace ConvNeuralNetwork
 
     struct Description
     {
-        // Network Description
-        public float learningRate;
-
         // input desc
         public int width;
         public int height;
@@ -47,7 +44,6 @@ namespace ConvNeuralNetwork
             string ret = "";
             ret += string.Format(
                 "layerType = {0}\n" + 
-                "Learning Rate = {1}\n" +
                 "width = {2}\n" +
                 "height = {3}\n" +
                 "channels = {4}\n" +
@@ -60,7 +56,7 @@ namespace ConvNeuralNetwork
                 "hiddens = {11}\n" +
                 "outputs = {12}\n" +
                 "\n",
-                layerType, learningRate, width, height, channels, filters,
+                layerType, width, height, channels, filters,
                 kernelSize, stride, padding, activationHidden, activation, hiddens, outputs
             );
 

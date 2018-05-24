@@ -116,15 +116,6 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            //Console.WriteLine("input");
-            //Console.WriteLine(Input[0].ToString());
-            //Console.WriteLine("kernel");
-            //Console.WriteLine(kernels[0, 0].ToString());
-            //Console.WriteLine("output");
-            //Console.WriteLine(Output[0]);
-            //Console.WriteLine("output_d_E");
-            //Console.WriteLine(Output_d_E[0].ToString());
-
             Matrix kernel_d_E;
 
             for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
@@ -154,9 +145,6 @@ namespace ConvNeuralNetwork
                             }               
                         }
                     }
-
-                    //if (fil_idx == 0)
-                    //    Console.WriteLine(kernel_d_E);
 
                     kernels[fil_idx, ch] = kernels[fil_idx, ch] - (Network.LearningRate * kernel_d_E);
                 }
