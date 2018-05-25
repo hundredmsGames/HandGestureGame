@@ -11,8 +11,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_Test();
-            //CNN_OverfittingTest();
+           CNN_Test();
+           // CNN_OverfittingTest();
 
             Console.ReadLine();
         }
@@ -22,6 +22,8 @@ namespace CNN_Test_Console
             int trCount = 60000, tsCount = 10000;
             float error = 0f;
             float timeLimit = 0;
+            int iterationCount = 10;
+            bool predictionIsOn = false;
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
             int training_count = digitImages.Length;
@@ -45,24 +47,28 @@ namespace CNN_Test_Console
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            for (int i = 0; i < training_count; i++)
+
+            for (int x = 0; x < iterationCount; x++)
             {
-                for (int j = 0; j < 28; j++)
-                    for (int k = 0; k < 28; k++)
-                        input[0][j, k] = digitImages[i].pixels[j][k];
-
-                input[0].Normalize(0f, 255f, 0f, 1f);
-                cnn.Train(input, targets[digitImages[i].label]);
-
-                if (stopwatch.ElapsedMilliseconds > timeLimit)
+                for (int i = 0; i < training_count; i++)
                 {
-                    // every 0.5 sec update error
-                    timeLimit += 500;
-                    error = cnn.GetError();
-                }
+                    for (int j = 0; j < 28; j++)
+                        for (int k = 0; k < 28; k++)
+                            input[0][j, k] = digitImages[i].pixels[j][k];
 
-                int val = Map(0, training_count, 0, 100, i);
-                ProgressBar(val, i, training_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
+                    input[0].Normalize(0f, 255f, 0f, 1f);
+                    cnn.Train(input, targets[digitImages[i].label]);
+
+                    if (stopwatch.ElapsedMilliseconds > timeLimit)
+                    {
+                        // every 0.5 sec update error
+                        timeLimit += 500;
+                        error = cnn.GetError();
+                    }
+
+                    int val = Map(0, training_count * iterationCount, 0, 100, training_count * x + i);
+                    ProgressBar(val,training_count * x + i , training_count * iterationCount, error, stopwatch.ElapsedMilliseconds / 1000.0);
+                } 
             }
 
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, tsCount);
@@ -81,7 +87,16 @@ namespace CNN_Test_Console
                         input[0][j, k] = digitImages[i].pixels[j][k];
 
                 input[0].Normalize(0f, 255f, 0f, 1f);
-                Matrix ans = cnn.Predict(input);
+
+                Matrix ans=null;
+                if (predictionIsOn)
+                    ans = cnn.Predict(input);
+                else
+                {
+                   
+                    cnn.Train(input, targets[digitImages[i].label]);
+                    ans = cnn.Layers[cnn.Layers.Length - 1].Output[0];
+                }
 
                 if (ans.GetMaxRowIndex() == digitImages[i].label)
                     correct_count++;

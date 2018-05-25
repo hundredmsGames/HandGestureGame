@@ -118,6 +118,7 @@ namespace ConvNeuralNetwork
             }
         }
 
+
         public float GetError()
         {
             // Calculate the error 
