@@ -7,8 +7,8 @@ namespace CNN_Test_Console
 
     class MNIST_Parser
     {
-        const int MaxTrainingImageCount = 10000;
-        const int MaxTestingImageCount = 1000;
+        const int MaxTrainingImageCount = 60000;
+        const int MaxTestingImageCount = 10000;
         private static string path_training_images = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "train-images.idx3-ubyte");
         private static string path_training_labels = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "train-labels.idx1-ubyte");
         private static string path_test_images = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MNIST", "t10k-images.idx3-ubyte");
@@ -26,25 +26,37 @@ namespace CNN_Test_Console
 
         public static DigitImage[] ReadFromFile(DataSet dataSet, int count = -1)
         {
-            DigitImage[] digitImages;
+            DigitImage[] digitImages=null;
             string pathImages = "";
             string pathLabels = "";
             if (count != -1)
+            {
                 ImageCount = count;
+                digitImages = new DigitImage[ImageCount];
+            }
             if (dataSet == DataSet.Training)
             {
-                digitImages = new DigitImage[MaxTrainingImageCount];
+                if (imageCount==-1)
+                {
+                    digitImages = new DigitImage[MaxTrainingImageCount];
+                    ImageCount = MaxTrainingImageCount; 
+                }
+
                 pathImages = path_training_images;
                 pathLabels = path_training_labels;
-                ImageCount = MaxTrainingImageCount;
             }
             else
             {
-                digitImages = new DigitImage[MaxTestingImageCount];
+                if (imageCount==-1)
+                {
+                    digitImages = new DigitImage[MaxTestingImageCount];
+                    ImageCount = MaxTestingImageCount; 
+                }
+
                 pathImages = path_test_images;
                 pathLabels = path_test_labels;
-                ImageCount = MaxTestingImageCount;
             }
+          
             FileStream ifsLabels;
             FileStream ifsImages;
             try

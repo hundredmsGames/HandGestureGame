@@ -99,9 +99,13 @@ namespace ConvNeuralNetwork
 
             // Decrease dimension to 1
             fixedInput = DecreaseDimension(Input);
+           //fixedInput = Matrix.Normalize(fixedInput, 0, 255, 0, 1);
 
             for (int i = 0; i < layerOutputs.Length; i++)
             {
+                if(layerOutputs[i][0,0] is float.NaN)
+                    Console.WriteLine();
+
                 if (i == 0)
                     layerOutputs[i] = weights[i] * fixedInput;
                 else

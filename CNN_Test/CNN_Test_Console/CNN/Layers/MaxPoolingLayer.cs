@@ -88,7 +88,8 @@ namespace ConvNeuralNetwork
                                 }
                             }
                         }
-
+                        if(max < 0)
+                            Console.WriteLine();
                         max_locations[ch, out_idx_r, out_idx_c] = new Location(max_r, max_c);
                         Output[ch][out_idx_r, out_idx_c] = max;
                     }             

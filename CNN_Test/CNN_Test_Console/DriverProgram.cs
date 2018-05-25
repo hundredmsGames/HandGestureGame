@@ -31,7 +31,8 @@ namespace CNN_Test_Console
 
         public static void CNN_Test()
         {
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training);
+            int trCount = 60000, tsCount = 10000;
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
             int training_count = digitImages.Length;
 
             CNN cnn = new CNN();
@@ -63,11 +64,11 @@ namespace CNN_Test_Console
                 cnn.Train(input, targets[digitImages[i].label]);
 
                 //Y = (X-A)/(B-A) * (D-C) + C
-                int val = (int)((i - 0) / (double)(training_count - 1 - 0) * (100 - 0) + 0);
+                int val = Map(0, training_count, 0, 100, i);
                 ProgressBar(val, i, training_count, cnn.GetError(), stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
-            digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing);
+            digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, tsCount);
             int testing_count = digitImages.Length;
             int correct_count = 0;
 
@@ -88,8 +89,8 @@ namespace CNN_Test_Console
                     correct_count++;
 
 
-                int val = (int)((i - 0) / (double)(testing_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val, i, testing_count, cnn.GetError(), stopwatch.ElapsedMilliseconds / 1000.0);
+                int val = Map(0, testing_count, 0, 100, i);
+                ProgressBar(val, i, testing_count,0f, stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
             Console.WriteLine("\nTime :" + (stopwatch.ElapsedMilliseconds / 1000.0).ToString("F4"));
@@ -98,7 +99,11 @@ namespace CNN_Test_Console
 
             Console.ReadLine();
         }
-
+        public static int Map(int oldMin,int oldMax,int newMin,int newMax,int current)
+        {
+            //Y = (X-A)/(B-A) * (D-C) + C
+            return (int)((current - oldMin) / (double)(oldMax - 1 - oldMin) * (newMax - newMin) + newMin);
+        }
         public static void CNN_OverfittingTest()
         {
             CNN cnn = new CNN();
