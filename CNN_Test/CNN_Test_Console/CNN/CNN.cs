@@ -130,13 +130,6 @@ namespace ConvNeuralNetwork
             for (int i = 0; i < outputError.rows; i++)
                 error += outputError[i, 0];
 
-            if (error is float.NaN)
-            {
-                Console.WriteLine("wtf");
-                Console.WriteLine(outputError);
-                Console.WriteLine(Layers[Layers.Length - 1].Output[0]);
-                Console.WriteLine(target);
-            }
             return error;
         }
 

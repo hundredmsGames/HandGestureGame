@@ -78,7 +78,6 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        // Checked
         public override void FeedForward()
         {
             base.FeedForward();
@@ -87,10 +86,10 @@ namespace ConvNeuralNetwork
 
             for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
             {
-                out_idx_r = 0;
-
                 //reset values
                 Output[fil_idx].FillZero();
+
+                out_idx_r = 0;
                 for (int r = 0; r < Input[0].rows && out_idx_r < Output[0].rows; r += stride, out_idx_r++)
                 {
                     out_idx_c = 0;
@@ -108,8 +107,6 @@ namespace ConvNeuralNetwork
                         }
 
                         Output[fil_idx][out_idx_r, out_idx_c] = activation(Output[fil_idx][out_idx_r, out_idx_c]);
-                        if (Output[fil_idx][out_idx_r, out_idx_c] < 0)
-                            Console.WriteLine("convda relu den sonra negatif deger mi?");
                     }
                 }
             }
@@ -121,16 +118,15 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Matrix kernel_d_E;
-            
+            Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
 
             for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
             {
                 for (int ch = 0; ch < Input.Length; ch++)
                 {
-                    kernel_d_E = new Matrix(kernel_size, kernel_size);
                     //reset values
                     InputLayer.Output_d_E[ch].FillZero();
+                    kernel_d_E.FillZero();
 
                     for (int i = 0, r = 0; r < Output_d_E[fil_idx].rows && i < Input[ch].rows; i += stride, r++)
                     {
@@ -144,7 +140,7 @@ namespace ConvNeuralNetwork
                                 {
                                     kernel_d_E[p, q] += derOfAct * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
 
-                                    if (LayerIndex != 0)
+                                    if (LayerIndex != 1)
                                     {
                                         InputLayer.Output_d_E[ch][i + p, j + q] +=
                                             kernels[fil_idx, ch][p, q] * derOfAct * Output_d_E[fil_idx][r, c];

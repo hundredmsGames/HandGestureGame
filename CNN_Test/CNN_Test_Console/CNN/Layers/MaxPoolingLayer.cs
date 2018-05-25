@@ -58,7 +58,6 @@ namespace ConvNeuralNetwork
 
         #region Methods
 
-        // checked
         public override void FeedForward()
         {
             base.FeedForward();
@@ -88,8 +87,7 @@ namespace ConvNeuralNetwork
                                 }
                             }
                         }
-                        if(max < 0)
-                            Console.WriteLine();
+
                         max_locations[ch, out_idx_r, out_idx_c] = new Location(max_r, max_c);
                         Output[ch][out_idx_r, out_idx_c] = max;
                     }             
@@ -99,16 +97,15 @@ namespace ConvNeuralNetwork
             this.OutputLayer.Input = Output;
         }
 
-        // checked
         public override void Backpropagation()
         {
             base.Backpropagation();
 
-            for (int i = 0; i < InputLayer.Output_d_E.Length; i++)
-                InputLayer.Output_d_E[i].FillZero();
-
-            for (int ch = 0; ch < this.Input.Length; ch++)
+            for (int ch = 0; ch < Input.Length; ch++)
             {
+                // reset gradients
+                InputLayer.Output_d_E[ch].FillZero();
+
                 for (int i = 0; i < Output[ch].rows; i++)
                 {
                     for (int j = 0; j < Output[ch].cols; j++)
