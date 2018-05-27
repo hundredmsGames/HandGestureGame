@@ -16,24 +16,37 @@ namespace ConvNeuralNetwork
 
         private Matrix target;
 
+        Description[] descriptions;
+
         #endregion
 
         #region Constructors
 
-        public CNN()
+        public CNN(bool readFromConfig=true)
         {
+
             // We are deserializing config file at the top of the constructor
-            Description[] descriptions = DeserializeConfig();
-            layers = new Layer[descriptions.Length];
-
-            for (int i = 0; i < descriptions.Length; i++)
+            if (readFromConfig)
             {
-                NewLayer(descriptions[i]);
-                //Console.WriteLine(descriptions[i].ToString());
-            }
+                descriptions = DeserializeConfig();
 
+
+                layers = new Layer[descriptions.Length];
+
+                for (int i = 0; i < descriptions.Length; i++)
+                {
+                    NewLayer(descriptions[i]);
+                    //Console.WriteLine(descriptions[i].ToString());
+                }
+            }
+            else
+            {
+                //load descriptions from saved file
+                LoadData();
+            }
             // First layer index is 0.
-            nextLayerIndex = 0;
+            //THINK: What do we do with this line of code????
+             nextLayerIndex = 0;
         }
 
         #endregion
@@ -121,16 +134,18 @@ namespace ConvNeuralNetwork
 
         public float GetError()
         {
+            float error=0f;
             // Calculate the error 
             // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
-            
-            Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
-            outputError = Matrix.Multiply(outputError, outputError) / 2f;
+            if (target != null)
+            {
+                Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
+                outputError = Matrix.Multiply(outputError, outputError) / 2f;
 
-            float error = 0f;
-            for (int i = 0; i < outputError.rows; i++)
-                error += outputError[i, 0];
-
+                 error = 0f;
+                for (int i = 0; i < outputError.rows; i++)
+                    error += outputError[i, 0];
+            }
             return error;
         }
 

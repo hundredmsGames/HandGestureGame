@@ -23,6 +23,9 @@ namespace ConvNeuralNetwork
         private Func<float, float> activationOutput;
         private Func<float, float> derOfActivationOutput;
 
+        public Matrix[] Weights { get => weights; set => weights = value; }
+        public Matrix[] Biases { get => biases; set => biases = value; }
+
         #endregion
 
         #region Constructors

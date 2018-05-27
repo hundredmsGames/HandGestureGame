@@ -23,12 +23,19 @@ namespace CNN_Test_Console
             float error = 0f;
             float timeLimit = 0;
             int iterationCount = 10;
-            bool predictionIsOn = false;
+            bool predictionIsOn = true;
+            char dialogResult;
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
             int training_count = digitImages.Length;
+            CNN cnn;
+            Console.WriteLine("Would you like to load data from file?(Yy/Nn)");
+            dialogResult = Console.ReadLine().Trim().ToLower()[0];
+            if (dialogResult == 'y')
+                cnn = new CNN(false);
+            else
+                cnn = new CNN();
 
-            CNN cnn = new CNN();
             Matrix[] input = new Matrix[1];
             input[0]= new Matrix(28, 28);
             Matrix[] targets = new Matrix[10];
@@ -41,41 +48,44 @@ namespace CNN_Test_Console
                     targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
                 }
             }
-
-            Console.WriteLine("System is getting trained...");
-            cursorTop = Console.CursorTop;
+            
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-
-            for (int x = 0; x < iterationCount; x++)
+            if (dialogResult != 'y')
             {
-                for (int i = 0; i < training_count; i++)
+                Console.WriteLine("System is getting trained...");
+                cursorTop = Console.CursorTop;
+                for (int x = 0; x < iterationCount; x++)
                 {
-                    for (int j = 0; j < 28; j++)
-                        for (int k = 0; k < 28; k++)
-                            input[0][j, k] = digitImages[i].pixels[j][k];
-
-                    input[0].Normalize(0f, 255f, 0f, 1f);
-                    cnn.Train(input, targets[digitImages[i].label]);
-
-                    if (stopwatch.ElapsedMilliseconds > timeLimit)
+                    for (int i = 0; i < training_count; i++)
                     {
-                        // every 0.5 sec update error
-                        timeLimit += 500;
-                        error = cnn.GetError();
-                    }
+                        for (int j = 0; j < 28; j++)
+                            for (int k = 0; k < 28; k++)
+                                input[0][j, k] = digitImages[i].pixels[j][k];
 
-                    int val = Map(0, training_count * iterationCount, 0, 100, training_count * x + i);
-                    ProgressBar(val,training_count * x + i , training_count * iterationCount, error, stopwatch.ElapsedMilliseconds / 1000.0);
-                } 
+                        input[0].Normalize(0f, 255f, 0f, 1f);
+                        cnn.Train(input, targets[digitImages[i].label]);
+
+                        if (stopwatch.ElapsedMilliseconds > timeLimit)
+                        {
+                            // every 0.5 sec update error
+                            timeLimit += 500;
+                            error = cnn.GetError();
+                        }
+
+                        int val = Map(0, training_count * iterationCount, 0, 100, training_count * x + i);
+                        ProgressBar(val, training_count * x + i, training_count * iterationCount, error, stopwatch.ElapsedMilliseconds / 1000.0);
+                    }
+                }
+
+               
+
+                Console.WriteLine("\nSystem has been trained.");
             }
 
             digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, tsCount);
             int testing_count = digitImages.Length;
             int correct_count = 0;
-
-            Console.WriteLine("\nSystem has been trained.");
             Console.WriteLine("System is getting tested. You will see the results when it is done...\n");
             cursorTop = Console.CursorTop;
             timeLimit = stopwatch.ElapsedMilliseconds;
@@ -117,7 +127,17 @@ namespace CNN_Test_Console
             Console.WriteLine("\nAccuracy: %{0:F2}\n", (correct_count * 1f / testing_count) * 100.0);
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
 
-            Console.ReadLine();
+            //Console.WriteLine("Press any key to continue");
+            //Console.ReadKey();
+
+            Console.WriteLine("Would you like to save this network?(yY/nN)");
+            dialogResult = Console.ReadLine().ToLower()[0];
+            if(dialogResult=='y')
+            {
+                cnn.SaveData();
+            }
+            Console.WriteLine("Data Saved... Press enter to exit.");
+            
         }
         
         public static void CNN_OverfittingTest()

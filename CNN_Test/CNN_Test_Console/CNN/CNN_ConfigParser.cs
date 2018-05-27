@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 
 namespace ConvNeuralNetwork
 {
@@ -10,7 +10,7 @@ namespace ConvNeuralNetwork
         #region Config File Paths
 
         string main_cfg_path = Path.Combine("..", "..", "config_files", "config.cfg");
-
+        string saved_network_path = Path.Combine("..", "..", "config_files", "network.cfg");
         #endregion
 
         #region Deserialization
@@ -128,5 +128,62 @@ namespace ConvNeuralNetwork
         }
 
         #endregion
+
+        public void SaveData()
+        {
+            CNN_Data cNN_Data = new CNN_Data();
+            for (int i = 0; i < Layers.Length; i++)
+            {
+                switch (Layers[i].LayerType)
+                {
+                    case LayerType.INPUT:
+                        break;
+                    case LayerType.CONVOLUTIONAL:
+                        cNN_Data.Kernels.Add((layers[i] as ConvLayer).Kernels);
+                        break;
+                    case LayerType.MAXPOOLING:
+                        break;
+                    case LayerType.FULLY_CONNECTED:
+                        cNN_Data.Weights.Add((layers[i] as FullyConLayer).Weights);
+                        cNN_Data.Biases.Add((layers[i] as FullyConLayer).Biases);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            cNN_Data.Descriptions = descriptions.ToList();
+            JsonFileController.WriteToJsonFile(saved_network_path, cNN_Data);
+        }
+
+        public void LoadData()
+        {
+            int convLayCount = 0,FullyConLayCount=0;
+            CNN_Data cNN_Data = JsonFileController.ReadDataFromJsonFile<CNN_Data>(saved_network_path);
+            descriptions = cNN_Data.Descriptions.ToArray();
+            layers = new Layer[descriptions.Length];
+            for (int i = 0; i < descriptions.Length; i++)
+            {
+                NewLayer(descriptions[i]);
+                switch (descriptions[i].layerType)
+                {
+                    case LayerType.INPUT:
+                        break;
+                    case LayerType.CONVOLUTIONAL:
+                        (layers[i] as ConvLayer).Kernels = cNN_Data.Kernels[convLayCount];
+                        convLayCount++;
+                        break;
+                    case LayerType.MAXPOOLING:
+                        break;
+                    case LayerType.FULLY_CONNECTED:
+                        (layers[i] as FullyConLayer).Weights = cNN_Data.Weights[FullyConLayCount];
+                        (layers[i] as FullyConLayer).Biases = cNN_Data.Biases[FullyConLayCount];
+                        FullyConLayCount++;
+                        break;
+                    default:
+                        throw new UndefinedLayerException("This is not a recognizeable layer!!!");
+                }
+            }
+        }
     }
 }

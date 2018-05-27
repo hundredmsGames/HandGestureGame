@@ -15,6 +15,11 @@ namespace MatrixLib
         #endregion
 
         #region Constructors
+        //this one is for deserializing objects
+        public Matrix()
+        {
+
+        }
 
         public Matrix(int rows, int cols)
 		{

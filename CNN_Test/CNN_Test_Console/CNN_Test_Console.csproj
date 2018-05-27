@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -51,8 +54,10 @@
     <Compile Include="CNN\Layers\ConvLayer.cs" />
     <Compile Include="CNN\Layers\InputLayer.cs" />
     <Compile Include="CNN\Structures.cs" />
+    <Compile Include="CNN_Data.cs" />
     <Compile Include="Enums\Enums.cs" />
     <Compile Include="CNN\Layers\Layer.cs" />
+    <Compile Include="JsonController\JsonFileController.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="CNN\Layers\FullyConLayer.cs" />
     <Compile Include="CNN\Layers\MaxPoolingLayer.cs" />
@@ -62,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

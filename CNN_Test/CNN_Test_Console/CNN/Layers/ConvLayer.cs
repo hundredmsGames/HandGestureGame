@@ -180,7 +180,7 @@ namespace ConvNeuralNetwork
         public Matrix[,] Kernels
         {
             get { return kernels; }
-            protected set { kernels = value; }
+             set { kernels = value; }
         }
 
         public int Padding { get => padding; set => padding = value; }
