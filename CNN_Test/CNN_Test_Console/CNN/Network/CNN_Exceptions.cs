@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-
 namespace ConvNeuralNetwork
 {
     class WrongLayerException : Exception

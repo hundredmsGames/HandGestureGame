@@ -29,6 +29,7 @@ namespace CNN_Test_Console
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
             int training_count = digitImages.Length;
             CNN cnn;
+
             Console.WriteLine("Would you like to load data from file?(Yy/Nn)");
             dialogResult = Console.ReadLine().Trim().ToLower()[0];
             if (dialogResult == 'y')

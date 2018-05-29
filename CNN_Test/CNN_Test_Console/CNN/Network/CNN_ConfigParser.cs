@@ -9,11 +9,12 @@ namespace ConvNeuralNetwork
     {
         #region Config File Paths
 
-        string main_cfg_path = Path.Combine("..", "..", "config_files", "config.cfg");
-        string saved_network_path = Path.Combine("..", "..", "config_files", "network.cfg");
+        string main_cfg_path = Path.Combine("..", "..", "CNN", "Configs", "config.cfg");
+        string saved_network_path = Path.Combine("..", "..", "CNN", "Configs", "network.json");
+        
         #endregion
 
-        #region Deserialization
+        #region Deserialization from config file
 
         public Description[] DeserializeConfig(bool test = false)
         {
@@ -129,6 +130,8 @@ namespace ConvNeuralNetwork
 
         #endregion
 
+        #region Save-Load Network (JSON)
+
         public void SaveData()
         {
             CNN_Data cNN_Data = new CNN_Data();
@@ -185,5 +188,7 @@ namespace ConvNeuralNetwork
                 }
             }
         }
+
+        #endregion
     }
 }

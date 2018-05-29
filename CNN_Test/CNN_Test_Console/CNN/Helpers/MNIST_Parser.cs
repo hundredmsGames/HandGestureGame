@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace CNN_Test_Console
+namespace ConvNeuralNetwork
 {
     enum DataSet { Training, Testing }
 

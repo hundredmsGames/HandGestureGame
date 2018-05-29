@@ -24,19 +24,15 @@ namespace ConvNeuralNetwork
 
         public CNN(bool readFromConfig=true)
         {
-
             // We are deserializing config file at the top of the constructor
             if (readFromConfig)
             {
                 descriptions = DeserializeConfig();
-
-
                 layers = new Layer[descriptions.Length];
 
                 for (int i = 0; i < descriptions.Length; i++)
                 {
                     NewLayer(descriptions[i]);
-                    //Console.WriteLine(descriptions[i].ToString());
                 }
             }
             else
@@ -44,6 +40,7 @@ namespace ConvNeuralNetwork
                 //load descriptions from saved file
                 LoadData();
             }
+
             // First layer index is 0.
             //THINK: What do we do with this line of code????
              nextLayerIndex = 0;
