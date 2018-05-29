@@ -77,7 +77,7 @@ namespace ConvNeuralNetwork
 
             for (int i = 1; i <= weights.Length - 2; i++)
             {
-                weights[i] = new Matrix(hidLayers[i + 1], hidLayers[i]);
+                weights[i] = new Matrix(hidLayers[i], hidLayers[i - 1]);
                 biases[i] = new Matrix(hidLayers[i], 1);
             }
 
@@ -86,7 +86,7 @@ namespace ConvNeuralNetwork
                 weights[i].Randomize();
             }
 
-            for (int i = 0; i < weights.Length; i++)
+            for (int i = 0; i < biases.Length; i++)
             {
                 biases[i].Randomize();
             }

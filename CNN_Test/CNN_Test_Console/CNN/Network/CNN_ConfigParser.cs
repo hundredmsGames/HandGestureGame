@@ -84,7 +84,6 @@ namespace ConvNeuralNetwork
 
                     case "learning_rate":
                         learningRate = float.Parse(value.Replace('.', ','));
-                        
                         continue;
 
                     case "filters":
@@ -108,7 +107,11 @@ namespace ConvNeuralNetwork
                         continue;
 
                     case "hiddens":
-                        currDesc.hiddens = int.Parse(value);
+                        string[] values = value.Split(',');
+                        currDesc.hiddens = new int[values.Length];
+                        for (int i = 0; i < values.Length; i++)
+                            currDesc.hiddens[i] = int.Parse(values[i].Trim());
+
                         continue;
 
                     case "outputs":
