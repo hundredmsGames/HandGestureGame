@@ -6,7 +6,10 @@ namespace ConvNeuralNetwork
         INPUT,
         CONVOLUTIONAL,
         MAXPOOLING,
-        FULLY_CONNECTED
+        FULLY_CONNECTED,
+        FC_INPUT,
+        FC_HIDDEN,
+        FC_OUTPUT
     }
 
     enum ActivationType : byte

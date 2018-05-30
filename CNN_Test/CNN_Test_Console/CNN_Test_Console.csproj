@@ -47,6 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CNN\Helpers\ActivationFunctions.cs" />
+    <Compile Include="CNN\Layers\FC_Layers\FC_HiddenLayer.cs" />
+    <Compile Include="CNN\Layers\FC_Layers\FC_InputLayer.cs" />
+    <Compile Include="CNN\Layers\FC_Layers\FC_OutputLayer.cs" />
     <Compile Include="CNN\Network\CNN_Exceptions.cs" />
     <Compile Include="CNN\Network\CNN.cs" />
     <Compile Include="CNN\Network\CNN_ConfigParser.cs" />
