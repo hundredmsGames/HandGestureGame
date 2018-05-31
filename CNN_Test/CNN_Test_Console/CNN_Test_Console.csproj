@@ -47,9 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CNN\Helpers\ActivationFunctions.cs" />
-    <Compile Include="CNN\Layers\FC_Layers\FC_HiddenLayer.cs" />
-    <Compile Include="CNN\Layers\FC_Layers\FC_InputLayer.cs" />
-    <Compile Include="CNN\Layers\FC_Layers\FC_OutputLayer.cs" />
+    <Compile Include="CNN\Layers\FC_Layer.cs" />
     <Compile Include="CNN\Network\CNN_Exceptions.cs" />
     <Compile Include="CNN\Network\CNN.cs" />
     <Compile Include="CNN\Network\CNN_ConfigParser.cs" />
@@ -61,7 +59,7 @@
     <Compile Include="CNN\Layers\Layer.cs" />
     <Compile Include="CNN\Helpers\JSONFileController.cs" />
     <Compile Include="CNN\MatrixLib\Matrix.cs" />
-    <Compile Include="CNN\Layers\FullyConLayer.cs" />
+    <Compile Include="CNN\Layers\FC_Network.cs" />
     <Compile Include="CNN\Layers\MaxPoolingLayer.cs" />
     <Compile Include="CNN\Helpers\MNIST_Parser.cs" />
     <Compile Include="DriverProgram.cs" />

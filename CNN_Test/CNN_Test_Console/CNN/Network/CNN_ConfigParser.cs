@@ -150,8 +150,8 @@ namespace ConvNeuralNetwork
                     case LayerType.MAXPOOLING:
                         break;
                     case LayerType.FULLY_CONNECTED:
-                        cNN_Data.Weights.Add((layers[i] as FullyConLayer).Weights);
-                        cNN_Data.Biases.Add((layers[i] as FullyConLayer).Biases);
+                        cNN_Data.Weights.Add((layers[i] as FC_Network).Weights);
+                        cNN_Data.Biases.Add((layers[i] as FC_Network).Biases);
                         break;
                     default:
                         break;
@@ -182,8 +182,8 @@ namespace ConvNeuralNetwork
                     case LayerType.MAXPOOLING:
                         break;
                     case LayerType.FULLY_CONNECTED:
-                        (layers[i] as FullyConLayer).Weights = cNN_Data.Weights[FullyConLayCount];
-                        (layers[i] as FullyConLayer).Biases = cNN_Data.Biases[FullyConLayCount];
+                        (layers[i] as FC_Network).Weights = cNN_Data.Weights[FullyConLayCount];
+                        (layers[i] as FC_Network).Biases = cNN_Data.Biases[FullyConLayCount];
                         FullyConLayCount++;
                         break;
                     default:

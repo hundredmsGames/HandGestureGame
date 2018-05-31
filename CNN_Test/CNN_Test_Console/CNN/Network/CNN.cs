@@ -82,7 +82,7 @@ namespace ConvNeuralNetwork
                         topology[i] = description.hiddens[i - 1];
 
                     //FIXME:think about topology and find a better way to handle it
-                    newLayer = new FullyConLayer(topology, description.activationHidden, description.activation);
+                    newLayer = new FC_Network(topology, description.activationHidden, description.activation);
                     break;
 
                 default:
