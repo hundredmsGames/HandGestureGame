@@ -19,22 +19,33 @@ namespace ConvNeuralNetwork
 
             for (int i = 0; i < layers.Length; i++)
             {
-                //if we are looking at the first layer then we are in input layer
-                //and input layers dont have an activation function
-                if (i == 0)
-                    layers[i] = new FC_Layer(topology[i + 1], topology[i], ActivationType.NONE);
-                else
-                    layers[i] = new FC_Layer(topology[i + 1], topology[i], activationTypes[i-1]);
+                layers[i] = new FC_Layer(topology[i], topology[i + 1], activationTypes[i]);
 
-                layers[i].Network = this.Network;
+                if (i > 0)
+                {
+                    layers[i].InputLayer = layers[i - 1];
+                }
+
+                if (i < layers.Length - 1)
+                {
+                    layers[i].OutputLayer = layers[i + 1];
+                }
             }
 
+            layers[0].InputLayer = this;
+
             Output = new Matrix[1];
+            Output_d_E = new Matrix[1];
         }
 
         public override void Initialize()
         {
             base.Initialize();
+
+            for (int i = 0; i < layers.Length; i++)
+            {
+                layers[i].Network = this.Network;
+            }
         }
 
         #endregion
@@ -60,15 +71,15 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
+            layers[layers.Length - 1].Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
 
-            for (int i = layers.Length; i >= 0; i--)
+            for (int i = layers.Length - 1; i >= 0; i--)
             {
                 layers[i].Backpropagation();
             }
 
             // Increase dimension back
-            InputLayer.Output_d_E = IncreaseDimension(layers[0].Output_d_E[0]);
+            InputLayer.Output_d_E = IncreaseDimension(Output_d_E[0]);
         }
 
         private Matrix[] IncreaseDimension(Matrix oldMatrix)

@@ -51,9 +51,8 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
-           
-            Output[0] = weights* Input[0];
-            this.Output[0] += biases;
+            Output[0] = weights * Input[0];
+            Output[0] += biases;
             Output[0].Map(activation);
 
             // If this layer is last layer so there is no outputLayer.
@@ -72,9 +71,7 @@ namespace ConvNeuralNetwork
             Matrix out_d_E = Matrix.Transpose(out_d_net) * net_d_E;
             weights = weights - (this.Network.LearningRate * w_d_E);
 
-            // If this is first layer, don't need to backpropagate
-            if (InputLayer != null)
-                InputLayer.Output_d_E[0] = out_d_E;
+            InputLayer.Output_d_E[0] = out_d_E;
         }
 
         public static float DerNetFunc(float x)

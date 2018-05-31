@@ -108,10 +108,10 @@ namespace ConvNeuralNetwork
                             currDesc.activation = (ActivationType)Enum.Parse(typeof(ActivationType), value, true);
                         else
                         {
-                            if (currDesc.activationsFCNN == null)
-                                currDesc.activationsFCNN = new List<ActivationType>();
+                            if (currDesc.fc_activations == null)
+                                currDesc.fc_activations = new List<ActivationType>();
                             
-                            currDesc.activationsFCNN.Add((ActivationType)Enum.Parse(typeof(ActivationType), value, true));
+                            currDesc.fc_activations.Add((ActivationType)Enum.Parse(typeof(ActivationType), value, true));
                         }
                         continue;
 
@@ -121,9 +121,11 @@ namespace ConvNeuralNetwork
 
                         currDesc.neurons.Add(int.Parse(value));
                         continue;
+
                     case "layers":
                         currDesc.layers = int.Parse(value);
                         continue;
+
                     default:
                         // Config parser exception
                         throw new ConfigParserException("token is not recognizeable...TOKEN : " + param);

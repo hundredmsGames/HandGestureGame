@@ -34,8 +34,8 @@ namespace ConvNeuralNetwork
 
         // fc layer
         public int layers;
-        public List<int> neurons ;
-        public List<ActivationType> activationsFCNN;
+        public List<int> neurons;
+        public List<ActivationType> fc_activations;
 
         public LayerType layerType;
 
@@ -43,20 +43,39 @@ namespace ConvNeuralNetwork
         {
             string ret = "";
             ret += string.Format(
-                "layerType = {0}\n" + 
-                "width = {2}\n" +
-                "height = {3}\n" +
-                "channels = {4}\n" +
-                "filters = {5}\n" +
-                "kernelSize = {6}\n" +
-                "stride = {7}\n" +
-                "padding = {8}\n" +
-                "activation = {9}\n" +
-                "neurons = {10}\n" +
-                "\n",
+                "layerType = {0}\n" +
+                "width = {1}\n" +
+                "height = {2}\n" +
+                "channels = {3}\n" +
+                "filters = {4}\n" +
+                "kernelSize = {5}\n" +
+                "stride = {6}\n" +
+                "padding = {7}\n",
                 layerType, width, height, channels, filters,
-                kernelSize, stride, padding, activation, neurons
+                kernelSize, stride, padding
             );
+
+            if (neurons != null)
+            {
+                ret += "neurons = ";
+                foreach (int i in neurons)
+                    ret += i + ", ";
+                ret = ret.TrimEnd(',', ' ');
+                ret += "\n";
+            }
+
+            if (fc_activations != null)
+            {
+                ret += "activations = ";
+                foreach(ActivationType act in fc_activations)
+                    ret += act.ToString() + ", ";
+                ret = ret.TrimEnd(',', ' ');
+                ret += "\n";
+            }
+            else
+            {
+                ret += string.Format("activation = {0}\n", activation);
+            }
 
             return ret;
         }

@@ -73,19 +73,14 @@ namespace ConvNeuralNetwork
                     // TODO: This code should be arranged with respect to new FC Layer Model
 
                     Layer previousLayer = layers[nextLayerIndex - 1];
-                    int inputNeurons = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
+                    int[] topology = new int[description.layers + 1];
 
-                    int[] topology = new int[description.layers + 2];
-
-                    topology[0] = inputNeurons;
-                    //final layer is the output layer
-                    topology[topology.Length - 1] = description.neurons[description.neurons.Count - 1];
-
-                    for (int i = 1; i < topology.Length - 1; i++)
-                        topology[i] = description.neurons[i-1];
+                    topology[0] = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
+                    for (int i = 1; i < topology.Length; i++)
+                        topology[i] = description.neurons[i - 1];
 
                     //FIXME:think about topology and find a better way to handle it
-                    newLayer = new FC_Network(topology, description.activationsFCNN.ToArray());
+                    newLayer = new FC_Network(topology, description.fc_activations.ToArray());
                     break;
 
                 default:
