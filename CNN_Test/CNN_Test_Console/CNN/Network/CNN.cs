@@ -75,16 +75,17 @@ namespace ConvNeuralNetwork
                     Layer previousLayer = layers[nextLayerIndex - 1];
                     int inputNeurons = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
 
-                    int[] topology = new int[description.hiddens.Length + 2];
+                    int[] topology = new int[description.layers + 2];
 
                     topology[0] = inputNeurons;
-                    topology[topology.Length - 1] = description.outputs;
+                    //final layer is the output layer
+                    topology[topology.Length - 1] = description.neurons[description.neurons.Count - 1];
 
                     for (int i = 1; i < topology.Length - 1; i++)
-                        topology[i] = description.hiddens[i - 1];
+                        topology[i] = description.neurons[i-1];
 
                     //FIXME:think about topology and find a better way to handle it
-                    newLayer = new FC_Network(topology, description.activationHidden, description.activation);
+                    newLayer = new FC_Network(topology, description.activationsFCNN.ToArray());
                     break;
 
                 default:

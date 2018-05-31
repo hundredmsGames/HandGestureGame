@@ -15,11 +15,17 @@ namespace ConvNeuralNetwork
 
         public FC_Network(int[] topology, ActivationType[] activationTypes) : base(LayerType.FULLY_CONNECTED)
         {
-            layers = new FC_Layer[topology.Length - 1];
+            layers = new FC_Layer[topology.Length-1];
 
-            for(int i = 0; i < layers.Length; i++)
+            for (int i = 0; i < layers.Length; i++)
             {
-                layers[i] = new FC_Layer(topology[i + 1], topology[i], activationTypes[i]);
+                //if we are looking at the first layer then we are in input layer
+                //and input layers dont have an activation function
+                if (i == 0)
+                    layers[i] = new FC_Layer(topology[i + 1], topology[i], ActivationType.NONE);
+                else
+                    layers[i] = new FC_Layer(topology[i + 1], topology[i], activationTypes[i-1]);
+
                 layers[i].Network = this.Network;
             }
 

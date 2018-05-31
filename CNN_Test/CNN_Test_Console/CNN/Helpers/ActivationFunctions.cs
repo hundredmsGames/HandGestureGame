@@ -9,6 +9,10 @@ namespace ConvNeuralNetwork
         {
             switch (activationType)
             {
+
+                case ActivationType.NONE:
+                    return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.NONE, ActivationFunctions.NONE);
+
                 case ActivationType.RELU:
                     return new Tuple<Func<float, float>, Func<float, float>>(ActivationFunctions.ReLu, ActivationFunctions.DerOfReLu);
                 case ActivationType.SIGMOID:
@@ -34,6 +38,10 @@ namespace ConvNeuralNetwork
         public static float ReLu(float x)
         {
             return Math.Max(x, 0);
+        }
+        public static float NONE(float none)
+        {
+            return none;
         }
 
         /// <summary>

@@ -33,7 +33,9 @@ namespace ConvNeuralNetwork
         public ActivationType activation;
 
         // fc layer
-        public int neurons;
+        public int layers;
+        public List<int> neurons ;
+        public List<ActivationType> activationsFCNN;
 
         public LayerType layerType;
 

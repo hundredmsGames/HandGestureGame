@@ -11,7 +11,7 @@ namespace ConvNeuralNetwork
 
         string main_cfg_path = Path.Combine("..", "..", "CNN", "Configs", "config.cfg");
         string saved_network_path = Path.Combine("..", "..", "CNN", "Configs", "network.json");
-        
+
         #endregion
 
         #region Deserialization from config file
@@ -38,8 +38,8 @@ namespace ConvNeuralNetwork
                         if (descriptions.Count == 0)
                             currDesc.layerType = LayerType.INPUT;
                         else
-                        // otherwise throw exception
-                        throw new WrongLayerException("There can be only one input layer!!!!");
+                            // otherwise throw exception
+                            throw new WrongLayerException("There can be only one input layer!!!!");
                         continue;
 
                     case "[convolutional]":
@@ -58,16 +58,17 @@ namespace ConvNeuralNetwork
 
                     case "[fc_network]":
                         // TODO: read next line, get layer count.
-                        continue;
-
-                    case "[fc_layer]":
                         descriptions.Add(currDesc);
 
                         currDesc = new Description();
                         currDesc.layerType = LayerType.FULLY_CONNECTED;
                         continue;
+
+                    case "[fc_layer]":
+                        //just continue
+                        continue;
                 }
-                
+
                 string[] temp = line.Split('=');
                 string param = temp[0].Trim();
                 string value = temp[1].Trim();
@@ -103,17 +104,30 @@ namespace ConvNeuralNetwork
                         continue;
 
                     case "activation":
-                        currDesc.activation = (ActivationType) Enum.Parse(typeof(ActivationType), value, true);
+                        if (currDesc.layerType != LayerType.FULLY_CONNECTED)
+                            currDesc.activation = (ActivationType)Enum.Parse(typeof(ActivationType), value, true);
+                        else
+                        {
+                            if (currDesc.activationsFCNN == null)
+                                currDesc.activationsFCNN = new List<ActivationType>();
+                            
+                            currDesc.activationsFCNN.Add((ActivationType)Enum.Parse(typeof(ActivationType), value, true));
+                        }
                         continue;
 
                     case "neurons":
-                        currDesc.neurons = int.Parse(value);
-                        continue;
+                        if (currDesc.neurons == null)
+                            currDesc.neurons = new List<int>();
 
+                        currDesc.neurons.Add(int.Parse(value));
+                        continue;
+                    case "layers":
+                        currDesc.layers = int.Parse(value);
+                        continue;
                     default:
                         // Config parser exception
                         throw new ConfigParserException("token is not recognizeable...TOKEN : " + param);
-                        
+
                 }
             }
 
@@ -142,8 +156,15 @@ namespace ConvNeuralNetwork
                     case LayerType.MAXPOOLING:
                         break;
                     case LayerType.FULLY_CONNECTED:
-                        cNN_Data.Weights.Add((layers[i] as FC_Network).Weights);
-                        cNN_Data.Biases.Add((layers[i] as FC_Network).Biases);
+                        MatrixLib.Matrix[] Matrices = new MatrixLib.Matrix[1];
+
+                        for (int j = 0; j < (layers[i] as FC_Network).Layers.Length; j++)
+                        {
+                            Matrices[0] = (layers[i] as FC_Network).Layers[j].Weights;
+                            cNN_Data.Weights.Add(Matrices);
+                            Matrices[0] = (layers[i] as FC_Network).Layers[j].Biases;
+                            cNN_Data.Biases.Add(Matrices); 
+                        }
                         break;
                     default:
                         break;
@@ -156,7 +177,7 @@ namespace ConvNeuralNetwork
 
         public void LoadData()
         {
-            int convLayCount = 0,FullyConLayCount=0;
+            int convLayCount = 0;
             CNN_Data cNN_Data = JsonFileController.ReadDataFromJsonFile<CNN_Data>(saved_network_path);
             descriptions = cNN_Data.Descriptions.ToArray();
             layers = new Layer[descriptions.Length];
@@ -174,9 +195,12 @@ namespace ConvNeuralNetwork
                     case LayerType.MAXPOOLING:
                         break;
                     case LayerType.FULLY_CONNECTED:
-                        (layers[i] as FC_Network).Weights = cNN_Data.Weights[FullyConLayCount];
-                        (layers[i] as FC_Network).Biases = cNN_Data.Biases[FullyConLayCount];
-                        FullyConLayCount++;
+
+                        for (int j = 0; j < (layers[i] as FC_Network).Layers.Length; j++)
+                        {
+                            (layers[i] as FC_Network).Layers[j].Weights = cNN_Data.Weights[j][0];
+                            (layers[i] as FC_Network).Layers[j].Biases  = cNN_Data.Biases[j][0];
+                        }
                         break;
                     default:
                         throw new UndefinedLayerException("This is not a recognizeable layer!!!");

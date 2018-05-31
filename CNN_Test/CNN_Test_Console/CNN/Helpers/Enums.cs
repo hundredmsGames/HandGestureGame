@@ -12,6 +12,7 @@ namespace ConvNeuralNetwork
 
     enum ActivationType : byte
     {
+        NONE,
         RELU,
         SIGMOID,
         SOFTMAX,
