@@ -9,27 +9,6 @@ namespace ConvNeuralNetwork
 
         FC_Layer[] layers;
 
-        // -------------
-
-        private int inputNodes;
-        private int[] hidLayers;
-        private int outputNodes;
-
-        private Matrix fixedInput;
-        private Matrix[] weights;
-        private Matrix[] biases;
-
-        private Matrix[] layerOutputs;
-
-        private Func<float, float> activationHidden;
-        private Func<float, float> derOfActivationHidden;
-
-        private Func<float, float> activationOutput;
-        private Func<float, float> derOfActivationOutput;
-
-        public Matrix[] Weights { get => weights; set => weights = value; }
-        public Matrix[] Biases { get => biases; set => biases = value; }
-
         #endregion
 
         #region Constructors
@@ -75,15 +54,15 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-
+            Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
 
             for (int i = layers.Length; i >= 0; i--)
             {
-
+                layers[i].Backpropagation();
             }
 
             // Increase dimension back
-            InputLayer.Output_d_E = IncreaseDimension(out_d_E);
+            InputLayer.Output_d_E = IncreaseDimension(layers[0].Output_d_E[0]);
         }
 
         private Matrix[] IncreaseDimension(Matrix oldMatrix)
@@ -124,6 +103,16 @@ namespace ConvNeuralNetwork
             }
 
             return decreasedMatrix;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public FC_Layer[] Layers
+        {
+            get { return layers; }
+            set { layers = value; }
         }
 
         #endregion

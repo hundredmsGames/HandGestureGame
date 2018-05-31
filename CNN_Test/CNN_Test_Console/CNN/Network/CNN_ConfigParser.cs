@@ -56,7 +56,11 @@ namespace ConvNeuralNetwork
                         currDesc.layerType = LayerType.MAXPOOLING;
                         continue;
 
-                    case "[fclayer]":
+                    case "[fc_network]":
+                        // TODO: read next line, get layer count.
+                        continue;
+
+                    case "[fc_layer]":
                         descriptions.Add(currDesc);
 
                         currDesc = new Description();
@@ -98,24 +102,12 @@ namespace ConvNeuralNetwork
                         currDesc.stride = int.Parse(value);
                         continue;
 
-                    case "activation_hidden":
-                        currDesc.activationHidden = (ActivationType)Enum.Parse(typeof(ActivationType), value, true);
-                        continue;
-
                     case "activation":
                         currDesc.activation = (ActivationType) Enum.Parse(typeof(ActivationType), value, true);
                         continue;
 
-                    case "hiddens":
-                        string[] values = value.Split(',');
-                        currDesc.hiddens = new int[values.Length];
-                        for (int i = 0; i < values.Length; i++)
-                            currDesc.hiddens[i] = int.Parse(values[i].Trim());
-
-                        continue;
-
-                    case "outputs":
-                        currDesc.outputs = int.Parse(value);
+                    case "neurons":
+                        currDesc.neurons = int.Parse(value);
                         continue;
 
                     default:

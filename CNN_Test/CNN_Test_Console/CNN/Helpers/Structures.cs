@@ -33,9 +33,7 @@ namespace ConvNeuralNetwork
         public ActivationType activation;
 
         // fc layer
-        public int[] hiddens;
-        public int outputs;
-        public ActivationType activationHidden;
+        public int neurons;
 
         public LayerType layerType;
 
@@ -51,13 +49,11 @@ namespace ConvNeuralNetwork
                 "kernelSize = {6}\n" +
                 "stride = {7}\n" +
                 "padding = {8}\n" +
-                "activation_hidden = {9}\n" +
-                "activation = {10}\n" +
-                "hiddens = {11}\n" +
-                "outputs = {12}\n" +
+                "activation = {9}\n" +
+                "neurons = {10}\n" +
                 "\n",
                 layerType, width, height, channels, filters,
-                kernelSize, stride, padding, activationHidden, activation, hiddens, outputs
+                kernelSize, stride, padding, activation, neurons
             );
 
             return ret;

@@ -70,6 +70,8 @@ namespace ConvNeuralNetwork
 
                 case LayerType.FULLY_CONNECTED:
 
+                    // TODO: This code should be arranged with respect to new FC Layer Model
+
                     Layer previousLayer = layers[nextLayerIndex - 1];
                     int inputNeurons = previousLayer.Output.Length * previousLayer.Output[0].cols * previousLayer.Output[0].rows;
 
@@ -136,21 +138,21 @@ namespace ConvNeuralNetwork
             }
         }
 
-
         public float GetError()
         {
-            float error=0f;
             // Calculate the error 
             // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
+
+            float error = 0f;
             if (target != null)
             {
                 Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
                 outputError = Matrix.Multiply(outputError, outputError) / 2f;
 
-                 error = 0f;
                 for (int i = 0; i < outputError.rows; i++)
                     error += outputError[i, 0];
             }
+
             return error;
         }
 
