@@ -15,7 +15,7 @@ namespace ConvNeuralNetwork
 
         public FC_Network(int[] topology, ActivationType[] activationTypes) : base(LayerType.FULLY_CONNECTED)
         {
-            layers = new FC_Layer[topology.Length-1];
+            layers = new FC_Layer[topology.Length - 1];
 
             for (int i = 0; i < layers.Length; i++)
             {
@@ -25,13 +25,11 @@ namespace ConvNeuralNetwork
                 {
                     layers[i].InputLayer = layers[i - 1];
                 }
-
-                if (i < layers.Length - 1)
-                {
-                    layers[i].OutputLayer = layers[i + 1];
-                }
             }
-
+            for (int i = 0; i < layers.Length - 1; i++)
+            {
+                layers[i].OutputLayer = layers[i + 1];
+            }
             layers[0].InputLayer = this;
 
             Output = new Matrix[1];
