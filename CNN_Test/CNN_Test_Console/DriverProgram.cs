@@ -19,7 +19,7 @@ namespace CNN_Test_Console
 
         public static void CNN_Test()
         {
-            int trCount = 60000, tsCount = 10000;
+            int trCount = 100, tsCount = 100;
             float error = 0f;
             float timeLimit = 0;
             int iterationCount = 10;
@@ -130,15 +130,18 @@ namespace CNN_Test_Console
 
             //Console.WriteLine("Press any key to continue");
             //Console.ReadKey();
-
-            Console.WriteLine("Would you like to save this network?(yY/nN)");
-            dialogResult = Console.ReadLine().ToLower()[0];
-            if(dialogResult=='y')
+            //if we are not training the system we dont have to save again
+            if (dialogResult != 'y')
             {
-                cnn.SaveData();
+                Console.WriteLine("Would you like to save this network?(yY/nN)");
+                dialogResult = Console.ReadLine().ToLower()[0];
+                if (dialogResult == 'y')
+                {
+                    cnn.SaveData();
+                }
+                Console.WriteLine("Data Saved...");
             }
-            Console.WriteLine("Data Saved... Press enter to exit.");
-            
+            Console.WriteLine("Press enter to exit.");
         }
         
         public static void CNN_OverfittingTest()

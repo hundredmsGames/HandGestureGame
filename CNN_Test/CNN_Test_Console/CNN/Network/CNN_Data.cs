@@ -10,17 +10,17 @@ namespace ConvNeuralNetwork
 
         List<Matrix[,]> kernels;
 
-        List<Matrix[]> weights;
+        List<Matrix> weights;
 
-        List<Matrix[]> biases;
+        List<Matrix> biases;
         #endregion
 
         #region Properties
        
         public List<Description> Descriptions { get => descriptions; set => descriptions = value; }
         public List<Matrix[,]> Kernels { get => kernels; set => kernels = value; }
-        public List<Matrix[]> Weights { get => weights; set => weights = value; }
-        public List<Matrix[]> Biases { get => biases; set => biases = value; }
+        public List<Matrix> Weights { get => weights; set => weights = value; }
+        public List<Matrix> Biases { get => biases; set => biases = value; }
         #endregion
 
         #region CTOR
@@ -28,8 +28,8 @@ namespace ConvNeuralNetwork
         {
             descriptions = new List<Description>();
             kernels = new List<Matrix[,]>();
-            weights = new List<Matrix[]>();
-            biases = new List<Matrix[]>();
+            weights = new List<Matrix>();
+            biases = new List<Matrix>();
         }
         #endregion
     }

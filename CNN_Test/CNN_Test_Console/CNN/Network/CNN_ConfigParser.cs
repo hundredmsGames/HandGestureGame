@@ -158,14 +158,10 @@ namespace ConvNeuralNetwork
                     case LayerType.MAXPOOLING:
                         break;
                     case LayerType.FULLY_CONNECTED:
-                        MatrixLib.Matrix[] Matrices = new MatrixLib.Matrix[1];
-
                         for (int j = 0; j < (layers[i] as FC_Network).Layers.Length; j++)
                         {
-                            Matrices[0] = (layers[i] as FC_Network).Layers[j].Weights;
-                            cNN_Data.Weights.Add(Matrices);
-                            Matrices[0] = (layers[i] as FC_Network).Layers[j].Biases;
-                            cNN_Data.Biases.Add(Matrices); 
+                            cNN_Data.Weights.Add((layers[i] as FC_Network).Layers[j].Weights);
+                            cNN_Data.Biases.Add((layers[i] as FC_Network).Layers[j].Biases); 
                         }
                         break;
                     default:
@@ -200,8 +196,8 @@ namespace ConvNeuralNetwork
 
                         for (int j = 0; j < (layers[i] as FC_Network).Layers.Length; j++)
                         {
-                            (layers[i] as FC_Network).Layers[j].Weights = cNN_Data.Weights[j][0];
-                            (layers[i] as FC_Network).Layers[j].Biases  = cNN_Data.Biases[j][0];
+                            (layers[i] as FC_Network).Layers[j].Weights = cNN_Data.Weights[j];
+                            (layers[i] as FC_Network).Layers[j].Biases  = cNN_Data.Biases[j];
                         }
                         break;
                     default:
