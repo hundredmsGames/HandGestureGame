@@ -13,8 +13,8 @@ namespace ConvNeuralNetwork
         private int padding;
         private Matrix[,] kernels;
 
-        Func<float, float> activation;
-        Func<float, float> derOfActivation;
+        Func<Matrix, Matrix> activation;
+        Func<Matrix, Matrix> derOfActivation;
 
         #endregion
 
@@ -34,9 +34,7 @@ namespace ConvNeuralNetwork
                 padding = 0;
             }
 
-            var activations = ActivationFunctions.GetActivationFuncs(activationType);
-            activation = activations.Item1;
-            derOfActivation = activations.Item2;
+            ActivationFunctions.GetActivationFuncs(activationType, out activation, out derOfActivation);
         }
 
         public override void Initialize()
@@ -105,10 +103,10 @@ namespace ConvNeuralNetwork
                                 }
                             }
                         }
-
-                        Output[fil_idx][out_idx_r, out_idx_c] = activation(Output[fil_idx][out_idx_r, out_idx_c]);
                     }
                 }
+
+                Output[fil_idx] = activation(Output[fil_idx]);
             }
 
             this.OutputLayer.Input = Output;
@@ -128,22 +126,22 @@ namespace ConvNeuralNetwork
                     InputLayer.Output_d_E[ch].FillZero();
                     kernel_d_E.FillZero();
 
+                    Matrix derAct = derOfActivation(Output[fil_idx]);
+
                     for (int i = 0, r = 0; r < Output_d_E[fil_idx].rows && i < Input[ch].rows; i += stride, r++)
                     {
                         for (int j = 0, c = 0; c < Output_d_E[fil_idx].cols && j < Input[ch].cols; j += stride, c++)
                         {
-                            float derOfAct = derOfActivation(Output[fil_idx][r, c]);
-
                             for (int p = 0; p < kernel_size; p++)
                             {
                                 for (int q = 0; q < kernel_size; q++)
                                 {
-                                    kernel_d_E[p, q] += derOfAct * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
+                                    kernel_d_E[p, q] += derAct[r, c] * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
 
                                     if (LayerIndex != 1)
                                     {
                                         InputLayer.Output_d_E[ch][i + p, j + q] +=
-                                            kernels[fil_idx, ch][p, q] * derOfAct * Output_d_E[fil_idx][r, c];
+                                            kernels[fil_idx, ch][p, q] * derAct[r, c] * Output_d_E[fil_idx][r, c];
                                     }
                                 }
                             }               

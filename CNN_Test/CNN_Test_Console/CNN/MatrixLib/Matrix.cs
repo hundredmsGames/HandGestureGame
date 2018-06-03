@@ -10,7 +10,7 @@ namespace MatrixLib
 		public int cols;
 		public float[,] data;
 
-		static Random randomize = new Random();
+		static Random randomize = new Random(555);
 
         #endregion
 
@@ -253,6 +253,20 @@ namespace MatrixLib
             }
 
             return neg;
+        }
+
+        public static Matrix Exp(Matrix m)
+        {
+            Matrix exp = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < exp.rows; i++)
+            {
+                for (int j = 0; j < exp.cols; j++)
+                {
+                    exp[i, j] = (float) Math.Exp(m[i, j]);
+                }
+            }
+
+            return exp;
         }
 
         public void FillZero()

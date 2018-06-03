@@ -13,8 +13,8 @@ namespace ConvNeuralNetwork
 
         private Matrix weights;
         private Matrix biases;
-        Func<float, float> activation;
-        Func<float, float> derOfActivation;
+        Func<Matrix, Matrix> activation;
+        Func<Matrix, Matrix> derOfActivation;
 
         public Matrix Weights { get => weights; set => weights = value; }
         public Matrix Biases { get => biases; set => biases = value; }
@@ -28,19 +28,14 @@ namespace ConvNeuralNetwork
             this.weights.Randomize();
             this.biases.Randomize();
 
-            // TODO: This can be shorter with out parameters.
-
-            Tuple<Func<float, float>, Func<float, float>> Funcs = ActivationFunctions.GetActivationFuncs(activationType);
-            activation = Funcs.Item1;
-            derOfActivation = Funcs.Item2;
-
-
             Input = new Matrix[1];
             Output = new Matrix[1];
             Output_d_E = new Matrix[1];
             Input[0] = new Matrix(inputNeurons, 1);
             Output[0] = new Matrix(nextLayerNeurons, 1);
             Output_d_E[0] = new Matrix(nextLayerNeurons, 1);
+
+            ActivationFunctions.GetActivationFuncs(activationType, out activation, out derOfActivation);
         }
 
         public override void Initialize()
@@ -53,7 +48,7 @@ namespace ConvNeuralNetwork
             base.FeedForward();
             Output[0] = weights * Input[0];
             Output[0] += biases;
-            Output[0].Map(activation);
+            Output[0] = activation(Output[0]);
 
             // If this layer is last layer so there is no outputLayer.
             if (OutputLayer != null)
@@ -64,7 +59,7 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Matrix net_d_E = Matrix.Multiply(Output_d_E[0], Matrix.Map(Output[0], derOfActivation));
+            Matrix net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
             Matrix w_d_net = Matrix.Map(Input[0], DerNetFunc);
             Matrix w_d_E = net_d_E * Matrix.Transpose(w_d_net);
             Matrix out_d_net = Matrix.Map(weights, DerNetFunc);

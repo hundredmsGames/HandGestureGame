@@ -128,8 +128,8 @@ namespace CNN_Test_Console
             Console.WriteLine("\nAccuracy: %{0:F2}\n", (correct_count * 1f / testing_count) * 100.0);
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
 
-            //Console.WriteLine("Press any key to continue");
-            //Console.ReadKey();
+            Console.WriteLine(cnn.Layers[cnn.Layers.Length - 1].Output[0]);
+
             //if we are not training the system we dont have to save again
             if (dialogResult != 'y')
             {
