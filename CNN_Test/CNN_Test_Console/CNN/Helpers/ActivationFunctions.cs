@@ -56,28 +56,6 @@ namespace ConvNeuralNetwork
             return Matrix.Map(m, x => (x > 0) ? 1f : 0f);
         }
 
-        /// <summary>
-        /// Rectified Linear Units: Max(x, 0)
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static float ReLu(float x)
-        {
-            return Math.Max(x, 0);
-        }
-
-        /// <summary>
-        /// Derivative of ReLu
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
-        public static float DerOfReLu(float x)
-        {
-            return (x > 0) ? 1f : 0f;
-        }
-
-
-
         public static Matrix Tanh(Matrix m)
         {
             return 2f / (1f + Matrix.Exp(-2f * m)) - 1f;
@@ -98,6 +76,16 @@ namespace ConvNeuralNetwork
         public static Matrix DerOfSigmoid(Matrix m)
         {
             return Matrix.Multiply(m, (1f - m));
+        }
+
+        public static float Sigmoid(float x)
+        {
+            return 1f / (1f + (float)Math.Exp(-x));
+        }
+
+        public static float DerOfSigmoid(float x)
+        {
+            return x * (1f - x);
         }
 
         public static Matrix Softmax(Matrix m)
