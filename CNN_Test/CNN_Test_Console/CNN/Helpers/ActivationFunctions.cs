@@ -78,16 +78,6 @@ namespace ConvNeuralNetwork
             return Matrix.Multiply(m, (1f - m));
         }
 
-        public static float Sigmoid(float x)
-        {
-            return 1f / (1f + (float)Math.Exp(-x));
-        }
-
-        public static float DerOfSigmoid(float x)
-        {
-            return x * (1f - x);
-        }
-
         public static Matrix Softmax(Matrix m)
         {
 

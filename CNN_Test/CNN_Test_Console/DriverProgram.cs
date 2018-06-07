@@ -20,8 +20,8 @@ namespace CNN_Test_Console
         public static void CNN_Test()
         {
             int trCount = 100, tsCount = 100;
-            float error = 0f;
-            float timeLimit = 0;
+            double error = 0f;
+            double timeLimit = 0;
             int iterationCount = 10;
             bool predictionIsOn = true;
             char dialogResult;
@@ -128,8 +128,6 @@ namespace CNN_Test_Console
             Console.WriteLine("\nAccuracy: %{0:F2}\n", (correct_count * 1f / testing_count) * 100.0);
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
 
-            Console.WriteLine(cnn.Layers[cnn.Layers.Length - 1].Output[0]);
-
             //if we are not training the system we dont have to save again
             if (dialogResult != 'y')
             {
@@ -163,7 +161,7 @@ namespace CNN_Test_Console
             for(int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
-                float error = cnn.GetError();
+                double error = cnn.GetError();
                
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
@@ -181,7 +179,7 @@ namespace CNN_Test_Console
             return (int)((current - oldMin) / (double)(oldMax - 1 - oldMin) * (newMax - newMin) + newMin);
         }
 
-        static void ProgressBar(int currentValue, int currentCount, int maxCount, float error, double timePassed = 0)
+        static void ProgressBar(int currentValue, int currentCount, int maxCount, double error, double timePassed = 0)
         {
             Console.CursorVisible = false;
 

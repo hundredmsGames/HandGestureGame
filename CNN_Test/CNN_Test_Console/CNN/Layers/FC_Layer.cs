@@ -48,8 +48,7 @@ namespace ConvNeuralNetwork
             base.FeedForward();
             Output[0] = weights * Input[0];
             Output[0] += biases;
-            //Output[0] = activation(Output[0]);
-            Output[0].Map(ActivationFunctions.Sigmoid);     // OLD CODE
+            Output[0] = activation(Output[0]);
 
             // If this layer is last layer so there is no outputLayer.
             if (OutputLayer != null)
@@ -60,8 +59,7 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            //Matrix net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
-            Matrix net_d_E = Matrix.Multiply(Output_d_E[0], Matrix.Map(Output[0], ActivationFunctions.DerOfSigmoid));  // OLD CODE
+            Matrix net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
             Matrix w_d_net = Matrix.Map(Input[0], DerNetFunc);
             Matrix w_d_E = net_d_E * Matrix.Transpose(w_d_net);
             Matrix out_d_net = Matrix.Map(weights, DerNetFunc);
@@ -71,7 +69,7 @@ namespace ConvNeuralNetwork
             InputLayer.Output_d_E[0] = out_d_E;
         }
 
-        public static float DerNetFunc(float x)
+        public static double DerNetFunc(double x)
         {
             return x;
         }

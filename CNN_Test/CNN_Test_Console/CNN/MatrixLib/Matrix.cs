@@ -8,7 +8,7 @@ namespace MatrixLib
 
         public int rows;
 		public int cols;
-		public float[,] data;
+		public double[,] data;
 
 		static Random randomize = new Random(555);
 
@@ -26,14 +26,14 @@ namespace MatrixLib
 			this.rows = rows;
 			this.cols = cols;
 
-			data = new float[this.rows, this.cols];
+			data = new double[this.rows, this.cols];
 		}
 
-        public Matrix(float[] arr)
+        public Matrix(double[] arr)
         {
             this.rows = arr.Length;
             this.cols = 1;
-            this.data = new float[this.rows, this.cols];
+            this.data = new double[this.rows, this.cols];
 
             for (int i = 0; i < arr.Length; i++)
                 data[i, 0] = arr[i];
@@ -43,7 +43,7 @@ namespace MatrixLib
         {
             this.rows = pixels.Length;
             this.cols = pixels.Length;
-            this.data = new float[this.rows, this.cols];
+            this.data = new double[this.rows, this.cols];
 
             for (int i = 0; i < pixels.Length; i++)
                 for (int j = 0; j < pixels.Length; j++)
@@ -56,14 +56,14 @@ namespace MatrixLib
 			this.rows = m.rows;
 			this.cols = m.cols;
 
-			this.data = new float[rows, cols];
+			this.data = new double[rows, cols];
 
 			for(int i = 0; i < rows; i++)
 				for(int j = 0; j < cols; j++)
 					this.data[i, j] = m.data[i, j];
 		}
 
-        public float this[int r, int c]
+        public double this[int r, int c]
         {
             get
             {
@@ -171,7 +171,7 @@ namespace MatrixLib
 
         #region Scalar Operations
 
-        public static Matrix Add(Matrix m, float x)
+        public static Matrix Add(Matrix m, double x)
         {
             Matrix sum = new Matrix(m.rows, m.cols);
             for (int i = 0; i < sum.rows; i++)
@@ -185,7 +185,7 @@ namespace MatrixLib
             return sum;
         }
 
-        public static Matrix Subtract(Matrix m, float x)
+        public static Matrix Subtract(Matrix m, double x)
         {
             Matrix sub = new Matrix(m.rows, m.cols);
             for (int i = 0; i < sub.rows; i++)
@@ -199,7 +199,7 @@ namespace MatrixLib
             return sub;
         }
 
-        public static Matrix Multiply(Matrix m, float x)
+        public static Matrix Multiply(Matrix m, double x)
         {
             Matrix mult = new Matrix(m.rows, m.cols);
             for (int i = 0; i < mult.rows; i++)
@@ -213,7 +213,7 @@ namespace MatrixLib
             return mult;
         }
 
-        public static Matrix Divide(Matrix m, float x)
+        public static Matrix Divide(Matrix m, double x)
         {
             Matrix div = new Matrix(m.rows, m.cols);
             for (int i = 0; i < div.rows; i++)
@@ -227,7 +227,7 @@ namespace MatrixLib
             return div;
         }
 
-        public static Matrix Divide(float x, Matrix m)
+        public static Matrix Divide(double x, Matrix m)
         {
             Matrix div = new Matrix(m.rows, m.cols);
             for (int i = 0; i < div.rows; i++)
@@ -262,7 +262,7 @@ namespace MatrixLib
             {
                 for (int j = 0; j < exp.cols; j++)
                 {
-                    exp[i, j] = (float) Math.Exp(m[i, j]);
+                    exp[i, j] = (double) Math.Exp(m[i, j]);
                 }
             }
 
@@ -327,7 +327,7 @@ namespace MatrixLib
 
         #region Normalization
 
-        public void Normalize(float oldMin, float oldMax, float newMin, float newMax)
+        public void Normalize(double oldMin, double oldMax, double newMin, double newMax)
         {
             for (int i = 0; i < this.rows; i++)
             {
@@ -338,7 +338,7 @@ namespace MatrixLib
             }
         }
 
-        public static Matrix Normalize(Matrix matrix, float oldMin, float oldMax, float newMin, float newMax)
+        public static Matrix Normalize(Matrix matrix, double oldMin, double oldMax, double newMin, double newMax)
         {
             Matrix normalized = new Matrix(matrix.rows, matrix.cols);
 
@@ -359,7 +359,7 @@ namespace MatrixLib
 
         // Maps the matrix according to given func.
         // i.e: Changes each element according to given func.
-        public void Map(Func<float, float> mapFunc)
+        public void Map(Func<double, double> mapFunc)
         {
             for (int i = 0; i < this.rows; i++)
             {
@@ -371,7 +371,7 @@ namespace MatrixLib
         }
 
         // Same as the non-static version of Map
-        public static Matrix Map(Matrix m, Func<float, float> mapFunc)
+        public static Matrix Map(Matrix m, Func<double, double> mapFunc)
         {
             Matrix mapped = new Matrix(m.rows, m.cols);
             for (int i = 0; i < m.rows; i++)
@@ -396,7 +396,7 @@ namespace MatrixLib
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    this.data[i, j] = (float) (randomize.NextDouble() * 2.0 - 1.0);
+                    this.data[i, j] = (double) (randomize.NextDouble() * 2.0 - 1.0);
                 }
             }
         }
@@ -441,42 +441,42 @@ namespace MatrixLib
             return Divide(m1, m2);
         }
 
-        public static Matrix operator +(Matrix m, float x)
+        public static Matrix operator +(Matrix m, double x)
         {
             return Add(m, x);
         }
 
-        public static Matrix operator +(float x, Matrix m)
+        public static Matrix operator +(double x, Matrix m)
         {
             return Add(m, x);
         }
 
-        public static Matrix operator -(Matrix m, float x)
+        public static Matrix operator -(Matrix m, double x)
         {
             return Subtract(m, x);
         }
 
-        public static Matrix operator -(float x, Matrix m)
+        public static Matrix operator -(double x, Matrix m)
         {
             return Negative(Subtract(m, x));
         }
 
-        public static Matrix operator *(Matrix m, float x)
+        public static Matrix operator *(Matrix m, double x)
         {
             return Multiply(m, x);
         }
 
-        public static Matrix operator *(float x, Matrix m)
+        public static Matrix operator *(double x, Matrix m)
         {
             return Multiply(m, x);
         }
 
-        public static Matrix operator /(Matrix m, float x)
+        public static Matrix operator /(Matrix m, double x)
         {
             return Divide(m, x);
         }
 
-        public static Matrix operator /(float x, Matrix m)
+        public static Matrix operator /(double x, Matrix m)
         {
             return Divide(x, m);
         }
@@ -523,7 +523,7 @@ namespace MatrixLib
         }
 
         // Convert matrix from array.
-        public static Matrix FromArray(float[] arr)
+        public static Matrix FromArray(double[] arr)
 		{
 			Matrix m = new Matrix(arr.Length, 1);
 
@@ -534,9 +534,9 @@ namespace MatrixLib
 		}
 
 		// Convert matrix to array.
-		public static float[] ToArray(Matrix m)
+		public static double[] ToArray(Matrix m)
 		{
-            float[] arr = new float[m.rows * m.cols];
+            double[] arr = new double[m.rows * m.cols];
 
 			int cnt = 0;
 			for(int i = 0; i < m.rows; i++)

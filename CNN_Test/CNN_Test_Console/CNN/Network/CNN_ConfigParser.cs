@@ -88,7 +88,7 @@ namespace ConvNeuralNetwork
                         continue;
 
                     case "learning_rate":
-                        learningRate = float.Parse(value.Replace('.', ','));
+                        learningRate = double.Parse(value.Replace('.', ','));
                         continue;
 
                     case "filters":

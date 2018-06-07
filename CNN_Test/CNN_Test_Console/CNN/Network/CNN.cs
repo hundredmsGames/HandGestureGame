@@ -12,7 +12,7 @@ namespace ConvNeuralNetwork
 
         private int nextLayerIndex;
 
-        private float learningRate;
+        private double learningRate;
 
         private Matrix target;
 
@@ -134,12 +134,12 @@ namespace ConvNeuralNetwork
             }
         }
 
-        public float GetError()
+        public double GetError()
         {
             // Calculate the error 
             // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
 
-            float error = 0f;
+            double error = 0f;
             if (target != null)
             {
                 Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
@@ -168,7 +168,7 @@ namespace ConvNeuralNetwork
             set { nextLayerIndex = value; }
         }
 
-        public float LearningRate
+        public double LearningRate
         {
             get { return learningRate; }
             set { learningRate = value; }
