@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using ConvNeuralNetwork;
 using MatrixLib;
+using System.Linq;
 
 namespace CNN_Test_Console
 {
@@ -11,6 +12,7 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
+
             CNN_Test();
             //CNN_OverfittingTest();
 
