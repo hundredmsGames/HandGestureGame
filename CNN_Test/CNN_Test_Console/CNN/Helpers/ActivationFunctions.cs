@@ -94,17 +94,7 @@ namespace ConvNeuralNetwork
             //i=>i is a lamda expression for selecting value we are selecing the current item
             double expMatrixSum = query.Sum<double>(i => i);
 
-            Matrix softmax = new Matrix(m.rows, m.cols);
-
-            for (int r = 0; r < softmax.rows; r++)
-            {
-                for (int c = 0; c < softmax.cols; c++)
-                {
-                    softmax[r, c] = expMatrix[r, c] / expMatrixSum;
-                }
-            }
-
-            return softmax;
+            return expMatrix / expMatrixSum;
         }
 
         public static Matrix DerOfSoftmax(Matrix x)

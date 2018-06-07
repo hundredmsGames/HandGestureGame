@@ -13,8 +13,8 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
 
-            CNN_Test();
-            //CNN_OverfittingTest();
+            //CNN_Test();
+            CNN_OverfittingTest();
 
             Console.ReadLine();
         }
