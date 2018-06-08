@@ -99,17 +99,17 @@ namespace ConvNeuralNetwork
 
         public static Matrix DerOfSoftmax(Matrix x)
         {
-            Matrix der_E_Input = new Matrix(x.rows, x.cols);
+            Matrix der = new Matrix(x.rows, x.rows);
 
             for (int i = 0; i < x.rows; i++)
             {
                 for (int j = 0; j < x.rows; j++)
                 {
-                    der_E_Input[i, 0] += x[i, 0] * ( (i == j ? 1 : 0) - x[j, 0]);
+                    der[i, j] = x[i, 0] * ((i == j ? 1 : 0) - x[j, 0]);
                 }
             }
 
-            return der_E_Input;
+            return Matrix.DecreaseToOneDimension(der); ;
         }
     }
 }

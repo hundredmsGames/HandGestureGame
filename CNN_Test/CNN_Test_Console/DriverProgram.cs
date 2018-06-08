@@ -12,16 +12,15 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-
-            //CNN_Test();
-            CNN_OverfittingTest();
+            CNN_Test();
+            //CNN_OverfittingTest();
 
             Console.ReadLine();
         }
 
         public static void CNN_Test()
         {
-            int trCount = 100, tsCount = 100;
+            int trCount = 60000, tsCount = 10000;
             double error = 0f;
             double timeLimit = 0;
             int iterationCount = 10;

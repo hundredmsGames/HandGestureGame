@@ -46,6 +46,7 @@ namespace ConvNeuralNetwork
         public override void FeedForward()
         {
             base.FeedForward();
+
             Output[0] = weights * Input[0];
             Output[0] += biases;
             Output[0] = activation(Output[0]);
@@ -59,7 +60,14 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Matrix net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
+            Matrix activation_grad = derOfActivation(Output[0]);
+            Matrix net_d_E;
+
+            if (activation == ActivationFunctions.Softmax)
+                net_d_E = Matrix.IncreaseToTwoDimension(activation_grad, Output[0].rows, Output[0].rows) * Output_d_E[0];
+            else
+                net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
+
             Matrix w_d_net = Matrix.Map(Input[0], DerNetFunc);
             Matrix w_d_E = net_d_E * Matrix.Transpose(w_d_net);
             Matrix out_d_net = Matrix.Map(weights, DerNetFunc);
