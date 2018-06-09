@@ -10,7 +10,7 @@ namespace ConvNeuralNetwork
         #region Config File Paths
 
         string main_cfg_path = Path.Combine("..", "..", "CNN", "Configs", "config.cfg");
-        string saved_network_path = Path.Combine("..", "..", "CNN", "Configs", "network.json");
+        string saved_network_path = Path.Combine("..", "..", "CNN", "Configs");
 
         #endregion
 
@@ -143,7 +143,7 @@ namespace ConvNeuralNetwork
 
         #region Save-Load Network (JSON)
 
-        public void SaveData()
+        public void SaveData(string fileName)
         {
             CNN_Data cNN_Data = new CNN_Data();
             for (int i = 0; i < Layers.Length; i++)
@@ -170,13 +170,21 @@ namespace ConvNeuralNetwork
             }
 
             cNN_Data.Descriptions = descriptions.ToList();
-            JsonFileController.WriteToJsonFile(saved_network_path, cNN_Data);
+
+            int fileCount = Directory.GetFiles(saved_network_path, "*.json").Length;
+            if (string.IsNullOrEmpty(fileName))
+                fileName = string.Format("network{0}.json", fileCount);
+
+            string fullPath = Path.Combine(saved_network_path, fileName);
+
+            JsonFileController.WriteToJsonFile(fullPath, cNN_Data);
         }
 
-        public void LoadData()
+        public void LoadData(string fileName)
         {
             int convLayCount = 0;
-            CNN_Data cNN_Data = JsonFileController.ReadDataFromJsonFile<CNN_Data>(saved_network_path);
+          
+            CNN_Data cNN_Data = JsonFileController.ReadDataFromJsonFile<CNN_Data>(Path.Combine(saved_network_path,fileName));
             descriptions = cNN_Data.Descriptions.ToArray();
             layers = new Layer[descriptions.Length];
             for (int i = 0; i < descriptions.Length; i++)

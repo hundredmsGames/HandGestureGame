@@ -22,10 +22,10 @@ namespace ConvNeuralNetwork
 
         #region Constructors
 
-        public CNN(bool readFromConfig=true)
+        public CNN(string fileName=null)
         {
             // We are deserializing config file at the top of the constructor
-            if (readFromConfig)
+            if (string.IsNullOrEmpty(fileName))
             {
                 descriptions = DeserializeConfig();
                 layers = new Layer[descriptions.Length];
@@ -38,7 +38,7 @@ namespace ConvNeuralNetwork
             else
             {
                 //load descriptions from saved file
-                LoadData();
+                LoadData(fileName);
             }
 
             // First layer index is 0.

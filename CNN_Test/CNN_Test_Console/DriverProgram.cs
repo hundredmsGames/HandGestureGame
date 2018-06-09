@@ -3,6 +3,7 @@ using System.Diagnostics;
 using ConvNeuralNetwork;
 using MatrixLib;
 using System.Linq;
+using System.IO;
 
 namespace CNN_Test_Console
 {
@@ -20,26 +21,41 @@ namespace CNN_Test_Console
 
         public static void CNN_Test()
         {
-            int trCount = 60000, tsCount = 10000;
+            int trCount = 10, tsCount = 10;
             double error = 0f;
             double timeLimit = 0;
             int iterationCount = 10;
             bool predictionIsOn = true;
             char dialogResult;
+            Random random = new Random();
 
-            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
-            int training_count = digitImages.Length;
+            DigitImage[] digitImagesDatas = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
+            int training_count = digitImagesDatas.Length;
             CNN cnn;
 
             Console.WriteLine("Would you like to load data from file?(Yy/Nn)");
             dialogResult = Console.ReadLine().Trim().ToLower()[0];
             if (dialogResult == 'y')
-                cnn = new CNN(false);
+            {
+                Console.WriteLine("0) Cancel");
+                string[] files = Directory.GetFiles(Path.Combine("..", "..", "CNN", "Configs"), "*.json");
+                for (int i = 0; i < files.Length; i++)
+                {
+                    
+                    Console.WriteLine("{0}){1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar)+1));
+                }
+                Console.WriteLine("Select a file by index: ");
+                int indexOfFile = int.Parse(Console.ReadLine().Trim());
+                if (indexOfFile != 0 && indexOfFile<files.Length)
+                    cnn = new CNN(files[indexOfFile - 1] + ".json");
+                else
+                    cnn = new CNN();
+            }
             else
                 cnn = new CNN();
 
             Matrix[] input = new Matrix[1];
-            input[0]= new Matrix(28, 28);
+            input[0] = new Matrix(28, 28);
             Matrix[] targets = new Matrix[10];
 
             for (int i = 0; i < 10; i++)
@@ -50,7 +66,7 @@ namespace CNN_Test_Console
                     targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
                 }
             }
-            
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             if (dialogResult != 'y')
@@ -59,6 +75,7 @@ namespace CNN_Test_Console
                 cursorTop = Console.CursorTop;
                 for (int x = 0; x < iterationCount; x++)
                 {
+                    DigitImage[] digitImages = digitImagesDatas.OrderBy(image => random.Next(training_count)).ToArray();
                     for (int i = 0; i < training_count; i++)
                     {
                         for (int j = 0; j < 28; j++)
@@ -80,13 +97,13 @@ namespace CNN_Test_Console
                     }
                 }
 
-               
+
 
                 Console.WriteLine("\nSystem has been trained.");
             }
 
-            digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, tsCount);
-            int testing_count = digitImages.Length;
+            digitImagesDatas = MNIST_Parser.ReadFromFile(DataSet.Testing, tsCount);
+            int testing_count = digitImagesDatas.Length;
             int correct_count = 0;
             Console.WriteLine("System is getting tested. You will see the results when it is done...\n");
             cursorTop = Console.CursorTop;
@@ -96,21 +113,21 @@ namespace CNN_Test_Console
             {
                 for (int j = 0; j < 28; j++)
                     for (int k = 0; k < 28; k++)
-                        input[0][j, k] = digitImages[i].pixels[j][k];
+                        input[0][j, k] = digitImagesDatas[i].pixels[j][k];
 
                 input[0].Normalize(0f, 255f, 0f, 1f);
 
-                Matrix ans=null;
+                Matrix ans = null;
                 if (predictionIsOn)
                     ans = cnn.Predict(input);
                 else
                 {
-                   
-                    cnn.Train(input, targets[digitImages[i].label]);
+
+                    cnn.Train(input, targets[digitImagesDatas[i].label]);
                     ans = cnn.Layers[cnn.Layers.Length - 1].Output[0];
                 }
 
-                if (ans.GetMaxRowIndex() == digitImages[i].label)
+                if (ans.GetMaxRowIndex() == digitImagesDatas[i].label)
                     correct_count++;
 
 
@@ -136,13 +153,16 @@ namespace CNN_Test_Console
                 dialogResult = Console.ReadLine().ToLower()[0];
                 if (dialogResult == 'y')
                 {
-                    cnn.SaveData();
+                    Console.WriteLine("Press Enter to continue, if you do not write a name, there will be a default name.");
+                    Console.Write("File Name: ");
+                    string fileName = Console.ReadLine().Trim();
+                    cnn.SaveData(fileName);
                 }
                 Console.WriteLine("Data Saved...");
             }
             Console.WriteLine("Press enter to exit.");
         }
-        
+
         public static void CNN_OverfittingTest()
         {
             CNN cnn = new CNN();
@@ -153,17 +173,17 @@ namespace CNN_Test_Console
             Matrix[] input = new Matrix[1];
             input[0] = new Matrix(digitImages[test_image_idx].pixels);
             Matrix target = new Matrix(10, 1);
-            target[(int) digitImages[test_image_idx].label, 0] = 1f;
+            target[(int)digitImages[test_image_idx].label, 0] = 1f;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             int iteration_count = 10000;
-            for(int i = 0; i < iteration_count; i++)
+            for (int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
                 double error = cnn.GetError();
-               
+
                 int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
                 ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
             }
@@ -193,12 +213,12 @@ namespace CNN_Test_Console
                 Console.Write("]");
             }
 
-            Console.SetCursorPosition(pos+1, cursorTop);
+            Console.SetCursorPosition(pos + 1, cursorTop);
             Console.Write("#");
             Console.SetCursorPosition(14, cursorTop);
             Console.WriteLine(currentValue + "%");
             Console.SetCursorPosition(25, cursorTop);
-            Console.WriteLine(currentCount+1 + " / " + maxCount);
+            Console.WriteLine(currentCount + 1 + " / " + maxCount);
             Console.SetCursorPosition(45, cursorTop);
             Console.WriteLine("Time Passed: " + timePassed.ToString("F1"));
             Console.SetCursorPosition(70, cursorTop);
