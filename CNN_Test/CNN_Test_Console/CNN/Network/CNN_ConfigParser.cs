@@ -154,6 +154,7 @@ namespace ConvNeuralNetwork
                         break;
                     case LayerType.CONVOLUTIONAL:
                         cNN_Data.Kernels.Add((layers[i] as ConvLayer).Kernels);
+                        cNN_Data.Ker_Biases.Add((layers[i] as ConvLayer).Biases);
                         break;
                     case LayerType.MAXPOOLING:
                         break;
@@ -196,6 +197,7 @@ namespace ConvNeuralNetwork
                         break;
                     case LayerType.CONVOLUTIONAL:
                         (layers[i] as ConvLayer).Kernels = cNN_Data.Kernels[convLayCount];
+                        (layers[i] as ConvLayer).Biases = cNN_Data.Ker_Biases[convLayCount];
                         convLayCount++;
                         break;
                     case LayerType.MAXPOOLING:

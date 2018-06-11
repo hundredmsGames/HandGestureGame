@@ -12,6 +12,7 @@ namespace ConvNeuralNetwork
         private int stride;
         private int padding;
         private Matrix[,] kernels;
+        private Matrix biases;
 
         Func<Matrix, Matrix> activation;
         Func<Matrix, Matrix> derOfActivation;
@@ -70,6 +71,10 @@ namespace ConvNeuralNetwork
                     kernels[i, j].Randomize();
                 }
             }
+
+            // Initalize biases
+            biases = new Matrix(filters, 1);
+            biases.Randomize();
         }
 
         #endregion
@@ -107,6 +112,7 @@ namespace ConvNeuralNetwork
                 }
 
                 Output[fil_idx] = activation(Output[fil_idx]);
+                Output[fil_idx] += biases[fil_idx, 0];
             }
 
             this.OutputLayer.Input = Output;
@@ -117,6 +123,7 @@ namespace ConvNeuralNetwork
             base.Backpropagation();
 
             Matrix kernel_d_E = new Matrix(kernel_size, kernel_size);
+            Matrix bias_d_E = new Matrix(Filters, 1);
 
             for (int fil_idx = 0; fil_idx < Filters; fil_idx++)
             {
@@ -125,6 +132,7 @@ namespace ConvNeuralNetwork
                     //reset values
                     InputLayer.Output_d_E[ch].FillZero();
                     kernel_d_E.FillZero();
+                    bias_d_E.FillZero();
 
                     Matrix derAct = derOfActivation(Output[fil_idx]);
 
@@ -137,6 +145,7 @@ namespace ConvNeuralNetwork
                                 for (int q = 0; q < kernel_size; q++)
                                 {
                                     kernel_d_E[p, q] += derAct[r, c] * Output_d_E[fil_idx][r, c] * Input[ch][i + p, j + q];
+                                    bias_d_E[fil_idx, 0] += derAct[r, c] * Output_d_E[fil_idx][r, c];
 
                                     if (LayerIndex != 1)
                                     {
@@ -149,6 +158,7 @@ namespace ConvNeuralNetwork
                     }
 
                     kernels[fil_idx, ch] = kernels[fil_idx, ch] - (Network.LearningRate * kernel_d_E);
+                    biases[fil_idx, 0] = biases[fil_idx, 0] - (Network.LearningRate * bias_d_E[fil_idx, 0]);
                 }
             }
         }
@@ -179,6 +189,12 @@ namespace ConvNeuralNetwork
         {
             get { return kernels; }
              set { kernels = value; }
+        }
+
+        public Matrix Biases
+        {
+            get { return biases; }
+            set { biases = value; }
         }
 
         public int Padding { get => padding; set => padding = value; }
