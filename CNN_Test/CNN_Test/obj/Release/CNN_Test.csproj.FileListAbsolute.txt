@@ -9,10 +9,10 @@ D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\bin\Release\Emgu.CV.xml
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\bin\Release\Emgu.CV.UI.xml
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\bin\Release\Emgu.Util.xml
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csprojResolveAssemblyReference.cache
+D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.MainForm.resources
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.Properties.Resources.resources
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csproj.GenerateResource.cache
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csproj.CoreCompileInputs.cache
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.csproj.CopyComplete
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.exe
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.pdb
-D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test\obj\Release\CNN_Test.MainForm.resources

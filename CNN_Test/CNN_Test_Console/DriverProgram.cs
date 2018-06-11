@@ -21,55 +21,25 @@ namespace CNN_Test_Console
 
         public static void CNN_Test()
         {
-            int trCount = 10, tsCount = 10;
+            int trCount = 100, tsCount = 100;
             double error = 0f;
             double timeLimit = 0;
-            int iterationCount = 10;
+            int iterationCount = 20;
             bool predictionIsOn = true;
-            char dialogResult;
             Random random = new Random();
 
             DigitImage[] digitImagesDatas = MNIST_Parser.ReadFromFile(DataSet.Training, trCount);
             int training_count = digitImagesDatas.Length;
-            CNN cnn;
+            int dialogResult;
 
-            Console.WriteLine("Would you like to load data from file?(Yy/Nn)");
-            dialogResult = Console.ReadLine().Trim().ToLower()[0];
-            if (dialogResult == 'y')
-            {
-                Console.WriteLine("0) Cancel");
-                string[] files = Directory.GetFiles(Path.Combine("..", "..", "CNN", "Configs"), "*.json");
-                for (int i = 0; i < files.Length; i++)
-                {
-                    
-                    Console.WriteLine("{0}){1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar)+1));
-                }
-                Console.WriteLine("Select a file by index: ");
-                int indexOfFile = int.Parse(Console.ReadLine().Trim());
-                if (indexOfFile != 0 && indexOfFile<files.Length)
-                    cnn = new CNN(files[indexOfFile - 1] + ".json");
-                else
-                    cnn = new CNN();
-            }
-            else
-                cnn = new CNN();
-
-            Matrix[] input = new Matrix[1];
-            input[0] = new Matrix(28, 28);
-            Matrix[] targets = new Matrix[10];
-
-            for (int i = 0; i < 10; i++)
-            {
-                targets[i] = new Matrix(10, 1);
-                for (int j = 0; j < 10; j++)
-                {
-                    targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
-                }
-            }
+            CNN cnn = CreateCNN(out dialogResult);
+            Matrix[] input, targets;
+            InitializeInputAndTarget(out input, out targets);
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            if (dialogResult != 'y')
+
+            if (dialogResult == 0)
             {
                 Console.WriteLine("System is getting trained...");
                 cursorTop = Console.CursorTop;
@@ -97,8 +67,6 @@ namespace CNN_Test_Console
                     }
                 }
 
-
-
                 Console.WriteLine("\nSystem has been trained.");
             }
 
@@ -122,14 +90,12 @@ namespace CNN_Test_Console
                     ans = cnn.Predict(input);
                 else
                 {
-
                     cnn.Train(input, targets[digitImagesDatas[i].label]);
                     ans = cnn.Layers[cnn.Layers.Length - 1].Output[0];
                 }
 
                 if (ans.GetMaxRowIndex() == digitImagesDatas[i].label)
                     correct_count++;
-
 
                 if (stopwatch.ElapsedMilliseconds > timeLimit)
                 {
@@ -147,19 +113,21 @@ namespace CNN_Test_Console
             Console.WriteLine("Correct/All: {0}/{1}", correct_count, testing_count);
 
             //if we are not training the system we dont have to save again
-            if (dialogResult != 'y')
+            if (dialogResult == 0)
             {
                 Console.WriteLine("Would you like to save this network?(yY/nN)");
-                dialogResult = Console.ReadLine().ToLower()[0];
-                if (dialogResult == 'y')
+                string res = Console.ReadLine();
+
+                if (res == "" || char.ToLower(res[0]) == 'y')
                 {
                     Console.WriteLine("Press Enter to continue, if you do not write a name, there will be a default name.");
-                    Console.Write("File Name: ");
+                    Console.Write("File Name >> ");
                     string fileName = Console.ReadLine().Trim();
                     cnn.SaveData(fileName);
                 }
                 Console.WriteLine("Data Saved...");
             }
+
             Console.WriteLine("Press enter to exit.");
         }
 
@@ -178,7 +146,7 @@ namespace CNN_Test_Console
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            int iteration_count = 10000;
+            int iteration_count = 1000;
             for (int i = 0; i < iteration_count; i++)
             {
                 cnn.Train(input, target);
@@ -192,6 +160,43 @@ namespace CNN_Test_Console
 
             Console.WriteLine(output.ToString());
             Console.WriteLine(digitImages[test_image_idx].ToString());
+        }
+
+
+
+        public static CNN CreateCNN(out int dialogResult)
+        {
+            string[] files = Directory.GetFiles(Path.Combine("..", "..", "CNN", "Configs"), "*.json");
+
+            Console.WriteLine("0 > Train new network");
+            for (int i = 0; i < files.Length; i++)
+            {
+                Console.WriteLine("{0} > {1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1));
+            }
+            Console.Write(">> ");
+
+            int indexOfFile = int.Parse(Console.ReadLine().Trim());
+            dialogResult = indexOfFile;
+            if (indexOfFile != 0 && indexOfFile < files.Length)
+                return new CNN(files[indexOfFile - 1]);
+            else
+                return new CNN();
+        }
+
+        public static void InitializeInputAndTarget(out Matrix[] input, out Matrix[] targets)
+        {
+            input = new Matrix[1];
+            input[0] = new Matrix(28, 28);
+            targets = new Matrix[10];
+
+            for (int i = 0; i < 10; i++)
+            {
+                targets[i] = new Matrix(10, 1);
+                for (int j = 0; j < 10; j++)
+                {
+                    targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
+                }
+            }
         }
 
         public static int Map(int oldMin, int oldMax, int newMin, int newMax, int current)

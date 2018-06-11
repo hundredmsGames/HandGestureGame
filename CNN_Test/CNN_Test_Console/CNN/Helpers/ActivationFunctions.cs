@@ -83,11 +83,10 @@ namespace ConvNeuralNetwork
         {
             //find the max of the array
             double max = m.data.OfType<double>().Max();
-            //subtract matrix from the max value
-            Matrix belowZero = Matrix.Subtract(m, max);
 
             //find the exp of the array
-            Matrix expMatrix = Matrix.Exp(belowZero);
+            Matrix expMatrix = Matrix.Exp(m - max);
+
             //make a query for using linq
             var query = expMatrix.data.OfType<double>();
 
@@ -109,7 +108,7 @@ namespace ConvNeuralNetwork
                 }
             }
 
-            return Matrix.DecreaseToOneDimension(der); ;
+            return Matrix.DecreaseToOneDimension(der);
         }
     }
 }
