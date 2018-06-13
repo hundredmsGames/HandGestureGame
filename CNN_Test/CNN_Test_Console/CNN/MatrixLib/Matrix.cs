@@ -262,11 +262,25 @@ namespace MatrixLib
             {
                 for (int j = 0; j < exp.cols; j++)
                 {
-                    exp[i, j] = (double) Math.Exp(m[i, j]);
+                    exp[i, j] = Math.Exp(m[i, j]);
                 }
             }
 
             return exp;
+        }
+
+        public static Matrix Log(Matrix m)
+        {
+            Matrix log = new Matrix(m.rows, m.cols);
+            for (int i = 0; i < log.rows; i++)
+            {
+                for (int j = 0; j < log.cols; j++)
+                {
+                    log[i, j] = Math.Log(m[i, j]);
+                }
+            }
+
+            return log;
         }
 
         public void FillZero()

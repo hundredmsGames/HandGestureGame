@@ -69,7 +69,12 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            layers[layers.Length - 1].Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
+            //layers[layers.Length - 1].Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
+
+            layers[layers.Length - 1].Output_d_E[0] = DerivativeOfCrossEntropy(
+                layers[layers.Length - 1].Output[0],
+                Network.Target
+            );
 
             for (int i = layers.Length - 1; i >= 0; i--)
             {
@@ -78,6 +83,14 @@ namespace ConvNeuralNetwork
 
             // Increase dimension back
             InputLayer.Output_d_E = IncreaseDimension(Output_d_E[0]);
+        }
+
+        
+
+        public Matrix DerivativeOfCrossEntropy(Matrix p, Matrix c)
+        {
+            // constant for divide by zero error. 
+            return -(c / (p + 0.00000000000001)) + (1 - c) / (1 - p + 0.00000000000001);
         }
 
         private Matrix[] IncreaseDimension(Matrix oldMatrix)

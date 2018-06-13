@@ -139,15 +139,29 @@ namespace ConvNeuralNetwork
             // Calculate the error 
             // ERROR = (1 / 2) * (TARGETS - OUTPUTS)^2
 
-            double error = 0f;
-            if (target != null)
-            {
-                Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
-                outputError = Matrix.Multiply(outputError, outputError) / 2f;
+            //double error = 0f;
+            //if (target != null)
+            //{
+            //    Matrix outputError = target - Layers[Layers.Length - 1].Output[0];
+            //    outputError = Matrix.Multiply(outputError, outputError) / 2f;
 
-                for (int i = 0; i < outputError.rows; i++)
-                    error += outputError[i, 0];
-            }
+            //    for (int i = 0; i < outputError.rows; i++)
+            //        error += outputError[i, 0];
+            //}
+
+            //return error;
+
+            return CrossEntropy(Layers[Layers.Length - 1].Output[0], target);
+        }
+
+        public double CrossEntropy(Matrix p, Matrix c)
+        {
+            double error = 0.0;
+
+            Matrix errorMatrix = -Matrix.Multiply(c, Matrix.Log(p)) + Matrix.Multiply(1 - c, Matrix.Log(1 - p));
+
+            for (int i = 0; i < errorMatrix.rows; i++)
+                error += errorMatrix[i, 0];
 
             return error;
         }

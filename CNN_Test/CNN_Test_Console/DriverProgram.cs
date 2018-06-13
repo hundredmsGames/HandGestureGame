@@ -13,8 +13,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_Test();
-            //CNN_OverfittingTest();
+            //CNN_Test();
+            CNN_OverfittingTest();
 
             Console.ReadLine();
         }
@@ -93,6 +93,7 @@ namespace CNN_Test_Console
 
             Console.WriteLine("Press enter to exit.");
         }
+
         public static void SystemTestCode(DigitImage[] digitImagesDatas, bool predictionIsOn, CNN cnn, int iterationCount)
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -165,106 +166,105 @@ namespace CNN_Test_Console
             }
 
             }
-            public static void CNN_OverfittingTest()
+
+        public static void CNN_OverfittingTest()
+        {
+            CNN cnn = new CNN();
+
+            DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, 100);
+
+            int test_image_idx = 5;
+            Matrix[] input = new Matrix[1];
+            input[0] = new Matrix(digitImages[test_image_idx].pixels);
+            Matrix target = new Matrix(10, 1);
+            target[(int)digitImages[test_image_idx].label, 0] = 1f;
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            int iteration_count = 1000;
+            for (int i = 0; i < iteration_count; i++)
             {
-                CNN cnn = new CNN();
+                cnn.Train(input, target);
+                double error = cnn.GetError();
 
-                DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, 100);
-
-                int test_image_idx = 5;
-                Matrix[] input = new Matrix[1];
-                input[0] = new Matrix(digitImages[test_image_idx].pixels);
-                Matrix target = new Matrix(10, 1);
-                target[(int)digitImages[test_image_idx].label, 0] = 1f;
-
-                Stopwatch stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                int iteration_count = 1000;
-                for (int i = 0; i < iteration_count; i++)
-                {
-                    cnn.Train(input, target);
-                    double error = cnn.GetError();
-
-                    int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
-                    ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
-                }
-
-                Matrix output = cnn.Predict(input);
-
-                Console.WriteLine(output.ToString());
-                Console.WriteLine(digitImages[test_image_idx].ToString());
+                int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
+                ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
             }
 
+            Matrix output = cnn.Predict(input);
 
+            Console.WriteLine(output.ToString());
+            Console.WriteLine(digitImages[test_image_idx].ToString());
+        }
 
-            public static CNN CreateCNN(out int dialogResult)
+        public static CNN CreateCNN(out int dialogResult)
+        {
+            string[] files = Directory.GetFiles(Path.Combine("..", "..", "CNN", "Configs"), "*.json");
+
+            Console.WriteLine("0 > Train new network");
+            for (int i = 0; i < files.Length; i++)
             {
-                string[] files = Directory.GetFiles(Path.Combine("..", "..", "CNN", "Configs"), "*.json");
-
-                Console.WriteLine("0 > Train new network");
-                for (int i = 0; i < files.Length; i++)
-                {
-                    Console.WriteLine("{0} > {1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1));
-                }
-                Console.Write(">> ");
-
-                int indexOfFile = int.Parse(Console.ReadLine().Trim());
-                dialogResult = indexOfFile;
-                if (indexOfFile != 0 && indexOfFile < files.Length)
-                    return new CNN(files[indexOfFile - 1]);
-                else
-                    return new CNN();
+                Console.WriteLine("{0} > {1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1));
             }
+            Console.Write(">> ");
 
-            public static void InitializeInputAndTarget(out Matrix[] input, out Matrix[] targets)
+            int indexOfFile = int.Parse(Console.ReadLine().Trim());
+            dialogResult = indexOfFile;
+            if (indexOfFile != 0 && indexOfFile < files.Length)
+                return new CNN(files[indexOfFile - 1]);
+            else
+                return new CNN();
+        }
+
+        public static void InitializeInputAndTarget(out Matrix[] input, out Matrix[] targets)
+        {
+            input = new Matrix[1];
+            input[0] = new Matrix(28, 28);
+            targets = new Matrix[10];
+
+            for (int i = 0; i < 10; i++)
             {
-                input = new Matrix[1];
-                input[0] = new Matrix(28, 28);
-                targets = new Matrix[10];
-
-                for (int i = 0; i < 10; i++)
+                targets[i] = new Matrix(10, 1);
+                for (int j = 0; j < 10; j++)
                 {
-                    targets[i] = new Matrix(10, 1);
-                    for (int j = 0; j < 10; j++)
-                    {
-                        targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
-                    }
+                    targets[i][j, 0] = (i == j) ? 1.0f : 0.0f;
                 }
-            }
-
-            public static int Map(int oldMin, int oldMax, int newMin, int newMax, int current)
-            {
-                //Y = (X-A)/(B-A) * (D-C) + C
-                return (int)((current - oldMin) / (double)(oldMax - 1 - oldMin) * (newMax - newMin) + newMin);
-            }
-
-            static void ProgressBar(int currentValue, int currentCount, int maxCount, double error, double timePassed = 0, int cursorTop = 0)
-            {
-                Console.CursorVisible = false;
-
-                int pos = currentValue / 10;
-                if (currentValue == 0)
-                {
-                    Console.SetCursorPosition(0, cursorTop);
-                    Console.Write("[");
-                    Console.SetCursorPosition(pos + 12, cursorTop);
-                    Console.Write("]");
-                }
-
-                Console.SetCursorPosition(pos + 1, cursorTop);
-                Console.Write("#");
-                Console.SetCursorPosition(14, cursorTop);
-                Console.WriteLine(currentValue + "%");
-                Console.SetCursorPosition(25, cursorTop);
-                Console.WriteLine(currentCount + 1 + " / " + maxCount);
-                Console.SetCursorPosition(45, cursorTop);
-                Console.WriteLine("Time Passed: " + timePassed.ToString("F1"));
-                Console.SetCursorPosition(70, cursorTop);
-                Console.WriteLine("Error: {0:F6}", error);
-
-                Console.CursorVisible = true;
             }
         }
+
+        public static int Map(int oldMin, int oldMax, int newMin, int newMax, int current)
+        {
+            //Y = (X-A)/(B-A) * (D-C) + C
+            return (int)((current - oldMin) / (double)(oldMax - 1 - oldMin) * (newMax - newMin) + newMin);
+        }
+
+        static void ProgressBar(int currentValue, int currentCount, int maxCount, double error, double timePassed = 0, int cursorTop = 0)
+        {
+            Console.CursorVisible = false;
+
+            int pos = currentValue / 10;
+            if (currentValue == 0)
+            {
+                Console.SetCursorPosition(0, cursorTop);
+                Console.Write("[");
+                Console.SetCursorPosition(pos + 12, cursorTop);
+                Console.Write("]");
+            }
+
+            Console.SetCursorPosition(pos + 1, cursorTop);
+            Console.Write("#");
+            Console.SetCursorPosition(14, cursorTop);
+            Console.WriteLine(currentValue + "%");
+            Console.SetCursorPosition(25, cursorTop);
+            Console.WriteLine(currentCount + 1 + " / " + maxCount);
+            Console.SetCursorPosition(45, cursorTop);
+            Console.WriteLine("Time Passed: " + timePassed.ToString("F1"));
+            Console.SetCursorPosition(70, cursorTop);
+            Console.WriteLine("Error: {0:F13}", error);
+
+            Console.CursorVisible = true;
+        }
     }
+}
 
