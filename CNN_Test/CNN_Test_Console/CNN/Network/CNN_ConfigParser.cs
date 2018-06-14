@@ -184,7 +184,7 @@ namespace ConvNeuralNetwork
         public void LoadData(string fileName)
         {
             int convLayCount = 0;
-          
+
             CNN_Data cNN_Data = JsonFileController.ReadDataFromJsonFile<CNN_Data>(Path.Combine(saved_network_path,fileName));
             descriptions = cNN_Data.Descriptions.ToArray();
             layers = new Layer[descriptions.Length];

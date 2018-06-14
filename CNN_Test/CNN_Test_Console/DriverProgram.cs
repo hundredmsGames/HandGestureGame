@@ -21,7 +21,7 @@ namespace CNN_Test_Console
 
         public static void CNN_Training()
         {
-            int trCount = 60000, tsCount = 1000;
+            int trCount = 60000, tsCount = 10000;
             double error = 0f, timeLimit = 0f;
 
             int iterationCount = 10;
@@ -190,14 +190,18 @@ namespace CNN_Test_Console
             Console.WriteLine("0 > Train new network");
             for (int i = 0; i < files.Length; i++)
             {
-                Console.WriteLine("{0} > {1}", i + 1, files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1));
+                files[i] = files[i].Substring(files[i].LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                Console.WriteLine("{0} > {1}", i + 1, files[i]);
             }
             Console.Write(">> ");
 
             int indexOfFile = int.Parse(Console.ReadLine().Trim());
             dialogResult = indexOfFile;
-            if (indexOfFile != 0 && indexOfFile < files.Length)
+
+            if (indexOfFile != 0 && indexOfFile <= files.Length)
+            {
                 return new CNN(files[indexOfFile - 1]);
+            }
             else
                 return new CNN();
         }
