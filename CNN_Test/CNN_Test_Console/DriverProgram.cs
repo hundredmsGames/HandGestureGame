@@ -21,7 +21,7 @@ namespace CNN_Test_Console
 
         public static void CNN_Training()
         {
-            int trCount = 60000, tsCount = 10000;
+            int trCount = 60000, tsCount = 1000;
             double error = 0f, timeLimit = 0f;
 
             int iterationCount = 10;
@@ -76,7 +76,7 @@ namespace CNN_Test_Console
             }
             else
             {
-                CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, 0);
+                CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, -1);
             }
         }
 
@@ -137,14 +137,14 @@ namespace CNN_Test_Console
 
             cursorTopTesting = Console.CursorTop;
 
-            if (accuracy >= 95)
+            if (accuracy >= 95 && iterationCount != -1)
             {
-                string name = accuracy.ToString("F2") + " " + iterationCount + "";
+                string name = accuracy.ToString("F2") + "__" + iterationCount + "__";
                 Random random = new Random();
-                int length = random.Next(3, 6);
+                int length = 6;
                 for (int i = 0; i < length; i++)
                 {
-                    char c = (char)random.Next(65, 122);
+                    char c = (char)random.Next('A', 'F' + 1);
                     name += c;
                 }
                 cnn.SaveData(name+".json");
