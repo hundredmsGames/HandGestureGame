@@ -156,8 +156,10 @@ namespace ConvNeuralNetwork
 
         public double CrossEntropy(Matrix p, Matrix c)
         {
-            double error = 0.0;
+            if (target == null)
+                return -1.0;
 
+            double error = 0.0;
             Matrix errorMatrix = -Matrix.Multiply(c, Matrix.Log(p)) + Matrix.Multiply(1 - c, Matrix.Log(1 - p));
 
             for (int i = 0; i < errorMatrix.rows; i++)

@@ -13,13 +13,13 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_Test();
+            CNN_Training();
             //CNN_OverfittingTest();
 
             Console.ReadLine();
         }
 
-        public static void CNN_Test()
+        public static void CNN_Training()
         {
             int trCount = 60000, tsCount = 10000;
             double error = 0f, timeLimit = 0f;
@@ -46,6 +46,7 @@ namespace CNN_Test_Console
                 //if we never assigned this assign only once
                 if (cursorTopTraining == -1)
                     cursorTopTraining = Console.CursorTop;
+
                 for (int x = 0; x < iterationCount; x++)
                 {
                     DigitImage[] digitImages = trainigDigitImagesDatas.OrderBy(image => random.Next(training_count)).ToArray();
@@ -68,34 +69,18 @@ namespace CNN_Test_Console
                         int val = Map(0, training_count * iterationCount, 0, 100, training_count * x + i);
                         ProgressBar(val, training_count * x + i, training_count * iterationCount, error, stopwatch.ElapsedMilliseconds / 1000.0, cursorTopTraining);
                     }
-                    SystemTestCode(testingDigitImagesDatas, predictionIsOn, cnn, x + 1);
+                    CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, x + 1);
                 }
 
                 Console.WriteLine("\nSystem has been trained.");
             }
-            
-
-            //if we are not training the system we dont have to save again
-            if (dialogResult == 0)
+            else
             {
-                Console.WriteLine("Would you like to save this network?(yY/nN)");
-                string res = Console.ReadLine();
-
-                if (res == "" || char.ToLower(res[0]) == 'y')
-                {
-                    Console.WriteLine("Press Enter to continue, if you do not write a name, there will be a default name.");
-                    Console.Write("File Name >> ");
-                    string fileName = Console.ReadLine().Trim();
-                    cnn.SaveData(fileName);
-                    Console.WriteLine("Data Saved...");
-                }
-                
+                CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, 0);
             }
-
-            Console.WriteLine("Press enter to exit.");
         }
 
-        public static void SystemTestCode(DigitImage[] digitImagesDatas, bool predictionIsOn, CNN cnn, int iterationCount)
+        public static void CNN_Testing(DigitImage[] digitImagesDatas, bool predictionIsOn, CNN cnn, int iterationCount)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -106,12 +91,10 @@ namespace CNN_Test_Console
             Matrix[] input, targets;
 
             Console.WriteLine("System is getting tested. You will see the results when it is done...\n");
-
-
             if (cursorTopTesting == 0)
                 cursorTopTesting = Console.CursorTop;
-            InitializeInputAndTarget(out input, out targets);
 
+            InitializeInputAndTarget(out input, out targets);
             timeLimit = stopwatch.ElapsedMilliseconds;
 
             for (int i = 0; i < testing_count; i++)
@@ -121,6 +104,7 @@ namespace CNN_Test_Console
                         input[0][j, k] = digitImagesDatas[i].pixels[j][k];
 
                 input[0].Normalize(0f, 255f, 0f, 1f);
+
 
                 Matrix ans = null;
                 if (predictionIsOn)
