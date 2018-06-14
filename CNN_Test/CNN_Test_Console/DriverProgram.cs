@@ -13,8 +13,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            //CNN_Test();
-            CNN_OverfittingTest();
+            CNN_Test();
+            //CNN_OverfittingTest();
 
             Console.ReadLine();
         }
@@ -73,7 +73,7 @@ namespace CNN_Test_Console
 
                 Console.WriteLine("\nSystem has been trained.");
             }
-
+            
 
             //if we are not training the system we dont have to save again
             if (dialogResult == 0)
@@ -87,8 +87,9 @@ namespace CNN_Test_Console
                     Console.Write("File Name >> ");
                     string fileName = Console.ReadLine().Trim();
                     cnn.SaveData(fileName);
+                    Console.WriteLine("Data Saved...");
                 }
-                Console.WriteLine("Data Saved...");
+                
             }
 
             Console.WriteLine("Press enter to exit.");
@@ -162,7 +163,7 @@ namespace CNN_Test_Console
                     char c = (char)random.Next(65, 122);
                     name += c;
                 }
-                cnn.SaveData(name);
+                cnn.SaveData(name+".json");
             }
 
             }
