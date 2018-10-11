@@ -18,3 +18,13 @@ D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Tes
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csproj.CopyComplete
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.exe
 D:\workspace\unity\HandGestureGame\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.pdb
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.exe.config
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.exe
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\bin\Release\CNN_Test_Console.pdb
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\bin\Release\Newtonsoft.Json.dll
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\bin\Release\Newtonsoft.Json.xml
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csprojResolveAssemblyReference.cache
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csproj.CoreCompileInputs.cache
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.csproj.CopyComplete
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.exe
+D:\workspace\unity\100msGames\in-development\hand-gesture-game\CNN_Test\CNN_Test_Console\obj\Release\CNN_Test_Console.pdb

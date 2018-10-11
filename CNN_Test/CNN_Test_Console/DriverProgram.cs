@@ -108,7 +108,9 @@ namespace CNN_Test_Console
 
                 Matrix ans = null;
                 if (predictionIsOn)
+                {
                     ans = cnn.Predict(input);
+                }
                 else
                 {
                     cnn.Train(input, targets[digitImagesDatas[i].label]);
@@ -149,8 +151,7 @@ namespace CNN_Test_Console
                 }
                 cnn.SaveData(name+".json");
             }
-
-            }
+        }
 
         public static void CNN_OverfittingTest()
         {
