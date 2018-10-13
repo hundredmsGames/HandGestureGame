@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CNN\Helpers\ActivationFunctions.cs" />
+    <Compile Include="CNN\Helpers\CSV_Helper.cs" />
     <Compile Include="CNN\Layers\FC_Layer.cs" />
     <Compile Include="CNN\Network\CNN_Exceptions.cs" />
     <Compile Include="CNN\Network\CNN.cs" />

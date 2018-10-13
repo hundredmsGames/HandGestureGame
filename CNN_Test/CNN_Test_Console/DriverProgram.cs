@@ -13,10 +13,62 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            CNN_Training();
+            Kaggle_Test();
+            //CNN_Training();
             //CNN_OverfittingTest();
 
             Console.ReadLine();
+        }
+
+        public static void Kaggle_Test()
+        {
+            //DigitImage[] training = CSV_Helper.Read(DataSet.Training);
+            DigitImage[] testing = CSV_Helper.Read(DataSet.Testing);
+
+            int dialogResult;
+            CNN cnn = CreateCNN(out dialogResult);
+            DigitImage[] digitImagesDatas = testing;
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            int testing_count = digitImagesDatas.Length;
+            int correct_count = 0;
+            double timeLimit = 0, error = 0;
+            Matrix[] input, targets;
+
+            Console.WriteLine("System is getting tested. You will see the results when it is done...\n");
+            if (cursorTopTesting == 0)
+                cursorTopTesting = Console.CursorTop;
+
+            InitializeInputAndTarget(out input, out targets);
+            timeLimit = stopwatch.ElapsedMilliseconds;
+
+            string submissionCSV = "ImageId,Label" + Environment.NewLine;
+            for (int i = 0; i < testing_count; i++)
+            {
+                for (int j = 0; j < 28; j++)
+                    for (int k = 0; k < 28; k++)
+                        input[0][j, k] = digitImagesDatas[i].pixels[j][k];
+
+                input[0].Normalize(0f, 255f, 0f, 1f);
+
+                Matrix ans = cnn.Predict(input);
+
+                submissionCSV += (i + 1).ToString() + "," + ans.GetMaxRowIndex() + Environment.NewLine;
+
+                if (stopwatch.ElapsedMilliseconds > timeLimit)
+                {
+                    // every 0.5 sec update error
+                    timeLimit += 500;
+                    error = cnn.GetError();
+                }
+
+                int val = Map(0, testing_count, 0, 100, i);
+                ProgressBar(val, i, testing_count, error, stopwatch.ElapsedMilliseconds / 1000.0, cursorTopTesting);
+            }
+
+            CSV_Helper.Write(submissionCSV);
         }
 
         public static void CNN_Training()
