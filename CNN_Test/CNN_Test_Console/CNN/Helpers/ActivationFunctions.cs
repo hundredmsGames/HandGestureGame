@@ -64,9 +64,7 @@ namespace ConvNeuralNetwork
 
         public static Matrix DerTanh(Matrix m)
         {
-            Matrix tanh = Tanh(m);
-
-            return 1f - Matrix.Multiply(tanh, tanh);
+            return 1f - Matrix.Multiply(m, m);
         }
 
         public static Matrix Sigmoid(Matrix m)

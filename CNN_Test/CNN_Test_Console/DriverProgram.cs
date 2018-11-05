@@ -13,8 +13,8 @@ namespace CNN_Test_Console
 
         static void Main(string[] args)
         {
-            Kaggle_Test();
-            //CNN_Training();
+            //Kaggle_Test();
+            CNN_Training();
             //CNN_OverfittingTest();
 
             Console.ReadLine();
