@@ -164,7 +164,7 @@ namespace ConvNeuralNetwork
             var query = crossEntropy.data.OfType<double>();
             double error = query.Sum<double>(i => i);
 
-            return error;
+            return -error;
         }
 
         #endregion

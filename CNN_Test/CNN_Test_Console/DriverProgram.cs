@@ -14,8 +14,8 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
             //Kaggle_Test();
-            //CNN_Training();
-            CNN_OverfittingTest();
+            CNN_Training();
+            //CNN_OverfittingTest();
 
             Console.ReadLine();
         }
@@ -76,7 +76,7 @@ namespace CNN_Test_Console
             int trCount = 60000, tsCount = 10000;
             double error = 0f, timeLimit = 0f;
 
-            int iterationCount = 10;
+            int totalEpoch = 10;
             bool predictionIsOn = true;
             Random random = new Random();
 
@@ -99,8 +99,9 @@ namespace CNN_Test_Console
                 if (cursorTopTraining == -1)
                     cursorTopTraining = Console.CursorTop;
 
-                for (int x = 0; x < iterationCount; x++)
+                for (int epoch = 0; epoch < totalEpoch; epoch++)
                 {
+                    double lossSum = 0.0;
                     DigitImage[] digitImages = trainigDigitImagesDatas.OrderBy(image => random.Next(training_count)).ToArray();
                     for (int i = 0; i < training_count; i++)
                     {
@@ -111,17 +112,19 @@ namespace CNN_Test_Console
                         input[0].Normalize(0f, 255f, 0f, 1f);
                         cnn.Train(input, targets[digitImages[i].label]);
 
-                        if (stopwatch.ElapsedMilliseconds > timeLimit)
-                        {
+                        //if (stopwatch.ElapsedMilliseconds > timeLimit)
+                       // {
                             // every 0.5 sec update error
-                            timeLimit += 500;
-                            error = cnn.GetError();
-                        }
+                            //timeLimit += 500;
+                        error = cnn.GetError();
+                        lossSum += error;
 
-                        int val = Map(0, training_count * iterationCount, 0, 100, training_count * x + i);
-                        ProgressBar(val, training_count * x + i, training_count * iterationCount, error, stopwatch.ElapsedMilliseconds / 1000.0, cursorTopTraining);
+                        //}
+
+                        int val = Map(0, training_count * totalEpoch, 0, 100, training_count * epoch + i);
+                        ProgressBar(val, training_count * epoch + i, training_count * totalEpoch, lossSum / (i + 1), stopwatch.ElapsedMilliseconds / 1000.0, cursorTopTraining);
                     }
-                    CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, x + 1);
+                    CNN_Testing(testingDigitImagesDatas, predictionIsOn, cnn, epoch + 1);
                 }
 
                 Console.WriteLine("\nSystem has been trained.");
@@ -214,7 +217,7 @@ namespace CNN_Test_Console
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            int iteration_count = 50;
+            int iteration_count = 10;
             for (int i = 0; i < iteration_count; i++)
             {
                 for(int j = 0; j < digitImages.Length; ++j)

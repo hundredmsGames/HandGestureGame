@@ -71,11 +71,6 @@ namespace ConvNeuralNetwork
 
             //layers[layers.Length - 1].Output_d_E[0] = layers[layers.Length - 1].Output[0] - Network.Target;
 
-            //layers[layers.Length - 1].Output_d_E[0] = DerivativeOfCrossEntropy(
-            //    layers[layers.Length - 1].Output[0],
-            //    Network.Target
-            //);
-
             for (int i = layers.Length - 1; i >= 0; i--)
             {
                 layers[i].Backpropagation();
