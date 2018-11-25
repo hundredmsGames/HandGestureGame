@@ -14,8 +14,8 @@ namespace CNN_Test_Console
         static void Main(string[] args)
         {
             //Kaggle_Test();
-            CNN_Training();
-            //CNN_OverfittingTest();
+            //CNN_Training();
+            CNN_OverfittingTest();
 
             Console.ReadLine();
         }
@@ -211,29 +211,40 @@ namespace CNN_Test_Console
 
             DigitImage[] digitImages = MNIST_Parser.ReadFromFile(DataSet.Testing, 100);
 
-            int test_image_idx = 5;
-            Matrix[] input = new Matrix[1];
-            input[0] = new Matrix(digitImages[test_image_idx].pixels);
-            Matrix target = new Matrix(10, 1);
-            target[(int)digitImages[test_image_idx].label, 0] = 1f;
-
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            int iteration_count = 1000;
+            int iteration_count = 50;
             for (int i = 0; i < iteration_count; i++)
             {
-                cnn.Train(input, target);
-                double error = cnn.GetError();
+                for(int j = 0; j < digitImages.Length; ++j)
+                {
+                    Matrix[] input = new Matrix[1];
+                    input[0] = new Matrix(digitImages[j].pixels);
 
-                int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
-                ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
+                    Matrix target = new Matrix(10, 1);
+                    target[(int)digitImages[j].label, 0] = 1f;
+
+                    cnn.Train(input, target);
+                    double error = cnn.GetError();
+
+                    int val = (int)((i - 0) / (double)(iteration_count - 1 - 0) * (100 - 0) + 0);
+                    ProgressBar(val, i, iteration_count, error, stopwatch.ElapsedMilliseconds / 1000.0);
+                }
+                
             }
 
-            Matrix output = cnn.Predict(input);
+            for (int j = 0; j < digitImages.Length; ++j)
+            {
+                Matrix[] input = new Matrix[1];
+                input[0] = new Matrix(digitImages[j].pixels);
 
-            Console.WriteLine(output.ToString());
-            Console.WriteLine(digitImages[test_image_idx].ToString());
+                Matrix output = cnn.Predict(input);
+
+                Console.WriteLine(output.ToString());
+                Console.WriteLine(digitImages[j].ToString());
+                Console.ReadLine();
+            }
         }
 
         public static CNN CreateCNN(out int dialogResult)

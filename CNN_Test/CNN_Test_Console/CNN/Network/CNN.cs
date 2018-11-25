@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatrixLib;
 
 namespace ConvNeuralNetwork
@@ -154,16 +155,14 @@ namespace ConvNeuralNetwork
             return CrossEntropy(Layers[Layers.Length - 1].Output[0], target);
         }
 
-        public double CrossEntropy(Matrix p, Matrix c)
+        public double CrossEntropy(Matrix output, Matrix target)
         {
             if (target == null)
                 return -1.0;
 
-            double error = 0.0;
-            Matrix errorMatrix = -Matrix.Multiply(c, Matrix.Log(p)) + Matrix.Multiply(1 - c, Matrix.Log(1 - p));
-
-            for (int i = 0; i < errorMatrix.rows; i++)
-                error += errorMatrix[i, 0];
+            Matrix crossEntropy = Matrix.Multiply(target, Matrix.Log(output));
+            var query = crossEntropy.data.OfType<double>();
+            double error = query.Sum<double>(i => i);
 
             return error;
         }

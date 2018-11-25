@@ -60,11 +60,11 @@ namespace ConvNeuralNetwork
         {
             base.Backpropagation();
 
-            Matrix activation_grad = derOfActivation(Output[0]);
             Matrix net_d_E;
-
             if (activation == ActivationFunctions.Softmax)
-                net_d_E = Matrix.IncreaseToTwoDimension(activation_grad, Output[0].rows, Output[0].rows) * Output_d_E[0];
+                // Derivative of the softmax and cross entropy.
+                // IMPORTANT: We can only use cross entropy with softmax.
+                net_d_E = Output[0] - this.Network.Target;
             else
                 net_d_E = Matrix.Multiply(Output_d_E[0], derOfActivation(Output[0]));
 
